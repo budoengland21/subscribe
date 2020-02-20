@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:subscription/AddCard.dart';
 
     void main() => runApp(
       MaterialApp(
@@ -14,15 +15,23 @@ class FrontPage extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.black,
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.settings),
-            color: Colors.white,
-            onPressed: (){},//go to settings page} ,
+          Padding(
+            padding: const EdgeInsets.only(right:30.0),
+            child: IconButton(
+              icon: Icon(Icons.filter_list),
+              color: Colors.white,
+              iconSize: 30,
+              onPressed: (){},//go to settings page} ,
+            ),
           ),
-          IconButton(
-            icon: Icon(Icons.filter_list),
-            color: Colors.white,
-            onPressed: (){}, // generate container with options
+          Padding(
+            padding: const EdgeInsets.only(right:10.0),
+            child: IconButton(
+              icon: Icon(Icons.settings),
+              color: Colors.white,
+              iconSize: 30,
+              onPressed: (){}, // generate container with options
+            ),
           )
         ],
       ),
@@ -119,14 +128,42 @@ class FrontPage extends StatelessWidget {
 
 
               child: Container(
+
                 width: double.infinity,
                 // color: Colors.blue,
                 height: 80,
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      height: 30,
+                      width: 70,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage("images/price.png"),fit: BoxFit.contain,
+                        )
+
+
+                      ),
+                    ),
+                    Container(
+                      width: 120,
+                      child: Center(child: Text("\$439990",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,fontSize: 23),))
+                    )
+                  ],
+                ),
               ),
 
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        elevation: 10,
+        backgroundColor: Colors.blueGrey,
+        child: Icon(Icons.add,color: Colors.white,size: 30,),
+        splashColor: Colors.lime,
+        onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context)=> AddCard()));
+        },
       ),
 
 
