@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:subscription/AddCard.dart';
+import 'package:subscription/AddCardScreen/AddCard.dart';
 
     void main() => runApp(
       MaterialApp(
+        theme: ThemeData(
+         primaryColor: Colors.black
+      ),
         home: FrontPage(),
       )
     );
