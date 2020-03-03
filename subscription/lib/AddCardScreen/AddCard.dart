@@ -6,6 +6,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:date_range_picker/date_range_picker.dart';
+import 'package:flutter/services.dart';
 
 class AddCard extends StatefulWidget {
   @override
@@ -23,6 +24,7 @@ class _AddCardState extends State<AddCard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
         body: CustomScrollView(
 
 
@@ -123,7 +125,7 @@ class _AddCardState extends State<AddCard> {
         ),
         //THIS IS WHERE WE PUT ALL THE CHILDREN
         SliverFixedExtentList(
-          itemExtent: 650,//height of each widget in the listdelegate
+          itemExtent: 700,//height of each widget in the listdelegate
           //for my case since its one widget, make height reasonable size
           //divide the items
           delegate: SliverChildListDelegate(
@@ -133,7 +135,7 @@ class _AddCardState extends State<AddCard> {
 
 
                   child:Padding(
-                      padding: const EdgeInsets.only(top:18.0, left:10,right: 10),
+                      padding: const EdgeInsets.only(top:18.0, left:5,right: 5),
 
                       child: Column(
                         children: <Widget>[
@@ -279,6 +281,8 @@ class _AddCardState extends State<AddCard> {
                               ),
                             ),
                           ),
+
+
                           Padding(
                             padding: const EdgeInsets.only(top:12.0),
                             child: Row(
@@ -298,6 +302,7 @@ class _AddCardState extends State<AddCard> {
                               ],
                             ),
                           ),
+
                           Visibility(
                             visible: isOn,
                             child: Row(
@@ -331,6 +336,11 @@ class _AddCardState extends State<AddCard> {
                                 )],
                             ),
                           ),
+                          //HORIZONTAL RULER
+                          Padding(
+                            padding: const EdgeInsets.only(top:5.0),
+                            child: Container(height: 0.3,color: Colors.black,),
+                          ),
                           Padding(
                             padding: const EdgeInsets.only(top:12.0),
                             child: Row(
@@ -350,6 +360,11 @@ class _AddCardState extends State<AddCard> {
                                 children: paymentContainers(),
                               ),
                             ),
+                          ),
+
+                          Padding(
+                            padding: const EdgeInsets.only(top:8.0),
+                            child: Container(height: 0.3,color: Colors.black,),
                           ),
 
 
@@ -372,18 +387,56 @@ class _AddCardState extends State<AddCard> {
                               ],
                             ),
                           ),
+
+                          Padding(
+                            padding: const EdgeInsets.only(top:5.0),
+                            child: Container(height: 0.3,color: Colors.black,),
+                          ),
                           SizedBox(
                             height: 15,
                           ),
                           Row(
                             children: <Widget>[
+                              //Text("Amount", style: TextStyle(fontSize: 20),),
+                             // Spacer(),
                               Text("Amount", style: TextStyle(fontSize: 20),),
                               Spacer(),
+                              Container(
+
+
+                               // color: Colors.black,
+                                width: 120,
+                                child: TextField(
+                                    decoration: InputDecoration(prefixIcon: Icon(Icons.attach_money,color: Colors.green,),
+                                     //border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(15)),),
+                                      //block digits with comma, hyphen etc.
+                                    ),keyboardType: TextInputType.number,inputFormatters: [BlacklistingTextInputFormatter(RegExp('[,|-]|[(.)?]|[ ]')),//WhitelistingTextInputFormatter.digitsOnly],
+                                ]),
+                              )
 
 
 
                             ],
                           ),
+                         
+
+                          //Button to add the card
+
+                          Spacer(),
+
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom:8.0),
+                              child: Container(
+                                child: Center(child: Text("Add Card" ,style: TextStyle(fontSize: 23,color: Colors.white))),
+
+                                height: 50,
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(20),color: Colors.black,),
+                              ),
+                            ),
+                          )
                         ],
 
                       )
@@ -410,16 +463,7 @@ class _AddCardState extends State<AddCard> {
 
 
     ),
-      floatingActionButton: FloatingActionButton(
 
-        elevation: 10,
-        backgroundColor: Colors.blueGrey,
-        child: Icon(Icons.done,color: Colors.white,size: 30,),
-        splashColor: Colors.lime,
-        onPressed: (){
-          //Navigator.push(context, MaterialPageRoute(builder: (context)=> AddCard()));
-        },
-      ),
 
     );
 
