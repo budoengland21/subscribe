@@ -65,7 +65,7 @@ class FrontPage extends StatelessWidget {
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.only(left:20.0),
-                        child: Text("Youtube", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 38),),
+                        child: Text("YOUTUBE 1234567", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 38),),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top:5,left: 3),
