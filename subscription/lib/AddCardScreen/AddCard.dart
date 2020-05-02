@@ -316,6 +316,7 @@ class _AddCardState extends State<AddCard> {
     else{
       tempDays=val;
     }
+    cardDetails.setDayCount(val);
 
 
 
