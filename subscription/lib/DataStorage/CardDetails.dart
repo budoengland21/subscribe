@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class CardDetails{
 // _ (private fields for attributes)
   String _nameCard;
-  int _dayCount;
+  String _dayCount;
   Color _color;
   bool _reminder;
   int _reminderDays;
@@ -15,7 +15,7 @@ class CardDetails{
   bool _track; // check if all fields are filled
 
   CardDetails(){
-    _color = Colors.white;_reminder=false;_dayCount=0;
+    _color = Colors.white;_reminder=false;;
    _renew=false;;
   }
 
@@ -49,8 +49,8 @@ class CardDetails{
     _color = value;
   }
 
-  int getDayCount() => _dayCount;
-  void setDayCount(int value) {
+  String getDayCount() => _dayCount;
+  void setDayCount(String value) {
     _dayCount = value;
   }
 
@@ -64,7 +64,7 @@ class CardDetails{
   ///Checks if all fields were filled
   ///if not then button can't be selected
   bool checkAll(){
-    if ((_nameCard!=null) && (_dayCount!=0) && (_color!= Colors.white) &&
+    if ((_nameCard!=null) && (_dayCount!=null) && (_color!= Colors.white) &&
         (_namePayment!=null) && (_money!=null) ){
       return true;
     }else{
