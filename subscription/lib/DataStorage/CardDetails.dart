@@ -10,51 +10,51 @@ class CardDetails{
   int _reminderDays;
   String _namePayment;
   bool _renew;
-  int _money;
+  String _money;
 
   bool _track; // check if all fields are filled
 
   CardDetails(){
     _color = Colors.white;_reminder=false;_dayCount=0;
-   _renew=false;_money=-1;
+   _renew=false;;
   }
 
-  int get money => _money;
-   void setMoney(int value) {
+  String getMoney() => _money;
+   void setMoney(String value) {
     _money = value;
   }
 
-  bool get renew => _renew;
+  bool getRenew() => _renew;
   void setRenew(bool value) {
     _renew = value;
   }
 
-  String get namePayment => _namePayment;
+  String getNamePayment() => _namePayment;
   void NamePayment(String value) {
     _namePayment = value;
   }
 
-  int get reminderDays => _reminderDays;
+  int getReminderDays() => _reminderDays;
   void setReminderDays(int value) {
     _reminderDays = value;
   }
 
-  bool get reminder => _reminder;
+  bool getReminder() => _reminder;
   void setReminder(bool value) {
     _reminder = value;
   }
 
-  Color get color => _color;
+  Color getColor() => _color;
   void  setColor(Color value) {
     _color = value;
   }
 
-  int get dayCount => _dayCount;
-  void setdayCount(int value) {
+  int getDayCount() => _dayCount;
+  void setDayCount(int value) {
     _dayCount = value;
   }
 
-  String get nameCard {
+  String getNameCard() {
     return _nameCard;
   }
    void setNameCard(String value) {
@@ -65,7 +65,7 @@ class CardDetails{
   ///if not then button can't be selected
   bool checkAll(){
     if ((_nameCard!=null) && (_dayCount!=0) && (_color!= Colors.white) &&
-        (_namePayment!=null) && (_money!=-1) ){
+        (_namePayment!=null) && (_money!=null) ){
       return true;
     }else{
       return false;

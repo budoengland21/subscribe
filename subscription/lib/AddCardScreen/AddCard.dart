@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 import 'package:flutter/services.dart';
+import 'package:subscription/DataStorage/CardDetails.dart';
+
 
 class AddCard extends StatefulWidget {
   @override
@@ -19,6 +21,7 @@ class _AddCardState extends State<AddCard> {
   //Controller to check if user changed a value in the text field box
   final TextEditingController textCheck = new TextEditingController();
 
+  CardDetails cardDetails = new CardDetails();
 
   //Used to update the card real time as user types
   String tempName = '';
@@ -280,21 +283,25 @@ class _AddCardState extends State<AddCard> {
 
 
   void updateColor(Color i) {
+    cardDetails.setColor(i); //set the color
     cardColor = i;
   }
 
 
   void updateCardName(String val) {
+    cardDetails.setNameCard(val);
     tempName = val;
   }
 
   //Update payment type real time
   void updatePaymentType(String val) {
+    cardDetails.NamePayment(val);
     tempPay = val;
   }
 
   //Update money
   void updateMoney(String amount) {
+    cardDetails.setMoney(amount);
     tempAmount = amount;
   }
 
@@ -382,6 +389,7 @@ class _AddCardState extends State<AddCard> {
 
                             // Text card container
                             Text(
+
                               tempName, style: TextStyle(fontSize: 25,
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold),
@@ -1000,19 +1008,19 @@ class _AddCardState extends State<AddCard> {
                               alignment: Alignment.bottomCenter,
                               child: Padding(
                                 padding: const EdgeInsets.only(bottom: 8.0),
-                                child: Container(
-                                  child: Center(child: Text("Add Card",
-                                      style: TextStyle(
-                                          fontSize: 23, color: Colors.white))),
+                                child: RaisedButton(
+                                  disabledColor: Colors.black12,
+                                  color: Colors.black,
+                                  onPressed: (){
+                                    //if true, then all fields were filled
+                                    if (cardDetails.checkAll()){
 
-                                  height: 50,
-                                  width: MediaQuery
-                                      .of(context)
-                                      .size
-                                      .width,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: Colors.black,),
+
+                                    }
+                                  },
+                                  child:Center(child: Text("Add Card",
+                                      style: TextStyle(
+                                          fontSize: 23, color: Colors.white))) ,
                                 ),
                               ),
                             )
