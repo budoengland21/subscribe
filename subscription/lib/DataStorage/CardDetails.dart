@@ -15,8 +15,8 @@ class CardDetails{
   bool _track; // check if all fields are filled
 
   CardDetails(){
-    _color = Colors.white;_reminder=false;;
-   _renew=false;;
+    _color = Colors.white;_reminder=false;
+   _renew=false;
   }
 
   String getMoney() => _money;
@@ -50,7 +50,14 @@ class CardDetails{
   }
 
   String getDayCount() => _dayCount;
-  void setDayCount(String value) {
+ void setDayCount(String value) {
+//    var x = value.split(" ")[0];//first index ie number
+//    if (int.parse(x) == 1){
+//      _dayCount ="Today";
+//    }
+//    else{
+//
+//    }
     _dayCount = value;
   }
 

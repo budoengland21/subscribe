@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 import 'package:flutter/services.dart';
+import 'package:subscription/DataStorage/ArrayOfCards.dart';
 import 'package:subscription/DataStorage/CardDetails.dart';
 
 
@@ -22,6 +23,7 @@ class _AddCardState extends State<AddCard> {
   final TextEditingController textCheck = new TextEditingController();
 
   CardDetails cardDetails = new CardDetails();
+  ArrayOfCards arrayOfCards = new ArrayOfCards();
 
   //Used to update the card real time as user types
   String tempName = '';
@@ -144,6 +146,7 @@ class _AddCardState extends State<AddCard> {
     return  (i-x);
   }
   ///calculate days in the same year
+  ///try using .difference???????
   int daysInMonths(int hi, int lo, int hiDay, int loDay, int year){
     int difference=0;
     int hiMonth = hi;
@@ -195,6 +198,7 @@ class _AddCardState extends State<AddCard> {
     return difference;
 
   }
+
 
 
   //Reupdate card name as user types
@@ -322,6 +326,14 @@ class _AddCardState extends State<AddCard> {
 
   }
 
+  ///_________________________________________________________________________
+  ///This will add the card to the home screen
+  ///then it will add the card to an array
+  void returnHome(){
+    arrayOfCards.addCard(cardDetails);
+    Navigator.of(context).pop();
+  }
+  //___________________________________________________________________________
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1017,6 +1029,8 @@ class _AddCardState extends State<AddCard> {
                                   onPressed: (){
                                     //if true, then all fields were filled
                                     if (cardDetails.checkAll()){
+                                      ///go to home screen add card
+                                      returnHome();
 
 
                                     }
