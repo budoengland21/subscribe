@@ -14,8 +14,16 @@ import 'package:subscription/homePage/cardStack.dart';
       );
     }
 
-class FrontPage extends StatelessWidget {
-  ArrayOfCards a = new ArrayOfCards();/// calls the singleton class
+class FrontPage extends StatefulWidget {
+  @override
+  _FrontPageState createState() => _FrontPageState();
+}
+
+class _FrontPageState extends State<FrontPage> {
+  ArrayOfCards a = new ArrayOfCards();
+/// calls the singleton class
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,44 +57,7 @@ class FrontPage extends StatelessWidget {
       Stack(
         children: stackOfCards(a)
 
-         /** Positioned(
-            top:150,
-            left:0,
-            right: 0,
-            child: Card(
-              margin: EdgeInsets.zero,
-              elevation: 10,
-              color:Colors.blueGrey,
 
-
-              child: Container(
-
-                width: double.infinity,
-                // color: Colors.blue,
-                height: 80,
-                child: Row(
-                  children: <Widget>[
-                    Container(
-                      height: 30,
-                      width: 70,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage("images/price.png"),fit: BoxFit.contain,
-                        )
-
-
-                      ),
-                    ),
-                    Container(
-                      width: 120,
-                      child: Center(child: Text("\$439990",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,fontSize: 23),))
-                    )
-                  ],
-                ),
-              ),
-
-            ),
-          ),**/
 
       ),
 
@@ -106,5 +77,4 @@ class FrontPage extends StatelessWidget {
 
 
     );
-  }
-}
+  }}

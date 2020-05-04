@@ -330,6 +330,7 @@ class _AddCardState extends State<AddCard> {
   ///This will add the card to the home screen
   ///then it will add the card to an array
   void returnHome(){
+    //print (arrayOfCards.seeCard(1));
     arrayOfCards.addCard(cardDetails);
     Navigator.of(context).pop();
   }
