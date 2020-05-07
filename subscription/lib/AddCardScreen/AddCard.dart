@@ -11,6 +11,7 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:subscription/DataStorage/ArrayOfCards.dart';
 import 'package:subscription/DataStorage/CardDetails.dart';
+import 'package:subscription/DataStorage/storedData.dart';
 
 
 class AddCard extends StatefulWidget {
@@ -330,11 +331,19 @@ class _AddCardState extends State<AddCard> {
   ///This will add the card to the home screen
   ///then it will add the card to an array
   void returnHome(){
-    //print (arrayOfCards.seeCard(1));
+
     arrayOfCards.addCard(cardDetails);
+    insertDatabase();
     Navigator.of(context).pop();
   }
-  //___________________________________________________________________________
+
+
+///insert into database
+  void insertDatabase(){
+    storedData storage = storedData();
+    storage.insertDb(cardDetails);
+  }
+  ///___________________________________________________________________________
   @override
   Widget build(BuildContext context) {
     return Scaffold(

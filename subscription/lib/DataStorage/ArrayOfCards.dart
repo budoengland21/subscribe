@@ -8,22 +8,17 @@ class ArrayOfCards{
 
   List<CardDetails> _storage;
 
-  factory ArrayOfCards(){
-    if (arrayOfCards == null){
-      arrayOfCards = ArrayOfCards._makeInstance();
-    }
-    return arrayOfCards;
-  }
-
-
-  ArrayOfCards._makeInstance(){
-    _storage = new List();
-  }
-
+   ArrayOfCards(){
+     _storage = new List();
+   }
 
 
   void addCard(CardDetails a){
     _storage.add(a);
+  }
+  void addAll(List<CardDetails> list){
+     _storage.addAll(list);
+
   }
 
   void removeCard(int index){

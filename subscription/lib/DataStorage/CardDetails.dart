@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:subscription/DataStorage/storedData.dart';
 
 class CardDetails{
 // _ (private fields for attributes)
@@ -73,11 +74,16 @@ class CardDetails{
   bool checkAll(){
     if ((_nameCard!=null) && (_dayCount!=null) && (_color!= Colors.white) &&
         (_namePayment!=null) && (_money!=null) ){
+      //also insert into database
+     // insertDatabase();
+
       return true;
     }else{
       return false;
     }
   }
+
+
 
 
 }

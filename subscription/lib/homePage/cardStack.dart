@@ -18,7 +18,7 @@ List<Widget> stackOfCards(ArrayOfCards cards)  {
     if (check == 0){
       stacks.add(
         Positioned(
-                  top:150,
+                  top:ttop,
                   left:0,
                   right: 0,
                   child: Card(
@@ -60,7 +60,7 @@ List<Widget> stackOfCards(ArrayOfCards cards)  {
   else{
 
   for (int i=0; i< cards.checkSize(); i++){
-    ttop+=140;
+
     stacks.add(
         Positioned(
             top: ttop,
@@ -145,6 +145,7 @@ List<Widget> stackOfCards(ArrayOfCards cards)  {
 
             )
         ));
+    ttop+=140;
 
   }
   }

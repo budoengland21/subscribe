@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:subscription/AddCardScreen/AddCard.dart';
 import 'package:subscription/DataStorage/ArrayOfCards.dart';
+import 'package:subscription/DataStorage/CardDetails.dart';
+import 'package:subscription/DataStorage/storedData.dart';
 import 'package:subscription/homePage/cardStack.dart';
 
     void main() {
@@ -14,14 +16,37 @@ import 'package:subscription/homePage/cardStack.dart';
       );
     }
 
+storedData storage;//stored data class
+List<CardDetails> list = new List();
+ArrayOfCards a = new ArrayOfCards();
+
 class FrontPage extends StatefulWidget {
   @override
   _FrontPageState createState() => _FrontPageState();
 }
 
+
 class _FrontPageState extends State<FrontPage> {
-  ArrayOfCards a = new ArrayOfCards();
+
 /// calls the singleton class
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    startDatabase();
+  }
+  void startDatabase() async{
+    storage = storedData();
+    await storage.initializeDatabase();
+    list  = await storage.getData();
+    setState(() {
+      a.addAll(list);
+    });
+
+
+
+  }
 
 
   @override
