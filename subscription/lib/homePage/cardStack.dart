@@ -15,6 +15,8 @@ List<Widget> stackOfCards(ArrayOfCards cards)  {
     double ttop=10;
     double lleft= 0;
     double rright=0;
+
+
     if (check == 0){
       stacks.add(
         Positioned(
@@ -60,6 +62,7 @@ List<Widget> stackOfCards(ArrayOfCards cards)  {
   else{
 
   for (int i=0; i< cards.checkSize(); i++){
+
 
     stacks.add(
         Positioned(

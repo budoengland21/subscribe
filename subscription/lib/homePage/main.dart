@@ -39,10 +39,17 @@ class _FrontPageState extends State<FrontPage> {
   void startDatabase() async{
     storage = storedData();
     await storage.initializeDatabase();
-    list  = await storage.getData();
-    setState(() {
-      a.addAll(list);
-    });
+
+
+      list  = await storage.getData();
+      setState(() {
+
+        a.addAll(list);
+        print("nah");
+        print(a.seeCard(1).getDayCount());
+      });
+
+
 
 
 

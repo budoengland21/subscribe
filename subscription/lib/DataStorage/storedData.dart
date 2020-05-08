@@ -16,9 +16,9 @@ class storedData{
   String days = 'days';
   String color = 'color';
   String reminder = 'reminder';
-  String reminder_days = 'Reminder days';
-  String paymentType = 'Payment type';
-  String autoRenew = 'Auto renew';
+  String reminder_days = 'Reminder_days';
+  String paymentType = 'Payment_type';
+  String autoRenew = 'Auto_renew';
   String money = 'money';
 
 
@@ -50,7 +50,7 @@ class storedData{
      Directory directory = await getApplicationDocumentsDirectory();
      String path = join(directory.path, 'subscribe.db');
      //open database
-     var myDatabase = await openDatabase(path, version: 1, onCreate: _createDatabase);
+     var myDatabase = await openDatabase(path, version: 13, onCreate: _createDatabase);
      return myDatabase;
 
 
@@ -59,12 +59,15 @@ class storedData{
    ///create the database if it doesn't exist
    void _createDatabase(Database db, int version) async{
      try{
-       await db.execute('CREATE TABLE'
+       await db.execute('CREATE TABLE '
            '$tblName'
-            '($id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, $cardName TEXT,'
-           '$days INTEGER , $color TEXT, $reminder TEXT,'
-           '$reminder_days INTEGER, $paymentType TEXT,'
-           '$autoRenew TEXT, $money TEXT )');
+            '($id INTEGER PRIMARY KEY AUTOINCREMENT, $cardName TEXT,'
+           '$days TEXT,'
+           '$reminder TEXT,'
+       //    '$reminder_days INTEGER,'
+         '$paymentType TEXT,'
+           '$autoRenew TEXT, '
+           '$money TEXT )');
      }
      catch(Exception){
        print (Exception);
@@ -81,14 +84,15 @@ class storedData{
 
    Map<String, dynamic> _mapItems(CardDetails card){
      return{
+
        '$cardName' : card.getNameCard(),
        '$days': card.getDayCount(),
-       '$color': card.getColor().toString(),
+    //  '$color': card.getColor().toString(),
        '$reminder': card.getReminder().toString(),
-       '$reminder_days': card.getReminderDays(),
-       '$paymentType': card.getNamePayment(),
+   //    '$reminder_days': card.getReminderDays(),
+      '$paymentType': card.getNamePayment().toString(),
        '$autoRenew': card.getRenew().toString(),
-       '$money': card.getMoney().toString(),
+       '$money': card.getMoney(),
 
 
      };
@@ -117,29 +121,40 @@ class storedData{
        print('deleteError: '+Exception);
      }
    }
+  Future<int> totalSize() async{
+    Database db = await getDatabase();
+    List <Map<String,dynamic>> map = await db.rawQuery('SELECT COUNT (*) from $tblName');
+    int size = Sqflite.firstIntValue(map);
+    return size;
+
+  }
    
    Future<List<CardDetails>> getData() async{
-     CardDetails card;
+
      Database db = await getDatabase();
      List maps = await db.query(tblName);
      
      return List.generate(maps.length, (index){
+       CardDetails card=new CardDetails();
+       //print(maps.length);
        //return new CardDetails();
        //maps[index]['$id'],
        Color c;
        bool ans;
        bool renew;
-       c=new Color(maps[index]['$color']).value as Color;
+     //  c=new Color(maps[index]['$color']).value as Color;
        if (maps[index]['$reminder'] == "true"){
+         card.setReminderDays(int.parse(maps[index]['$reminder_days']));
          ans = true;
        }else{ans=false;}
        if(maps[index]['$autoRenew']=="true"){
          renew=true;} else{renew=false;}
        card.setNameCard(maps[index]['$cardName']);
        card.setDayCount(maps[index]['$days']);
-       card.setColor(c);
+       print(maps[index]['$days']);
+       card.setColor(Colors.green);///temporary
        card.setReminder(ans);
-       card.setReminderDays(int.parse(maps[index]['$reminder_days']));
+      // card.setReminderDays(int.parse(maps[index]['$reminder_days']));
        card.NamePayment(maps[index]['$paymentType']);
        card.setRenew(renew);
        card.setMoney(maps[index]['$money']);

@@ -8,8 +8,16 @@ class ArrayOfCards{
 
   List<CardDetails> _storage;
 
-   ArrayOfCards(){
+   ArrayOfCards.createInstance(){
      _storage = new List();
+   }
+
+   factory ArrayOfCards(){
+     if (arrayOfCards == null){
+       arrayOfCards = ArrayOfCards.createInstance();
+     }
+     return arrayOfCards;
+
    }
 
 
