@@ -50,7 +50,7 @@ class storedData{
      Directory directory = await getApplicationDocumentsDirectory();
      String path = join(directory.path, 'subscribe.db');
      //open database
-     var myDatabase = await openDatabase(path, version: 13, onCreate: _createDatabase);
+     var myDatabase = await openDatabase(path, version: 15, onCreate: _createDatabase);
      return myDatabase;
 
 
@@ -63,8 +63,9 @@ class storedData{
            '$tblName'
             '($id INTEGER PRIMARY KEY AUTOINCREMENT, $cardName TEXT,'
            '$days TEXT,'
+           '$color TEXT,'
            '$reminder TEXT,'
-       //    '$reminder_days INTEGER,'
+          '$reminder_days INTEGER,'
          '$paymentType TEXT,'
            '$autoRenew TEXT, '
            '$money TEXT )');
@@ -87,7 +88,7 @@ class storedData{
 
        '$cardName' : card.getNameCard(),
        '$days': card.getDayCount(),
-    //  '$color': card.getColor().toString(),
+       '$color': card.getHexColor(),
        '$reminder': card.getReminder().toString(),
    //    '$reminder_days': card.getReminderDays(),
       '$paymentType': card.getNamePayment().toString(),
@@ -107,7 +108,7 @@ class storedData{
          '$reminder=?, $reminder_days=?, $paymentType=?,'
          '$autoRenew=?, $money=? WHERE $id=?',
          [card.getNameCard(), card.getDayCount(),
-         card.getColor().toString(), card.getReminder().toString(),
+         card.getColor(), card.getReminder().toString(),
          card.getReminderDays(), card.getNamePayment(),card.getRenew().toString(),
          card.getMoney().toString(), cardID]);
    }
@@ -144,7 +145,7 @@ class storedData{
        bool renew;
      //  c=new Color(maps[index]['$color']).value as Color;
        if (maps[index]['$reminder'] == "true"){
-         card.setReminderDays(int.parse(maps[index]['$reminder_days']));
+         card.setReminderDays((maps[index]['$reminder_days']));
          ans = true;
        }else{ans=false;}
        if(maps[index]['$autoRenew']=="true"){
@@ -152,9 +153,9 @@ class storedData{
        card.setNameCard(maps[index]['$cardName']);
        card.setDayCount(maps[index]['$days']);
        print(maps[index]['$days']);
-       card.setColor(Colors.green);///temporary
+       card.setHexColor((maps[index]['$color']));///temporary
        card.setReminder(ans);
-      // card.setReminderDays(int.parse(maps[index]['$reminder_days']));
+     // card.setReminderDays((maps[index]['$reminder_days']));
        card.NamePayment(maps[index]['$paymentType']);
        card.setRenew(renew);
        card.setMoney(maps[index]['$money']);

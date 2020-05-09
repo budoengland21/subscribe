@@ -1,22 +1,23 @@
 
 import 'package:flutter/material.dart';
-import 'package:subscription/DataStorage/storedData.dart';
+
 
 class CardDetails{
 // _ (private fields for attributes)
   String _nameCard;
   String _dayCount;
-  Color _color;
+  String _color;
   bool _reminder;
   int _reminderDays;
   String _namePayment;
   bool _renew;
   String _money;
+  Color _temp;
 
   bool _track; // check if all fields are filled
 
   CardDetails(){
-    _color = Colors.white;_reminder=false;
+    _reminder=false;
    _renew=false;
   }
 
@@ -45,10 +46,29 @@ class CardDetails{
     _reminder = value;
   }
 
-  Color getColor() => _color;
-  void  setColor(Color value) {
-    _color = value;
+
+  void  setColor(Color c) {//change color to string value
+    _color = '#${c.value.toRadixString(16).substring(2)}'; //change eg color(blue) to hex #f00000
   }
+  Color getColor(){ // to retrieve string hex color and turn to color
+  //  _temp = (Color(int.parse(_color.substring(1, 7), radix: 16) + 0xFF000000)); // changes String in hex format #f000000 to Color(0xf00000)
+    if (_temp == null){
+      setHexColor(_color);
+    }
+    return _temp;
+  }
+
+  //store color in db
+  String getHexColor(){
+    return _color;
+  }
+
+
+  void setHexColor(String c){
+    _temp = (Color(int.parse(c.substring(1, 7), radix: 16) + 0xFF000000)); // changes String in hex format #f000000 to Color(0xf00000)
+  }
+
+
 
   String getDayCount() => _dayCount;
  void setDayCount(String value) {

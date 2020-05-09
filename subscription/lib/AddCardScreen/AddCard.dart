@@ -331,11 +331,36 @@ class _AddCardState extends State<AddCard> {
   ///This will add the card to the home screen
   ///then it will add the card to an array
   void returnHome(){
-    print (cardDetails.getNamePayment());
+   // print (cardDetails.getNamePayment());
+// set the autorenew and remainder
+  if (cardColor== Colors.black){cardDetails.setColor(cardColor);}
+
+    cardDetails.setRenew(renewOn);
+    cardDetails.setReminder(isOn);
+    
 
     arrayOfCards.addCard(cardDetails);
     insertDatabase();
     Navigator.of(context).pop();
+  }
+  ///set the remainder
+  void checkReminderDays(String remDays){
+    if (renewOn){
+      int i= calculateRem(remDays);
+      cardDetails.setReminderDays(i);
+    }
+    else{
+      cardDetails.setReminderDays(0);///default day
+    }
+  }
+  int calculateRem(String x){
+    if (x== days[0]){
+      return 1;
+    }else if (x==days[1]){
+      return 3;
+    }else{
+      return 7;
+    }
   }
 
 
@@ -347,6 +372,8 @@ class _AddCardState extends State<AddCard> {
   ///___________________________________________________________________________
   @override
   Widget build(BuildContext context) {
+    //Since default color is black
+   // cardDetails.setColor(Colors.black); //set the color
     return Scaffold(
       backgroundColor: Colors.black,
       body: CustomScrollView(
@@ -805,10 +832,12 @@ class _AddCardState extends State<AddCard> {
                                     // default is 3 days
                                     onChanged: (newvalue) {
                                       setState(() {
-                                        FocusScope.of(context).requestFocus(
+                                        FocusScope.of(context).requestFocus( ///it will clear all focus of the textfield
                                             new FocusNode());
+                                        checkReminderDays(newvalue);
+                                        
 
-                                        ///it will clear all focus of the textfield
+                                       
 
                                         defaultDay = newvalue;
                                       });
@@ -824,7 +853,6 @@ class _AddCardState extends State<AddCard> {
 
 
                                     ).toList(),
-
                                   )
                                 ],
                               ),
@@ -1129,4 +1157,6 @@ class _AddCardState extends State<AddCard> {
 
     return false;
   }
+
+
 }

@@ -46,7 +46,7 @@ class _FrontPageState extends State<FrontPage> {
 
         a.addAll(list);
         print("nah");
-        print(a.seeCard(1).getDayCount());
+      //  print(a.seeCard(1).getDayCount());
       });
 
 
