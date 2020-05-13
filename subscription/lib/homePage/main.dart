@@ -49,7 +49,7 @@ class _FrontPageState extends State<FrontPage> {
       //  print(a.seeCard(1).getDayCount());
       });
 
-///make see card page and test day and add oResume
+///make see card page and add oResume when app doing nara
 
 
 

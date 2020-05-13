@@ -180,21 +180,25 @@ class storedData{
   ///Method will also be used for the notification
    String getDifference(String dateString, String days){
      DateTime now = DateTime.now();
-
      int nowDay =  int.parse(days.substring(0,1));
 
 
      DateTime saved = DateTime.parse(dateString);
 
-     Duration diff = now.difference(saved);
-     int x = nowDay; //leave as original if same as day (ie it is 0)
-     if (diff.inDays>0){
-       x = nowDay- diff.inDays ;
+      int diff = now.difference(saved).inDays; //leave as original if same as day (ie it is 0)
+     // check if 0, fix same day bug
+     if (diff == 0 && saved.day !=now.day){
+       diff = nowDay-1;
+     }
+     else if (diff>0){
+       diff = nowDay- diff;
        //nowDay
      }
-
-
-     return x.toString() + " DAYS";
+     //then its the same day
+     else{
+       diff = nowDay;
+     }
+     return diff.toString() + " DAYS";
 
 
 
