@@ -20,7 +20,7 @@ class storedData{
   String paymentType = 'Payment_type';
   String autoRenew = 'Auto_renew';
   String money = 'money';
-  String actualDate = 'Date';//store date it was made
+  String actualDate = 'actualDate';//store date it was made
 
 
 
@@ -51,7 +51,7 @@ class storedData{
      Directory directory = await getApplicationDocumentsDirectory();
      String path = join(directory.path, 'subscribe.db');
      //open database
-     var myDatabase = await openDatabase(path, version: 16, onCreate: _createDatabase);
+     var myDatabase = await openDatabase(path, version: 17, onCreate: _createDatabase);
      return myDatabase;
 
 
@@ -69,7 +69,8 @@ class storedData{
           '$reminder_days INTEGER,'
          '$paymentType TEXT,'
            '$autoRenew TEXT, '
-           '$money TEXT, $actualDate TEXT)');
+           '$money TEXT,'
+           '$actualDate TEXT)');
      }
      catch(Exception){
        print (Exception);
@@ -153,9 +154,12 @@ class storedData{
        if(maps[index]['$autoRenew']=="true"){
          renew=true;} else{renew=false;}
        card.setNameCard(maps[index]['$cardName']);
-       int val = getDifference(maps[index]['$actualDate']);//calculate the difference
+
+       String val = getDifference(maps[index]['$actualDate'], maps[index]['$days']);//calculate the difference
        //card.setDayCount(maps[index]['$days']);
-       card.setDayCount(val.toString());
+
+       card.setDayCount(val);
+
        print(maps[index]['$days']);
        card.setHexColor((maps[index]['$color']));///temporary
        card.setReminder(ans);
@@ -172,13 +176,25 @@ class storedData{
 
      });
    }
-
-   int getDifference(String dateString){
+   ///gets the difference in days and update the subscription
+  ///Method will also be used for the notification
+   String getDifference(String dateString, String days){
      DateTime now = DateTime.now();
+
+     int nowDay =  int.parse(days.substring(0,1));
+
+
      DateTime saved = DateTime.parse(dateString);
+
      Duration diff = now.difference(saved);
-     int x = diff.inDays;
-     return x;
+     int x = nowDay; //leave as original if same as day (ie it is 0)
+     if (diff.inDays>0){
+       x = nowDay- diff.inDays ;
+       //nowDay
+     }
+
+
+     return x.toString() + " DAYS";
 
 
 

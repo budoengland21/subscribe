@@ -20,7 +20,7 @@ storedData storage;//stored data class
 List<CardDetails> list = new List();
 ArrayOfCards a = new ArrayOfCards();
 
-class FrontPage extends StatefulWidget {
+class FrontPage extends StatefulWidget{// with WidgetsBindingObserver {
   @override
   _FrontPageState createState() => _FrontPageState();
 }
@@ -49,7 +49,7 @@ class _FrontPageState extends State<FrontPage> {
       //  print(a.seeCard(1).getDayCount());
       });
 
-
+///make see card page and test day and add oResume
 
 
 
