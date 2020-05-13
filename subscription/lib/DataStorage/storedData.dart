@@ -20,6 +20,7 @@ class storedData{
   String paymentType = 'Payment_type';
   String autoRenew = 'Auto_renew';
   String money = 'money';
+  String actualDate = 'Date';//store date it was made
 
 
 
@@ -50,7 +51,7 @@ class storedData{
      Directory directory = await getApplicationDocumentsDirectory();
      String path = join(directory.path, 'subscribe.db');
      //open database
-     var myDatabase = await openDatabase(path, version: 15, onCreate: _createDatabase);
+     var myDatabase = await openDatabase(path, version: 16, onCreate: _createDatabase);
      return myDatabase;
 
 
@@ -68,7 +69,7 @@ class storedData{
           '$reminder_days INTEGER,'
          '$paymentType TEXT,'
            '$autoRenew TEXT, '
-           '$money TEXT )');
+           '$money TEXT, $actualDate TEXT)');
      }
      catch(Exception){
        print (Exception);
@@ -94,6 +95,7 @@ class storedData{
       '$paymentType': card.getNamePayment().toString(),
        '$autoRenew': card.getRenew().toString(),
        '$money': card.getMoney(),
+       '$actualDate': DateTime.now().toString()
 
 
      };
@@ -151,7 +153,9 @@ class storedData{
        if(maps[index]['$autoRenew']=="true"){
          renew=true;} else{renew=false;}
        card.setNameCard(maps[index]['$cardName']);
-       card.setDayCount(maps[index]['$days']);
+       int val = getDifference(maps[index]['$actualDate']);//calculate the difference
+       //card.setDayCount(maps[index]['$days']);
+       card.setDayCount(val.toString());
        print(maps[index]['$days']);
        card.setHexColor((maps[index]['$color']));///temporary
        card.setReminder(ans);
@@ -167,6 +171,17 @@ class storedData{
 
 
      });
+   }
+
+   int getDifference(String dateString){
+     DateTime now = DateTime.now();
+     DateTime saved = DateTime.parse(dateString);
+     Duration diff = now.difference(saved);
+     int x = diff.inDays;
+     return x;
+
+
+
    }
 
 }

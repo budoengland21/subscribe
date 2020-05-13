@@ -46,7 +46,7 @@ class _AddCardState extends State<AddCard> {
   Color days4 = Colors.white;
 
   bool checkOn = false; // for the color containers checker
-  Color cardColor = Colors.black;
+  Color cardColor = Colors.grey;
 
   var images = ["Debit", "Credit", "Gift card", "Paypal"];
   var png = [
@@ -333,7 +333,7 @@ class _AddCardState extends State<AddCard> {
   void returnHome(){
    // print (cardDetails.getNamePayment());
 // set the autorenew and remainder
-  if (cardColor== Colors.black){cardDetails.setColor(cardColor);}
+  if (cardColor== Colors.grey){cardDetails.setColor(cardColor);}
 
     cardDetails.setRenew(renewOn);
     cardDetails.setReminder(isOn);
