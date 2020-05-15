@@ -36,7 +36,15 @@ class CardDetails{
     _namePayment = value;
   }
 
-  int getReminderDays() => _reminderDays;
+  int getReminderDays() {
+    if (_reminder){
+      return _reminderDays;
+    }
+    else{
+      return 0;
+    }
+
+  }
   void setReminderDays(int value) {
     _reminderDays = value;
   }

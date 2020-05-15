@@ -87,7 +87,7 @@ class _FrontPageState extends State<FrontPage> {
 
       body:
       Stack(
-        children: stackOfCards(a)
+        children: stackOfCards(a,context)
 
 
 

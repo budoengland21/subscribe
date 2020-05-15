@@ -132,6 +132,13 @@ class storedData{
     return size;
 
   }
+  Future<int> getID(int index) async{
+    Database db = await getDatabase();
+    List data = await db.query(tblName);
+    print(data[index]['$id']);
+    return data[index]['$id'];
+  //  await
+  }
    
    Future<List<CardDetails>> getData() async{
 
