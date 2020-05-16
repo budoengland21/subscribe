@@ -61,7 +61,7 @@ class _FrontPageState extends State<FrontPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        elevation: 0,
+        elevation: 10,
         backgroundColor: Colors.black,
         actions: <Widget>[
           Padding(
@@ -86,12 +86,36 @@ class _FrontPageState extends State<FrontPage> {
       ),
 
       body:
-      Stack(
-        children: stackOfCards(a,context)
+          CustomScrollView(
+            slivers: <Widget>[
+
+             SliverFixedExtentList(
+               delegate: SliverChildListDelegate(
+                 [
+              Stack(
+
+              children: cardStack(a, context),
+              )]
+               ), itemExtent: 900,
+             )
+            ],
+          ),
 
 
 
-      ),
+           
+         
+
+
+
+
+
+
+
+
+
+
+
 
 
 
