@@ -9,7 +9,8 @@ import 'package:subscription/homePage/cardStack.dart';
       runApp(
           MaterialApp(
             theme: ThemeData(
-                primaryColor: Colors.black
+                primaryColor: Colors.white,canvasColor: Color.fromRGBO(72, 72, 72, 1)
+
             ),
             home: FrontPage(),
           )

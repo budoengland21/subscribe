@@ -33,17 +33,17 @@ class _AddCardState extends State<AddCard> {
   String tempDays = '';
 
   //color for payment containers
-  Color selected = Colors.white;
-  Color selected1 = Colors.white;
-  Color selected2 = Colors.white;
-  Color selected3 = Colors.white;
+  Color selected = Color.fromRGBO(97, 97, 97, 1);
+  Color selected1 = Color.fromRGBO(97, 97, 97, 1);
+  Color selected2 = Color.fromRGBO(97, 97, 97, 1);
+  Color selected3 = Color.fromRGBO(97, 97, 97, 1);
 
   //color for days selector
-  Color days0 = Colors.white;
-  Color days1 = Colors.white;
-  Color days2 = Colors.white;
-  Color days3 = Colors.white;
-  Color days4 = Colors.white;
+  Color days0 = Color.fromRGBO(97, 97, 97, 1);
+  Color days1 = Color.fromRGBO(97, 97, 97, 1);
+  Color days2 = Color.fromRGBO(97, 97, 97, 1);
+  Color days3 =Color.fromRGBO(97, 97, 97, 1);
+  Color days4 = Color.fromRGBO(97, 97, 97, 1);
 
   bool checkOn = false; // for the color containers checker
   Color cardColor = Colors.grey;
@@ -207,83 +207,83 @@ class _AddCardState extends State<AddCard> {
 
 
   void make() {
-    //just using length of colorcontain just coz its same
-    selected = Colors.greenAccent;
-    selected1 = Colors.white;
-    selected2 = Colors.white;
-    selected3 = Colors.white;
+    //just using length of colorcontain just coz its same255,241,118
+    selected = Color.fromRGBO(255, 241, 118, 1);
+    selected1 = Color.fromRGBO(72, 72, 72, 1);
+    selected2 = Color.fromRGBO(72, 72, 72, 1);
+    selected3 = Color.fromRGBO(72, 72, 72, 1);
   }
 
   void make1() {
     //just using length of colorcontain just coz its same
-    selected1 = Colors.greenAccent;
-    selected = Colors.white;
-    selected2 = Colors.white;
-    selected3 = Colors.white;
+    selected1 = Color.fromRGBO(255, 241, 118, 1);
+    selected = Color.fromRGBO(72, 72, 72, 1);
+    selected2 = Color.fromRGBO(72, 72, 72, 1);
+    selected3 = Color.fromRGBO(72, 72, 72, 1);
   }
 
   void make2() {
     //just using length of colorcontain just coz its same
-    selected2 = Colors.greenAccent;
-    selected = Colors.white;
-    selected3 = Colors.white;
-    selected1 = Colors.white;
+    selected2 =  Color.fromRGBO(255, 241, 118, 1);
+    selected = Color.fromRGBO(72, 72, 72, 1);
+    selected3 = Color.fromRGBO(72, 72, 72, 1);
+    selected1 = Color.fromRGBO(72, 72, 72, 1);
   }
 
   void make3() {
     //just using length of colorcontain just coz its same
-    selected3 = Colors.greenAccent;
-    selected = Colors.white;
-    selected1 = Colors.white;
-    selected2 = Colors.white;
+    selected3 = Color.fromRGBO(255, 241, 118, 1);
+    selected = Color.fromRGBO(72, 72, 72, 1);
+    selected1 = Color.fromRGBO(72, 72, 72, 1);
+    selected2 = Color.fromRGBO(72, 72, 72, 1);
   }
 
 
   void colorDay() {
-    days0 = Colors.greenAccent;
-    days1 = Colors.white;
-    days2 = Colors.white;
-    days3 = Colors.white;
-    days4 = Colors.white;
+    days0 =  Color.fromRGBO(255, 241, 118, 1);
+    days1 = Color.fromRGBO(72, 72, 72, 1);
+    days2 = Color.fromRGBO(72, 72, 72, 1);
+    days3 = Color.fromRGBO(72, 72, 72, 1);
+    days4 = Color.fromRGBO(72, 72, 72, 1);
   }
 
   void colorDay1() {
-    days0 = Colors.white;
-    days1 = Colors.greenAccent;
-    days2 = Colors.white;
-    days3 = Colors.white;
-    days4 = Colors.white;
+    days0 = Color.fromRGBO(72, 72, 72, 1);
+    days1 =  Color.fromRGBO(255, 241, 118, 1);
+    days2 = Color.fromRGBO(72, 72, 72, 1);
+    days3 = Color.fromRGBO(72, 72, 72, 1);;
+    days4 = Color.fromRGBO(72, 72, 72, 1);
   }
 
   void colorDay2() {
-    days0 = Colors.white;
-    days1 = Colors.white;
-    days2 = Colors.greenAccent;
-    days3 = Colors.white;
-    days4 = Colors.white;
+    days0 = Color.fromRGBO(72, 72, 72, 1);
+    days1 = Color.fromRGBO(72, 72, 72, 1);
+    days2 =  Color.fromRGBO(255, 241, 118, 1);
+    days3 = Color.fromRGBO(72, 72, 72, 1);
+    days4 = Color.fromRGBO(72, 72, 72, 1);
   }
 
   void colorDay3() {
-    days0 = Colors.white;
-    days1 = Colors.white;
-    days2 = Colors.white;
-    days3 = Colors.greenAccent;
-    days4 = Colors.white;
+    days0 =Color.fromRGBO(72, 72, 72, 1);
+    days1 = Color.fromRGBO(72, 72, 72, 1);
+    days2 = Color.fromRGBO(72, 72, 72, 1);
+    days3 =  Color.fromRGBO(255, 241, 118, 1);
+    days4 = Color.fromRGBO(72, 72, 72, 1);
   }
   void colorCustom(){
-    days0 = Colors.white;
-    days1 = Colors.white;
-    days2 = Colors.white;
-    days3 = Colors.white;
-    days4 = Colors.greenAccent;
+    days0 =  Color.fromRGBO(72, 72, 72, 1);
+    days1 =  Color.fromRGBO(72, 72, 72, 1);
+    days2 =  Color.fromRGBO(72, 72, 72, 1);
+    days3 = Color.fromRGBO(72, 72, 72, 1);
+    days4 =  Color.fromRGBO(255, 241, 118, 1);
 
   }
   void removeColor(){
-    days0 = Colors.white;
-    days1 = Colors.white;
-    days2 = Colors.white;
-    days3 = Colors.white;
-    days4 = Colors.white;
+    days0 =  Color.fromRGBO(72, 72, 72, 1);
+    days1 = Color.fromRGBO(72, 72, 72, 1);
+    days2 =  Color.fromRGBO(72, 72, 72, 1);
+    days3 =  Color.fromRGBO(72, 72, 72, 1);
+    days4 =  Color.fromRGBO(72, 72, 72, 1);
   }
 
 
@@ -383,21 +383,15 @@ class _AddCardState extends State<AddCard> {
 
 
           SliverAppBar(
-            backgroundColor: Colors.grey,
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.done),
-                color: Colors.black,
-                iconSize: 30,
-                onPressed: () {}, //go to settings page} ,
-              ),
-            ],
+            backgroundColor: Color.fromRGBO(97, 97, 97, 1),
+
             //forceElevated: true,
             //floating: true,
             pinned: true,
             elevation: 10,
             leading: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.black, size: 30,),),
+              icon: Icon(Icons.arrow_back, color: Colors.greenAccent, size: 35,),
+              onPressed: () {Navigator.pop(context);},),
             // appBar:AppBar(leading: IconButton(icon:Icon(Icons.arrow_back,color: Colors.black,size: 30,),),)//leading: IconButton(icon:Icon(Icons.arrow_back,color: Colors.black,size: 30,),),
 
             // color that appear when scroll up
@@ -489,57 +483,66 @@ class _AddCardState extends State<AddCard> {
             itemExtent: 795, //height of each widget in the listdelegate
             //for my case since its one widget, make height reasonable size
             //divide the items
+
             delegate: SliverChildListDelegate(
                 [
-                  //Using card coz material needed for textbox
+                  //Using c
+                  // ard coz material needed for textbox
                   Card(
+                    color: Colors.black,//ytttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
 
 
                     child: Padding(
                         padding: const EdgeInsets.only(
-                            top: 18.0, left: 5, right: 5),
+                            top: 20.0, left: 5, right: 5),
 
                         child: Column(
                           children: <Widget>[
-                            TextField(
+                            Theme(
+                              data: Theme.of(context).copyWith(hintColor: Colors.white,primaryColor: Colors.white),
 
-                              decoration: InputDecoration(
-                                labelText: "Subscription name",
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(15)),),
-                                prefixIcon: Icon(
-                                  Icons.credit_card, color: Colors.black,),
+                              child: TextField(
+                                style: TextStyle(color: Colors.white),
+
+                                decoration: InputDecoration(
+                                  labelText: "Subscription name",focusColor: Colors.white,
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(15)),borderSide: BorderSide(color: Colors.white),),
+                                  prefixIcon: Icon(
+                                    Icons.credit_card, color: Colors.white,),
+
+                                ),
+                                //Takes in a string variable
+                                onChanged: (val) {
+                                  setState(() {
+                                    updateCardName(val);
+                                  });
+                                },
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(15),
+                                ],
+                                //no need for controller unless you want to use it
+                                //controller: textCheck, // Obtain text from textbox
+                                  ///rgb(255,241,118)hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+
 
                               ),
-                              //Takes in a string variable
-                              onChanged: (val) {
-                                setState(() {
-                                  updateCardName(val);
-                                });
-                              },
-                              inputFormatters: [
-                                LengthLimitingTextInputFormatter(15),
-                              ],
-                              //no need for controller unless you want to use it
-                              //controller: textCheck, // Obtain text from textbox
-
-
                             ),
                             Padding(
                               padding: EdgeInsets.only(top: 15),
                               child: Row(
                                 children: <Widget>[
-                                  Text("Begin cycle: ",style: TextStyle(fontSize: 20),),
+                                  Text("Begin cycle: ",style: TextStyle(fontSize: 20,color: Colors.white),),
                                   Spacer(),
                                   RaisedButton(
                                     ///adding icon in button + name
-                                    color: Colors.white,
+                                    color: Color.fromRGBO(72, 72, 72, 1),
                                     child: Row(
                                       children: <Widget>[
-                                        Icon(Icons.calendar_today,color: Colors.black,),
+                                        Icon(Icons.calendar_today,color: Colors.white,),
                                         SizedBox(width: 10,),
-                                        Text(defaultDate),
+                                        Text(defaultDate,style: TextStyle(color: Colors.white),),
                                       ],
                                     ),
                                     onPressed: (){
@@ -550,6 +553,8 @@ class _AddCardState extends State<AddCard> {
                                        onConfirm: (val){///after done pressed
                                         print(val);
                                         setState(() {
+                                          FocusScope.of(context).requestFocus( ///it will clear all focus of the textfield
+                                              new FocusNode());
                                           formatDate(val);///where it formats date
                                           updateDays("null");
                                           removeColor();
@@ -570,7 +575,7 @@ class _AddCardState extends State<AddCard> {
                               padding: EdgeInsets.only(top:15),
                               child: Row(
                                 children: <Widget>[
-                                  Text("End Cycle",style: TextStyle(fontSize: 20),)
+                                  Text("End Cycle",style: TextStyle(fontSize: 20,color: Colors.white),)
                                 ],
                               ),
                             ),
@@ -579,7 +584,7 @@ class _AddCardState extends State<AddCard> {
                               padding: const EdgeInsets.only(top: 15.0),
                               child: Container(
                                 height: 90,
-                                color: Colors.white,
+                                color: Colors.black,
                                 width: double.infinity,
 
                                 child: ListView(
@@ -593,9 +598,11 @@ class _AddCardState extends State<AddCard> {
                                         });
                                       },
                                       child: Container(
+
                                           child: Column(
                                             mainAxisAlignment: MainAxisAlignment
                                                 .center,
+
 
                                             children: <Widget>[
                                               Text("3", style: TextStyle(
@@ -802,9 +809,9 @@ class _AddCardState extends State<AddCard> {
                               child: Row(
                                 children: <Widget>[
                                   Text("Set Reminder",
-                                    style: TextStyle(fontSize: 20),),
+                                    style: TextStyle(fontSize: 20,color: Colors.white),),
                                   Spacer(),
-                                  Switch(
+                                  Switch(inactiveTrackColor:Color.fromRGBO(72, 72, 72, 1),activeColor:Color.fromRGBO(255, 241, 118, 1),
                                       value: isOn,
                                       onChanged: (
                                           checker) { // onchanged takes parameter of whats changed
@@ -824,20 +831,20 @@ class _AddCardState extends State<AddCard> {
                               child: Row(
                                 children: <Widget>[
                                   Text(
-                                    "Remind me", style: TextStyle(fontSize: 20),
+                                    "Remind me", style: TextStyle(fontSize: 20,color: Colors.white),
                                   ),
                                   Spacer(),
-                                  DropdownButton(
-                                    value: defaultDay,
+                                  DropdownButton(iconEnabledColor: Color.fromRGBO(255, 241, 118, 1),
+                                    value: defaultDay,style: TextStyle(color: Colors.white),
                                     // default is 3 days
                                     onChanged: (newvalue) {
                                       setState(() {
                                         FocusScope.of(context).requestFocus( ///it will clear all focus of the textfield
                                             new FocusNode());
                                         checkReminderDays(newvalue);
-                                        
 
-                                       
+
+
 
                                         defaultDay = newvalue;
                                       });
@@ -861,19 +868,20 @@ class _AddCardState extends State<AddCard> {
                             Padding(
                               padding: const EdgeInsets.only(top: 5.0),
                               child: Container(
-                                height: 0.3, color: Colors.black,),
+                                height: 5, color: Color.fromRGBO(72, 72, 72, 1),),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 12.0),
                               child: Row(
                                 children: <Widget>[
                                   Text("Payment Type",
-                                    style: TextStyle(fontSize: 20),),
+                                    style: TextStyle(fontSize: 20,color: Colors.white),),
                                 ],
 
                               ),
                             ),
                             Container(
+                              color: Colors.black,
                               width: double.infinity,
                               height: 70,
                               child: Padding(
@@ -897,7 +905,7 @@ class _AddCardState extends State<AddCard> {
                                             color: selected)
                                         ,
                                         child: Center(child: Text(images[0],
-                                          style: TextStyle(fontSize: 20),)),
+                                          style: TextStyle(fontSize: 20,color: Colors.white),)),
                                       ),
                                     ),
 
@@ -920,7 +928,7 @@ class _AddCardState extends State<AddCard> {
                                             color: selected1)
                                         ,
                                         child: Center(child: Text(images[1],
-                                          style: TextStyle(fontSize: 20),)),
+                                          style: TextStyle(fontSize: 20,color: Colors.white),)),
                                       ),
                                     ),
 
@@ -943,7 +951,7 @@ class _AddCardState extends State<AddCard> {
                                             color: selected2)
                                         ,
                                         child: Center(child: Text(images[2],
-                                          style: TextStyle(fontSize: 20),)),
+                                          style: TextStyle(fontSize: 20,color: Colors.white),)),
                                       ),
                                     ),
 
@@ -966,7 +974,7 @@ class _AddCardState extends State<AddCard> {
                                             color: selected3)
                                         ,
                                         child: Center(child: Text(images[3],
-                                          style: TextStyle(fontSize: 20),)),
+                                          style: TextStyle(fontSize: 20,color: Colors.white),)),
                                       ),
                                     ),
 
@@ -992,9 +1000,9 @@ class _AddCardState extends State<AddCard> {
                               child: Row(
                                 children: <Widget>[
                                   Text("AutoRenew",
-                                    style: TextStyle(fontSize: 20),),
+                                    style: TextStyle(fontSize: 20,color: Colors.white),),
                                   Spacer(),
-                                  Switch(
+                                  Switch(inactiveTrackColor:Color.fromRGBO(72, 72, 72, 1),activeColor:Color.fromRGBO(255, 241, 118, 1),
                                       value: renewOn,
                                       onChanged: (
                                           val) { // onchanged takes parameter of whats changed
@@ -1021,7 +1029,7 @@ class _AddCardState extends State<AddCard> {
                               children: <Widget>[
                                 //Text("Amount", style: TextStyle(fontSize: 20),),
                                 // Spacer(),
-                                Text("Amount", style: TextStyle(fontSize: 20),),
+                                Text("Amount", style: TextStyle(fontSize: 20,color: Colors.white),),
                                 Spacer(),
                                 Container(
 
@@ -1031,14 +1039,15 @@ class _AddCardState extends State<AddCard> {
                                   child: TextField(
                                     decoration: InputDecoration(
                                       prefixIcon: Icon(Icons.attach_money,
-                                        color: Colors.green,),
+                                        color: Colors.green,),//enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white),),
+
                                       //border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(15)),),
                                       //block digits with comma, hyphen etc.
                                     ),
                                     keyboardType: TextInputType.number,
                                     inputFormatters: [
                                       BlacklistingTextInputFormatter(
-                                          RegExp('[,|-]|[(.)?]|[ ]')),
+                                          RegExp('[,|-]|[ ]')),
                                       //WhitelistingTextInputFormatter.digitsOnly],
 
                                     ],
@@ -1064,7 +1073,7 @@ class _AddCardState extends State<AddCard> {
                                 padding: const EdgeInsets.only(bottom: 8.0),
                                 child: RaisedButton(
                                   disabledColor: Colors.black12,
-                                  color: Colors.black,
+                                  color: Colors.greenAccent,
                                   onPressed: (){
                                     //if true, then all fields were filled
                                     if (cardDetails.checkAll()){

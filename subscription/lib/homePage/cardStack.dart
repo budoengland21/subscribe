@@ -142,6 +142,16 @@ class _cardStackState extends State<cardStack> {
 List<Widget> cardStack(ArrayOfCards cards, BuildContext context)  {
  //ArrayOfCards cards = new ArrayOfCards();
 
+  ///this checks the days and if it's zero days, string is set today
+  String checkDays(int i){
+    if (cards.seeCard(i).getDayCount() == "0 DAYS"){
+      return "TODAY";
+
+    }
+
+    return cards.seeCard(i).getDayCount();
+  }
+
   ///use if statement check if 0, then show balance
 
     print("passed here");
@@ -211,7 +221,7 @@ List<Widget> cardStack(ArrayOfCards cards, BuildContext context)  {
               child: Transform(
                 transform:  Matrix4.identity()
                 ..setEntry(3,2,0.01)
-               ..rotateX(0.1),
+               ..rotateX(0.05),
                 alignment: FractionalOffset.center,
 
                 child: Card(
@@ -260,7 +270,7 @@ List<Widget> cardStack(ArrayOfCards cards, BuildContext context)  {
                                       width: 90,
                                       child: Center(
                                         child: Text(
-                                          cards.seeCard(i).getMoney(), style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 27,),
+                                         '\$ '+ cards.seeCard(i).getMoney(), style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 27,),
                                         ),
                                       ),
                                     ),
@@ -276,7 +286,7 @@ List<Widget> cardStack(ArrayOfCards cards, BuildContext context)  {
                                           borderRadius: BorderRadius.all(Radius.circular(40),),color: Colors.red,
                                           //boxShadow: [BoxShadow(color: Colors.black12,spreadRadius: 1,blurRadius: 2)]
                                         ),
-                                        child: Center(child: Text(cards.seeCard(i).getDayCount(),style: TextStyle(fontSize: 25,color: Colors.white,fontWeight: FontWeight.bold),)),
+                                        child: Center(child: Text(checkDays(i),style: TextStyle(fontSize: 25,color: Colors.white,fontWeight: FontWeight.bold),)),
 
 
                                       ),
