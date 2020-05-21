@@ -20,6 +20,10 @@ class ArrayOfCards{
 
    }
 
+   void removeAll(){
+     _storage.clear();
+   }
+
 
   void addCard(CardDetails a){
     _storage.add(a);

@@ -571,6 +571,11 @@ class _AddCardState extends State<AddCard> {
                               ),
                             ),
                             Padding(
+                              padding: const EdgeInsets.only(top: 5.0),
+                              child: Container(
+                                height: 5, color: Color.fromRGBO(72, 72, 72, 1),),
+                            ),
+                            Padding(
 
                               padding: EdgeInsets.only(top:15),
                               child: Row(
@@ -790,6 +795,12 @@ class _AddCardState extends State<AddCard> {
                                   ],
                                 ),
                               ),
+                            ),
+
+                            Padding(
+                              padding: const EdgeInsets.only(top: 5.0),
+                              child: Container(
+                                height: 5, color: Color.fromRGBO(72, 72, 72, 1),),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 12.0),
@@ -1034,16 +1045,23 @@ class _AddCardState extends State<AddCard> {
                                 Container(
 
 
+                              //    CHANGE BORDER STYLE
+                                //  CHANGE WHITE TO BLACK WHEN PRESSED
+
+
                                   // color: Colors.black,
                                   width: 120,
                                   child: TextField(
                                     decoration: InputDecoration(
                                       prefixIcon: Icon(Icons.attach_money,
-                                        color: Colors.green,),//enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white),),
+                                        color: Colors.green,),
+                                      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white),),
+                                     // focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white))
 
-                                      //border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(15)),),
+
+
                                       //block digits with comma, hyphen etc.
-                                    ),
+                                    ),style: TextStyle(color: Colors.white),
                                     keyboardType: TextInputType.number,
                                     inputFormatters: [
                                       BlacklistingTextInputFormatter(
@@ -1055,7 +1073,7 @@ class _AddCardState extends State<AddCard> {
                                       setState(() {
                                         updateMoney(val);
                                       });
-                                    },),
+                                    },),//decoration: BoxDecoration(border: Border(left:BorderSide.none,right:BorderSide.none,top:BorderSide.none,),borderRadius: BorderRadius.all(Radius.circular(9)),),
                                 )
 
 
@@ -1073,7 +1091,7 @@ class _AddCardState extends State<AddCard> {
                                 padding: const EdgeInsets.only(bottom: 8.0),
                                 child: RaisedButton(
                                   disabledColor: Colors.black12,
-                                  color: Colors.greenAccent,
+                                  color: Color.fromRGBO(255, 241, 118, 1),
                                   onPressed: (){
                                     //if true, then all fields were filled
                                     if (cardDetails.checkAll()){
@@ -1085,7 +1103,7 @@ class _AddCardState extends State<AddCard> {
                                   },
                                   child:Center(child: Text("Add Card",
                                       style: TextStyle(
-                                          fontSize: 23, color: Colors.white))) ,
+                                          fontSize: 23, color: Colors.black))) ,
                                 ),
                               ),
                             )

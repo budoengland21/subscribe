@@ -27,7 +27,7 @@ class FrontPage extends StatefulWidget{// with WidgetsBindingObserver {
 }
 
 
-class _FrontPageState extends State<FrontPage> {
+class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
 
 /// calls the singleton class
 
@@ -35,18 +35,44 @@ class _FrontPageState extends State<FrontPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    // add the observer to register the events
+    WidgetsBinding.instance.addObserver(this);
+
     startDatabase();
+  }
+
+  @override///Listens when app changes its lifecycle
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // TODO: implement didChangeAppLifecycleState
+  //  super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed){// meaning the app resumed after dormant
+      startDatabase();
+    }else{
+      //temporarily delete list so as not to add again
+      a.removeAll();
+    }
+  }
+
+
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    WidgetsBinding.instance.removeObserver(this);//removes observer
+    super.dispose();
+
   }
   void startDatabase() async{
     storage = storedData();
     await storage.initializeDatabase();
 
 
+
       list  = await storage.getData();
       setState(() {
 
         a.addAll(list);
-        print("nah");
+
       //  print(a.seeCard(1).getDayCount());
       });
 
