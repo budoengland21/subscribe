@@ -23,6 +23,14 @@ class _AddCardState extends State<AddCard> {
   //Controller to check if user changed a value in the text field box
   final TextEditingController textCheck = new TextEditingController();
 
+  DateTime minDate(){
+    int yr = DateTime.now().year;
+    int month = firstTime.month;
+
+    int day = firstTime.day+1;
+    return DateTime(yr,month,day);
+  }
+
   CardDetails cardDetails = new CardDetails();
   ArrayOfCards arrayOfCards = new ArrayOfCards();
 
@@ -83,7 +91,7 @@ class _AddCardState extends State<AddCard> {
 
   }
   ///calculate date range
-  void calculateDays(DateTime custom){
+  /*void calculateDays(DateTime custom){
     int difference=0;
     int temp;
     bool first = false;
@@ -198,9 +206,31 @@ class _AddCardState extends State<AddCard> {
     print (difference);
     return difference;
 
+  }*/
+  void calculateD(DateTime custom){
+    int x = custom.difference(firstTime).inDays;
+    if (firstTime.day == DateTime.now().day){
+      x+=1;
+    }
+
+
+
+
+    if (x == 1){
+      updateDays(x.toString()+ " DAY");
+    }
+    else{
+      updateDays(x.toString() + " DAYS");
+    }
+    print("numDaaaay");
+    print(firstTime);
+    print(custom);
+    print(x);
+
+
+
+    //return x;
   }
-
-
 
   //Reupdate card name as user types
   //takes in value of textedit controller
@@ -315,13 +345,18 @@ class _AddCardState extends State<AddCard> {
     if (val == "null"){
    //   tempDays = val;
       customDate=-1;
-      tempDays="";//RESET to one month
+      tempDays="";
       removeColor();
     }
     else{
       tempDays=val;
+      print("updating.....");
+
+      cardDetails.setDayCount(val);
+
+     // tempDays=val;
     }
-    cardDetails.setDayCount(val);
+
 
 
 
@@ -556,6 +591,7 @@ class _AddCardState extends State<AddCard> {
                                           FocusScope.of(context).requestFocus( ///it will clear all focus of the textfield
                                               new FocusNode());
                                           formatDate(val);///where it formats date
+                                          firstTime = val; ///update the date selected
                                           updateDays("null");
                                           removeColor();
                                         });
@@ -571,10 +607,10 @@ class _AddCardState extends State<AddCard> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(top: 5.0),
-                              child: Container(
-                                height: 5, color: Color.fromRGBO(72, 72, 72, 1),),
+                              padding: const EdgeInsets.only(top: 8.0),
+
                             ),
+
                             Padding(
 
                               padding: EdgeInsets.only(top:15),
@@ -701,7 +737,7 @@ class _AddCardState extends State<AddCard> {
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          updateDays("1 MONTH");
+                                          updateDays("30 DAYS");
                                           colorDay3();
                                         });
                                       },
@@ -740,12 +776,14 @@ class _AddCardState extends State<AddCard> {
 
                                           DatePicker.showDatePicker(context,
                                               showTitleActions: true,
-                                              minTime: DateTime.now(),
+                                              minTime: minDate(),
                                               maxTime: DateTime(DateTime.now().year+5),
                                               onConfirm: (val){///after done pressed
                                                 print(val);
                                                 setState(() { colorCustom();
-                                                  calculateDays(val);
+                                                  //calculateDays(val);
+                                                  calculateD(val);
+                                                  //updateDays(val)
 
                                                  // formatDate(val);///where it formats date
 
@@ -798,10 +836,12 @@ class _AddCardState extends State<AddCard> {
                             ),
 
                             Padding(
-                              padding: const EdgeInsets.only(top: 5.0),
+                              padding: const EdgeInsets.only(top: 10.0),
                               child: Container(
-                                height: 5, color: Color.fromRGBO(72, 72, 72, 1),),
+                                height: 5, color: Color.fromRGBO(72, 72, 72, 1),
+                              ),
                             ),
+
                             Padding(
                               padding: const EdgeInsets.only(top: 12.0),
                               child: Container(
@@ -875,14 +915,10 @@ class _AddCardState extends State<AddCard> {
                                 ],
                               ),
                             ),
-                            //HORIZONTAL RULER
+                            ///HORIZONTAL RULER
+
                             Padding(
-                              padding: const EdgeInsets.only(top: 5.0),
-                              child: Container(
-                                height: 5, color: Color.fromRGBO(72, 72, 72, 1),),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 12.0),
+                              padding: const EdgeInsets.only(top: 18.0),
                               child: Row(
                                 children: <Widget>[
                                   Text("Payment Type",
@@ -1000,9 +1036,10 @@ class _AddCardState extends State<AddCard> {
                             ),
 
                             Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
+                              padding: const EdgeInsets.only(top: 10.0),
                               child: Container(
-                                height: 0.3, color: Colors.black,),
+                                height: 5, color: Color.fromRGBO(72, 72, 72, 1),
+                              ),
                             ),
 
 
@@ -1028,11 +1065,7 @@ class _AddCardState extends State<AddCard> {
                               ),
                             ),
 
-                            Padding(
-                              padding: const EdgeInsets.only(top: 5.0),
-                              child: Container(
-                                height: 0.3, color: Colors.black,),
-                            ),
+
                             SizedBox(
                               height: 15,
                             ),
@@ -1153,6 +1186,7 @@ class _AddCardState extends State<AddCard> {
               });
             },
             child: Container(
+
               width: 45,
 //                            //color: Colors.teal,
               decoration: BoxDecoration(

@@ -147,9 +147,12 @@ List<Widget> cardStack(ArrayOfCards cards, BuildContext context)  {
     if (cards.seeCard(i).getDayCount() == "0 DAYS"){
       return "TODAY";
 
+    }else{
+      print(cards.seeCard(i).getDayCount());
+      return cards.seeCard(i).getDayCount();
     }
 
-    return cards.seeCard(i).getDayCount();
+
   }
 
   ///use if statement check if 0, then show balance

@@ -51,7 +51,7 @@ class storedData{
      Directory directory = await getApplicationDocumentsDirectory();
      String path = join(directory.path, 'subscribe.db');
      //open database
-     var myDatabase = await openDatabase(path, version: 17, onCreate: _createDatabase);
+     var myDatabase = await openDatabase(path, version: 21, onCreate: _createDatabase);
      return myDatabase;
 
 
@@ -66,7 +66,7 @@ class storedData{
            '$days TEXT,'
            '$color TEXT,'
            '$reminder TEXT,'
-          '$reminder_days INTEGER,'
+         '$reminder_days INTEGER,'
          '$paymentType TEXT,'
            '$autoRenew TEXT, '
            '$money TEXT,'
@@ -92,7 +92,7 @@ class storedData{
        '$days': card.getDayCount(),
        '$color': card.getHexColor(),
        '$reminder': card.getReminder().toString(),
-   //    '$reminder_days': card.getReminderDays(),
+       '$reminder_days': card.getReminderDays(),
       '$paymentType': card.getNamePayment().toString(),
        '$autoRenew': card.getRenew().toString(),
        '$money': card.getMoney(),
@@ -161,13 +161,14 @@ class storedData{
        if(maps[index]['$autoRenew']=="true"){
          renew=true;} else{renew=false;}
        card.setNameCard(maps[index]['$cardName']);
-
+       print("seee"+maps[index]['$days']);
        String val = getDifference(maps[index]['$actualDate'], maps[index]['$days']);//calculate the difference
+      //print("see"+maps[index]['$days']);
        //card.setDayCount(maps[index]['$days']);
 
        card.setDayCount(val);
 
-       print(maps[index]['$days']);
+
        card.setHexColor((maps[index]['$color']));///temporary
        card.setReminder(ans);
      // card.setReminderDays((maps[index]['$reminder_days']));
@@ -196,6 +197,9 @@ class storedData{
      // check if 0, fix same day bug
      if (diff == 0 && saved.day !=now.day){
        diff = nowDay-1;
+     }
+     else if (diff == 0){
+
      }
      else if (diff>0){
        diff = nowDay- diff;
