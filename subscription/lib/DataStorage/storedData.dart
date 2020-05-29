@@ -14,6 +14,7 @@ class storedData{
   String id = 'id';
   String cardName = 'cardName';
   String days = 'days';
+  String dayColor = 'day_color';
   String color = 'color';
   String reminder = 'reminder';
   String reminder_days = 'Reminder_days';
@@ -22,7 +23,7 @@ class storedData{
   String money = 'money';
   String actualDate = 'actualDate';//store date it was made
 
-
+  int diff;
 
 
   factory storedData(){
@@ -51,7 +52,7 @@ class storedData{
      Directory directory = await getApplicationDocumentsDirectory();
      String path = join(directory.path, 'subscribe.db');
      //open database
-     var myDatabase = await openDatabase(path, version: 21, onCreate: _createDatabase);
+     var myDatabase = await openDatabase(path, version: 25, onCreate: _createDatabase);
      return myDatabase;
 
 
@@ -64,6 +65,7 @@ class storedData{
            '$tblName'
             '($id INTEGER PRIMARY KEY AUTOINCREMENT, $cardName TEXT,'
            '$days TEXT,'
+           '$dayColor TEXT, '
            '$color TEXT,'
            '$reminder TEXT,'
          '$reminder_days INTEGER,'
@@ -90,6 +92,7 @@ class storedData{
 
        '$cardName' : card.getNameCard(),
        '$days': card.getDayCount(),
+       '$dayColor': card.getDayHex(),
        '$color': card.getHexColor(),
        '$reminder': card.getReminder().toString(),
        '$reminder_days': card.getReminderDays(),
@@ -103,17 +106,18 @@ class storedData{
    }
 
    ///Update card, when card clicked on
-   Future<void> updateRow(CardDetails card, int cardID) async{
+   Future<void> updateRow(CardDetails card, String cardCol) async{
      Database db = await getDatabase();
 
-     int count = await db.rawUpdate('UPDATE $tblName SET'
-         '$cardName=?, $days=?, $color=?'
+     int count = await db.rawUpdate('UPDATE $tblName SET '
+         '$cardName=?, $days=?, $dayColor=?, $color=?,'
          '$reminder=?, $reminder_days=?, $paymentType=?,'
-         '$autoRenew=?, $money=? WHERE $id=?',
-         [card.getNameCard(), card.getDayCount(),
-         card.getColor(), card.getReminder().toString(),
-         card.getReminderDays(), card.getNamePayment(),card.getRenew().toString(),
-         card.getMoney().toString(), cardID]);
+         '$autoRenew=?, $money=?, $actualDate=? WHERE $cardName=? ',
+         [card.getNameCard(), card.getDayCount(), card.getDayHex(),
+         card.getHexColor(), card.getReminder().toString(),
+         card.getReminderDays(), card.getNamePayment().toString(),card.getRenew().toString(),
+         card.getMoney(), DateTime.now().toString(), cardCol]);
+     print("UPDATEDDD: $count");
    }
 
    ///delete item
@@ -150,23 +154,25 @@ class storedData{
        //print(maps.length);
        //return new CardDetails();
        //maps[index]['$id'],
-       Color c;
+
        bool ans;
        bool renew;
      //  c=new Color(maps[index]['$color']).value as Color;
        if (maps[index]['$reminder'] == "true"){
          card.setReminderDays((maps[index]['$reminder_days']));
          ans = true;
-       }else{ans=false;}
+       }else{ans=false; card.setReminderDays(0);//dummy value instead of null
+       }
        if(maps[index]['$autoRenew']=="true"){
          renew=true;} else{renew=false;}
        card.setNameCard(maps[index]['$cardName']);
        print("seee"+maps[index]['$days']);
        String val = getDifference(maps[index]['$actualDate'], maps[index]['$days']);//calculate the difference
-      //print("see"+maps[index]['$days']);
-       //card.setDayCount(maps[index]['$days']);
-
+       String d_color = findDayColor(maps[index]['$dayColor'],card.getReminderDays());
+       print("DY COLOR $d_color");
+       card.setDayColorHex(d_color);
        card.setDayCount(val);
+
 
 
        card.setHexColor((maps[index]['$color']));///temporary
@@ -184,6 +190,35 @@ class storedData{
 
      });
    }
+
+   String findDayColor(String cal, int remainder){
+     //check reminder days
+     //String check = days;
+    
+     if (remainder == 0){
+       if (diff == 1){//meaning 1 day remaining
+         return "#FF0000";//red color to mean 1 day remaining
+       }else{
+         return cal;//green color as default
+       }
+     }
+     else{//then user set a reminder, so check the day they set it
+        if (diff == 0 || diff < 0){
+         return "#FF0000";
+       }
+       else{
+         //int val = int.parse(days.substring(0,1));
+         if (diff == remainder){
+           return "#FF0000";
+         }
+         else{
+           return cal;//green as default if reminder not reached
+         }
+         
+       }
+     }
+
+   }
    ///gets the difference in days and update the subscription
   ///Method will also be used for the notification
    String getDifference(String dateString, String days){
@@ -193,18 +228,26 @@ class storedData{
 
      DateTime saved = DateTime.parse(dateString);
 
-      int diff = now.difference(saved).inDays; //leave as original if same as day (ie it is 0)
+      diff = now.difference(saved).inDays; //leave as original if same as day (ie it is 0)
      // check if 0, fix same day bug
-     if (diff == 0 && saved.day !=now.day){
+     if ((diff == 0 && saved.day !=now.day)){
        diff = nowDay-1;
      }
-     else if (diff == 0){
+     else if (diff == nowDay){
 
+       return "TODAY";
+
+
+    }
+     else if (diff > 0){
+       diff = nowDay - diff;
      }
-     else if (diff>0){
-       diff = nowDay- diff;
-       //nowDay
+     else if (diff < 0){//then it past due
+       return "EXPIRED";
      }
+
+    // print("THIS IS DIFF: $diff");
+
      //then its the same day
      else{
        diff = nowDay;

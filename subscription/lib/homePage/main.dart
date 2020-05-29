@@ -83,8 +83,10 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
   }
 
 
+
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -154,7 +156,7 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
         backgroundColor: Colors.blueGrey,
         child: Icon(Icons.add,color: Colors.white,size: 30,),
         splashColor: Colors.lime,
-        onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context)=> AddCard()));
+        onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context)=> AddCard(null,-1)));
         },
       ),
 

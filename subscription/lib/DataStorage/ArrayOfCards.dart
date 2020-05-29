@@ -7,9 +7,11 @@ class ArrayOfCards{
   static ArrayOfCards arrayOfCards;
 
   List<CardDetails> _storage;
+  bool updated;
 
    ArrayOfCards.createInstance(){
      _storage = new List();
+     updated = false;
    }
 
    factory ArrayOfCards(){
@@ -19,6 +21,17 @@ class ArrayOfCards{
      return arrayOfCards;
 
    }
+
+   void updatePerformed(){
+     updated = true;
+   }
+
+   void replaceCard(int i, CardDetails newVal){
+     _storage[i] = newVal;
+
+   }
+
+
 
    void removeAll(){
      _storage.clear();

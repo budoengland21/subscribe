@@ -14,9 +14,16 @@ import 'package:subscription/DataStorage/CardDetails.dart';
 import 'package:subscription/DataStorage/storedData.dart';
 
 
+// ignore: must_be_immutable
 class AddCard extends StatefulWidget {
-  @override
+
+   CardDetails accessCard;
+   int cardIndex;//index of card
+  AddCard(this.accessCard, this.cardIndex);///used to determine if being updated or not
+   @override
   _AddCardState createState() => _AddCardState();
+
+
 }
 
 class _AddCardState extends State<AddCard> {
@@ -33,6 +40,8 @@ class _AddCardState extends State<AddCard> {
 
   CardDetails cardDetails = new CardDetails();
   ArrayOfCards arrayOfCards = new ArrayOfCards();
+
+  bool updating = false;
 
   //Used to update the card real time as user types
   String tempName = '';
@@ -212,20 +221,13 @@ class _AddCardState extends State<AddCard> {
     if (firstTime.day == DateTime.now().day){
       x+=1;
     }
-
-
-
-
     if (x == 1){
       updateDays(x.toString()+ " DAY");
     }
     else{
       updateDays(x.toString() + " DAYS");
     }
-    print("numDaaaay");
-    print(firstTime);
-    print(custom);
-    print(x);
+
 
 
 
@@ -324,7 +326,8 @@ class _AddCardState extends State<AddCard> {
 
 
   void updateCardName(String val) {
-    cardDetails.setNameCard(val);
+
+    cardDetails.setNameCard(val); print("changed-->>>"+cardDetails.getNameCard());
     tempName = val;
   }
 
@@ -365,17 +368,37 @@ class _AddCardState extends State<AddCard> {
   ///_________________________________________________________________________
   ///This will add the card to the home screen
   ///then it will add the card to an array
-  void returnHome(){
-   // print (cardDetails.getNamePayment());
-// set the autorenew and remainder
-  if (cardColor== Colors.grey){cardDetails.setColor(cardColor);}
+  void returnHome() {
+    // print (cardDetails.getNamePayment());
 
-    cardDetails.setRenew(renewOn);
-    cardDetails.setReminder(isOn);
-    
+  ///Updates the current card
+    if (updating) {
+      cardDetails.setColor(cardColor);
 
-    arrayOfCards.addCard(cardDetails);
-    insertDatabase();
+      cardDetails.setRenew(renewOn);
+      arrayOfCards.updatePerformed();
+      arrayOfCards.replaceCard(this.widget.cardIndex, cardDetails);//update the view
+
+      Navigator.of(context).pop(context);
+      //day color left at default
+      updateDatabase();
+
+
+    }
+    ///Adds a new card
+    // set the autorenew and remainder
+    else {
+      if (cardColor == Colors.grey) {
+        cardDetails.setColor(cardColor);
+      }
+
+      cardDetails.setRenew(renewOn);
+      cardDetails.setReminder(isOn);
+       cardDetails.setDayColor(Color.fromRGBO(26, 255, 49, 1));
+      arrayOfCards.addCard(cardDetails);
+      insertDatabase();
+
+    }
     Navigator.of(context).pop();
   }
   ///set the remainder
@@ -385,7 +408,7 @@ class _AddCardState extends State<AddCard> {
       cardDetails.setReminderDays(i);
     }
     else{
-      cardDetails.setReminderDays(0);///default day
+      cardDetails.setReminderDays(0);///dummy value
     }
   }
   int calculateRem(String x){
@@ -404,11 +427,45 @@ class _AddCardState extends State<AddCard> {
     storedData storage = storedData();
     storage.insertDb(cardDetails);
   }
+  void updateDatabase(){
+    storedData storage = storedData();
+  //  cardDetails.setNameCard("kkk");
+    storage.updateRow(cardDetails, cardDetails.getNameCard());
+  }
   ///___________________________________________________________________________
   @override
   Widget build(BuildContext context) {
     //Since default color is black
    // cardDetails.setColor(Colors.black); //set the color
+
+      if (this.widget.accessCard != null){
+        setState(() {
+          updating = true;
+          CardDetails temp = this.widget.accessCard;
+          updateCardName(temp.getNameCard());
+        //  textCheck = temp.getNameCard();
+          updateDays(temp.getDayCount());
+          updateColor(temp.getColor());
+          updatePaymentType(temp.getNamePayment());
+          isOn = temp.getReminder();
+          if (isOn){
+            cardDetails.setReminder(isOn);
+            defaultDay = temp.getReminderDays().toString()+" days";
+          }
+          checkReminderDays(temp.getReminderDays().toString());
+          renewOn = temp.getRenew();
+          updateMoney(temp.getMoney());
+
+
+          //clear it
+        // cardDetails = temp;
+          this.widget.accessCard = null;
+          //arrayOfCards.removeCard(this.widget.cardIndex);
+        });
+      }
+
+
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: CustomScrollView(
@@ -486,7 +543,7 @@ class _AddCardState extends State<AddCard> {
                           children: <Widget>[
                             Padding(
                               padding: const EdgeInsets.only(left: 15.0),
-                              child: Text(
+                                child: Text(
                                 tempAmount, style: TextStyle(fontSize: 22,
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold),
@@ -558,7 +615,7 @@ class _AddCardState extends State<AddCard> {
                                   LengthLimitingTextInputFormatter(15),
                                 ],
                                 //no need for controller unless you want to use it
-                                //controller: textCheck, // Obtain text from textbox
+                             //   controller: textCheck, // Obtain text from textbox
                                   ///rgb(255,241,118)hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
 
 
@@ -1123,7 +1180,8 @@ class _AddCardState extends State<AddCard> {
                               child: Padding(
                                 padding: const EdgeInsets.only(bottom: 8.0),
                                 child: RaisedButton(
-                                  disabledColor: Colors.black12,
+                                  elevation: 10,
+
                                   color: Color.fromRGBO(255, 241, 118, 1),
                                   onPressed: (){
                                     //if true, then all fields were filled
@@ -1134,7 +1192,7 @@ class _AddCardState extends State<AddCard> {
 
                                     }
                                   },
-                                  child:Center(child: Text("Add Card",
+                                  child:Center(child: Text("Save Card",
                                       style: TextStyle(
                                           fontSize: 23, color: Colors.black))) ,
                                 ),

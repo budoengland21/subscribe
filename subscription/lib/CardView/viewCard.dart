@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:subscription/AddCardScreen/AddCard.dart';
 import 'package:subscription/DataStorage/ArrayOfCards.dart';
 import 'package:subscription/DataStorage/CardDetails.dart';
 import 'package:subscription/DataStorage/storedData.dart';
@@ -7,6 +8,7 @@ import 'package:subscription/DataStorage/storedData.dart';
 class viewCard extends StatelessWidget {
   CardDetails card;
   int index;
+  ArrayOfCards a = new ArrayOfCards();
   viewCard(this.card, this.index);
 
   String checkSet(){
@@ -23,10 +25,10 @@ class viewCard extends StatelessWidget {
 
     void delete() async{
        storedData store = new storedData();
-       ArrayOfCards a = new ArrayOfCards();
+
        int val = await store.getID(this.index);
        store.deleteItem(val);
-       a.removeCard(this.index);
+
        print("size");
        print(a.checkSize());
 
@@ -64,14 +66,19 @@ class viewCard extends StatelessWidget {
                             Text(this.card.getNameCard()
                               ,style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold,fontSize: 40),),
                             Spacer(),
-                            RaisedButton(
-                              child: Text("EDIT", style: TextStyle(color: Colors.white),),
-                              color: Colors.black,
-                              onPressed: () {},
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20)
-                              ),
+                            Padding(
+                              padding: const EdgeInsets.only(right:3.0),
+                              child: RaisedButton(
+                                child: Text("EDIT", style: TextStyle(color: Colors.white),),
+                                color: Colors.black,
+                                onPressed: () {
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> AddCard(this.card,this.index) ));
+                                },
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)
+                                ),
 
+                              ),
                             )
 
 
@@ -170,21 +177,21 @@ class viewCard extends StatelessWidget {
                           Padding(
                             padding: EdgeInsets.all(15),
                             child: Container(
-                              height: 50,
+                              height: 80,
                               width: MediaQuery.of(context).size.width/2,
 
-                              child:  FlatButton(
+                              child:  RaisedButton(
                                 child:  Text("Delete", style: TextStyle(color: Colors.white,fontSize: 30),),
                                 color: Colors.black,
                                 ///delete from database
                                 onPressed: () {
-
+                                  a.removeCard(this.index);
                                   delete();
-
                                   Navigator.pop(context);
                                 },
+                                elevation: 15,
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20)
+                                    borderRadius: BorderRadius.circular(30)
                                 ),
 
                               ),

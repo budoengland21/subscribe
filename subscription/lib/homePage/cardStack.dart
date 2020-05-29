@@ -142,23 +142,18 @@ class _cardStackState extends State<cardStack> {
 List<Widget> cardStack(ArrayOfCards cards, BuildContext context)  {
  //ArrayOfCards cards = new ArrayOfCards();
 
-  ///this checks the days and if it's zero days, string is set today
-  String checkDays(int i){
-    if (cards.seeCard(i).getDayCount() == "0 DAYS"){
-      return "TODAY";
 
-    }else{
-      print(cards.seeCard(i).getDayCount());
+  String checkDays(int i){
+
       return cards.seeCard(i).getDayCount();
-    }
+
 
 
   }
 
   ///use if statement check if 0, then show balance
 
-    print("passed here");
-    print((cards.checkSize()));
+
     int check = cards.checkSize();
     List<Widget> stacks = [];
     double ttop=10;
@@ -238,6 +233,7 @@ List<Widget> cardStack(ArrayOfCards cards, BuildContext context)  {
                     onTap: (){
                     Navigator.push(context, MaterialPageRoute(builder: (context)=> viewCard(cards.seeCard(i),i)));
 
+
                     },
                     child: Container(
                       width: double.infinity,
@@ -286,7 +282,7 @@ List<Widget> cardStack(ArrayOfCards cards, BuildContext context)  {
                                         width: 140,
 
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.all(Radius.circular(40),),color: Colors.red,
+                                          borderRadius: BorderRadius.all(Radius.circular(40),),color: cards.seeCard(i).getDayColor(),
                                           //boxShadow: [BoxShadow(color: Colors.black12,spreadRadius: 1,blurRadius: 2)]
                                         ),
                                         child: Center(child: Text(checkDays(i),style: TextStyle(fontSize: 25,color: Colors.white,fontWeight: FontWeight.bold),)),
