@@ -25,9 +25,10 @@ class viewCard extends StatelessWidget {
 
     void delete() async{
        storedData store = new storedData();
+       a.removeCard(this.index);//removes from the array
 
-       int val = await store.getID(this.index);
-       store.deleteItem(val);
+      // int val = await store.getID(this.index);
+       store.deleteItem(a.seeCard(this.index));
 
        print("size");
        print(a.checkSize());

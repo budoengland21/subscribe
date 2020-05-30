@@ -101,122 +101,7 @@ class _AddCardState extends State<AddCard> {
 
   }
   ///calculate date range
-  /*void calculateDays(DateTime custom){
-    int difference=0;
-    int temp;
-    bool first = false;
-    ///if it is less and user presses begin cycle again
-    if ((custom.year == firstTime.year) &&(custom.month < firstTime.month) ){
 
-        difference=0;
-
-
-    }
-    else if (custom.year == firstTime.year){
-      if (custom.month == firstTime.month){
-        difference = custom.day - firstTime.day;
-      }
-      else{
-      //  temp = custom.month - firstTime.month;
-        difference = daysInMonths(custom.month, firstTime.month, custom.day, firstTime.day, custom.year);
-        difference -=firstTime.day;
-
-
-      }
-    }///then the years are different
-    else{
-      for (int i = firstTime.year; i<=custom.year;i++){
-        //check if now it is in same year
-
-        if (custom.year == i){
-          difference+=daysInMonths(custom.month, 1, custom.day, 1,i);//start from jan all the way
-        }
-        ///only runs once
-       else if (first==false) {
-          //calculate days in that year till december
-          difference += daysInMonths(12, firstTime.month, 31, firstTime.day, firstTime.year);
-          first=true;
-        }
-       ///calculate from jan to dec
-       else{
-         if (i%4==0){
-           difference+=366;
-         }else{difference+=365;}
-
-        }
-
-      }
-      difference-=firstTime.day;
-    }
-    customDate = difference;
-    if (difference ==0){
-      tempDays = "";
-      removeColor();
-    }
-    else {
-      tempDays = difference.toString() + " DAYS";
-    }
-    //return difference;
-
-
-  }
-  //remove extra days
-  int runOnce(int i, int x){
-    return  (i-x);
-  }
-  ///calculate days in the same year
-  ///try using .difference???????
-  int daysInMonths(int hi, int lo, int hiDay, int loDay, int year){
-    int difference=0;
-    int hiMonth = hi;
-    int lowMonth = lo;
-    bool check = false;
-
-    for (int i = hiMonth; i >= lowMonth; i--){
-
-      if (i==1 || i == 3 || i == 5 || i == 7 || i==8 || i==10 || i==12){
-        difference+=31;
-        if (!check){
-          difference -=runOnce(31, hiDay);
-          check=true;
-        }
-
-
-
-        ///for february
-      }else if (i == 2) {
-        ///check if leap year
-        if (year%4==0){
-          difference+=29;
-          if (!check){
-            difference -=runOnce(29, hiDay);
-            check=true;
-          }
-
-        }
-        else{
-          difference+=28;
-          if (!check){
-            difference -=runOnce(28, hiDay);
-            check=true;
-          }
-
-        }
-
-      }
-      else{//the rest are 30 days
-        difference+=30;
-        if (!check){
-          difference -=runOnce(30, hiDay);
-          check=true;
-        }
-
-      }
-    }
-    print (difference);
-    return difference;
-
-  }*/
   void calculateD(DateTime custom){
     int x = custom.difference(firstTime).inDays;
     if (firstTime.day == DateTime.now().day){
@@ -396,6 +281,7 @@ class _AddCardState extends State<AddCard> {
       cardDetails.setRenew(renewOn);
       cardDetails.setReminder(isOn);
        cardDetails.setDayColor(Color.fromRGBO(26, 255, 49, 1));
+       print(cardDetails.getDayCount());
       arrayOfCards.addCard(cardDetails);
       insertDatabase();
 
@@ -431,7 +317,7 @@ class _AddCardState extends State<AddCard> {
   void updateDatabase(){
     storedData storage = storedData();
   //  cardDetails.setNameCard("kkk");
-    storage.updateRow(cardDetails, cardDetails.getNameCard());
+    storage.updateRow(cardDetails);
   }
   ///___________________________________________________________________________
   @override

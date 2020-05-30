@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class CardDetails{
 // _ (private fields for attributes)
+  int cardId;
   String _nameCard;
   String _dayCount;
   String _color;

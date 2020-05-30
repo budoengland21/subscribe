@@ -108,25 +108,31 @@ class storedData{
    }
 
    ///Update card, when card clicked on
-   Future<void> updateRow(CardDetails card, String cardCol) async{
+   Future<void> updateRow(CardDetails card) async{
      Database db = await getDatabase();
-
-     int count = await db.rawUpdate('UPDATE $tblName SET '
+     print("----------------");
+     print(card.getDayCount());
+     print(card.getNameCard());
+ //    print(cardCol);
+     print("----------------");
+     Map map = _mapItems(card);
+     int count = await db.update(tblName, map,where: "id=?", whereArgs: [card.cardId]);
+    /* int count = await db.rawUpdate('UPDATE $tblName SET '
          '$cardName=?, $days=?, $dayColor=?, $color=?,'
          '$reminder=?, $reminder_days=?, $paymentType=?,'
-         '$autoRenew=?, $money=?, $actualDate=? WHERE $cardName=? ',
+         '$autoRenew=?, $money=?, $actualDate=? WHERE $id=? ',
          [card.getNameCard(), card.getDayCount(), card.getDayHex(),
          card.getHexColor(), card.getReminder().toString(),
          card.getReminderDays(), card.getNamePayment().toString(),card.getRenew().toString(),
-         card.getMoney(), DateTime.now().toString(), cardCol]);
+         card.getMoney(), DateTime.now().toString(), cardCol]);*/
      print("UPDATEDDD: $count");
    }
 
    ///delete item
-   Future<void> deleteItem(int cardID) async{
+   Future<void> deleteItem(CardDetails card) async{
      try{
        Database db = await getDatabase();
-       db.delete(tblName, where: '$id=?',whereArgs: [cardID]);
+       db.delete(tblName, where: '$id=?',whereArgs: [card.cardId]);
      }catch(Exception){
        print('deleteError: '+Exception);
      }
@@ -138,13 +144,13 @@ class storedData{
     return size;
 
   }
-  Future<int> getID(int index) async{
+/*  Future<int> getID(int index) async{
     Database db = await getDatabase();
     List data = await db.query(tblName);
     print(data[index]['$id']);
     return data[index]['$id'];
   //  await
-  }
+  }*/
    
    Future<List<CardDetails>> getData() async{
 
@@ -232,7 +238,9 @@ class storedData{
 
       diff = now.difference(saved).inDays; //leave as original if same as day (ie it is 0)
 
-     print ("this is -->>> $diff");
+     print ("this is difference-->>> $diff");
+     print ("this is the day made-->>> $nowDay");
+     print("this is the day created-->> $saved");
      // check if 0, fix same day bug
      if ((diff == 0 && saved.day !=now.day)){
        diff = nowDay-1;
