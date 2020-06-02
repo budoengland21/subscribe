@@ -54,7 +54,7 @@ class storedData{
      Directory directory = await getApplicationDocumentsDirectory();
      String path = join(directory.path, 'subscribe.db');
      //open database
-     var myDatabase = await openDatabase(path, version: 25, onCreate: _createDatabase);
+     var myDatabase = await openDatabase(path, version: 27, onCreate: _createDatabase);
      return myDatabase;
 
 
@@ -65,7 +65,7 @@ class storedData{
      try{
        await db.execute('CREATE TABLE '
            '$tblName'
-            '($id INTEGER PRIMARY KEY AUTOINCREMENT, $cardName TEXT,'
+            '($id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL , $cardName TEXT,'
            '$days TEXT,'
            '$dayColor TEXT, '
            '$color TEXT,'
@@ -90,7 +90,10 @@ class storedData{
    }
 
    Map<String, dynamic> _mapItems(CardDetails card){
+     print('inserting $card.getCardId()');
      return{
+
+
 
        '$cardName' : card.getNameCard(),
        '$days': card.getDayCount(),
@@ -107,16 +110,31 @@ class storedData{
      };
    }
 
+   Future<int> getIndex(int cardIndex) async{
+     Database db = await getDatabase();
+    List<Map> map= await db.rawQuery('SELECT COUNT (*) from $tblName WHERE id = $id');/// this just retrieves the id of the row
+     //int val = map[cardIndex]['id'];
+    var x =  map[0].values.toList(); //it's dynamic so change to list then integer
+    int v = x[0];
+     return v;
+
+
+
+   }
    ///Update card, when card clicked on
-   Future<void> updateRow(CardDetails card) async{
+   Future<void> updateRow(CardDetails card, int cardIndex) async{
      Database db = await getDatabase();
      print("----------------");
-     print(card.getDayCount());
-     print(card.getNameCard());
+    // print(card.getDayCount());
+     print(getIndex(cardIndex));
+     int index = await getIndex(cardIndex);
+
+
  //    print(cardCol);
      print("----------------");
      Map map = _mapItems(card);
-     int count = await db.update(tblName, map,where: "id=?", whereArgs: [card.cardId]);
+     print(map.toString());
+     int count = await db.update(tblName, map,where: '$id=?', whereArgs: [index]);
     /* int count = await db.rawUpdate('UPDATE $tblName SET '
          '$cardName=?, $days=?, $dayColor=?, $color=?,'
          '$reminder=?, $reminder_days=?, $paymentType=?,'
@@ -132,7 +150,7 @@ class storedData{
    Future<void> deleteItem(CardDetails card) async{
      try{
        Database db = await getDatabase();
-       db.delete(tblName, where: '$id=?',whereArgs: [card.cardId]);
+       db.delete(tblName, where: '$cardName=?',whereArgs: [card.getNameCard()]);
      }catch(Exception){
        print('deleteError: '+Exception);
      }
@@ -144,15 +162,27 @@ class storedData{
     return size;
 
   }
-/*  Future<int> getID(int index) async{
-    Database db = await getDatabase();
-    List data = await db.query(tblName);
-    print(data[index]['$id']);
-    return data[index]['$id'];
-  //  await
-  }*/
-   
-   Future<List<CardDetails>> getData() async{
+//returns index/id of last item
+  Future<int> lastItem() async{
+    Database db= await getDatabase();
+    List<Map> result = await db.query(tblName);
+    if (result.length == 0){
+      return 0;
+    }
+    else{
+
+      int Lastindex = result.length-1;
+
+
+
+      return result[Lastindex].values.first;  // gets id of the last item.
+    }
+   }
+
+
+
+
+    Future<List<CardDetails>> getData() async{
 
      Database db = await getDatabase();
      List maps = await db.query(tblName);
@@ -231,7 +261,7 @@ class storedData{
   ///Method will also be used for the notification
    String getDifference(String dateString, String days){
      DateTime now = DateTime.now();
-     int nowDay =  int.parse(days.substring(0,1));
+     int nowDay =  int.parse(days);
 
 
      DateTime saved = DateTime.parse(dateString);
@@ -247,7 +277,8 @@ class storedData{
      }
      else if (diff == nowDay){
 
-       return "TODAY";
+      // return "TODAY";
+       return "0";
 
 
     }
@@ -255,7 +286,8 @@ class storedData{
        diff = nowDay - diff;
      }
      else if (diff < 0){//then it past due
-       return "EXPIRED";
+       //return "EXPIRED";
+       return "0";
      }
 
     // print("THIS IS DIFF: $diff");
@@ -264,7 +296,8 @@ class storedData{
      else{
        diff = nowDay;
      }
-     return diff.toString() + " DAYS";
+    return diff.toString();// + " DAYS";
+
 
 
 

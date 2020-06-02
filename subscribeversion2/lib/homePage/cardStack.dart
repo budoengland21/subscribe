@@ -1,46 +1,82 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:subscribeversion2/CardView/viewCard.dart';
 import 'package:subscribeversion2/DataStorage/ArrayOfCards.dart';
-
 ///
 /// creates a stack of cards to display on the home screen
-/// 
-/*
-class cardStack extends StatefulWidget {
-  @override
-
-  _cardStackState createState() => _cardStackState();
-}
-
-class _cardStackState extends State<cardStack> {
-  ArrayOfCards cards = new ArrayOfCards();//make array of cards
 
 
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> stacks = [];
+List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context)  {
+  //ArrayOfCards cards = new ArrayOfCards();
+  //cards.addCard()
+  ///use if statement check if 0, then show balance
+  print("passed here");
+  print((cards.checkSize()));
+
+  int check = cards.checkSize();
+  List<Widget> stacks = [];
+  double ttop=10;
+  double lleft= 0;
+  double rright=0;
+  //cards.addCard(cards.seeCard(0));
+  print("why am i not building");
+  if (check == 0){
+    stacks.add(
+        Positioned(
+          top:ttop,
+          left:0,
+          right: 0,
+          child: Card(
+            margin: EdgeInsets.zero,
+            elevation: 10,
+            color:Colors.blueGrey,
 
 
-        double ttop=10;
-        double lleft= 0;
-        double rright=0;
-       int i =0;
+            child: Container(
 
-        return SingleChildScrollView(
-          child:
-          Stack (
+              width: double.infinity,
+              // color: Colors.blue,
+              height: 80,
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    height: 30,
+                    width: 70,
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage("images/price.png"),fit: BoxFit.contain,
+                        )
 
-          children: <Widget>[
-              SizedBox(
-                height: 100,
-              )
-              ,
-            Positioned(
-                top: ttop,
-                left: lleft,
-                right: rright,
+
+                    ),
+                  ),
+                  Container(
+                      width: 120,
+                      child: Center(child: Text("\$439990",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,fontSize: 23),))
+                  )
+                ],
+              ),
+            ),
+
+          ),
+        ));
+
+  }
+  else{
+
+
+    for (int i=0; i< cards.checkSize(); i++){
+
+      stacks.add(
+          Positioned(
+              top: ttop,
+              left: lleft,
+              right: rright,
+              child: GestureDetector(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=> viewCard(cards.seeCard(i),i)));
+
+
+                },
                 child: Card(
                   margin: EdgeInsets.zero,
                   elevation: 10,
@@ -48,275 +84,86 @@ class _cardStackState extends State<cardStack> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(40))
                   ),
-                  child: GestureDetector(
-                    onTap: (){
-                     /// Navigator.push(context, MaterialPageRoute(builder: (context)=> viewCard(cards.seeCard(i),i)));
+                  child: Container(
+                    width: double.infinity,
+                    height: 200,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 10),
+                      child:  Column(
 
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      height: 200,
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 10),
-                        child:  Column(
-
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(left:20.0),
-                                child: Text(cards.seeCard(i).getNameCard(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 38),),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top:5,left: 3),
-                                child: Row(
-                                  children: <Widget>[
-                                    Container(
-                                      height: 60,
-                                      //color: Colors.red,
-                                      width: 70,
-                                      decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                            image: AssetImage(cards.seeCard(i).getNamePayment()),
-                                            fit: BoxFit.contain,
-
-                                          )
-                                      ),
-                                    ),
-                                    Container(
-                                      height: 40,
-                                      width: 90,
-                                      child: Center(
-                                        child: Text(
-                                          cards.seeCard(i).getMoney(), style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 23,),
-                                        ),
-                                      ),
-                                    ),
-                                    Spacer(),
-                                    Padding(
-                                      padding: const EdgeInsets.only(right:4.0),
-                                      child: Container(
-                                        //color: Colors.pinkAccent,
-                                        height: 60,
-                                        width: 140,
-
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.all(Radius.circular(40),),color: Colors.red,
-                                          //boxShadow: [BoxShadow(color: Colors.black12,spreadRadius: 1,blurRadius: 2)]
-                                        ),
-                                        child: Center(child: Text(cards.seeCard(i).getDayCount(),style: TextStyle(fontSize: 25,color: Colors.white,fontWeight: FontWeight.bold),)),
-
-
-                                      ),
-                                    )
-
-
-                                  ],
-                                ),
-
-                              )
-                            ]
-
-                        ),
-
-
-                      ),
-                    ),
-                  ),
-
-
-                )
-            )
-          ],
-        ));
-
-
-
-
-
-    }
-
-
-}
-*/
-
-
-List<Widget> cardStack(ArrayOfCards cards, BuildContext context)  {
- //ArrayOfCards cards = new ArrayOfCards();
-
-
-  String checkDays(int i){
-
-      return cards.seeCard(i).getDayCount();
-
-
-
-  }
-
-  ///use if statement check if 0, then show balance
-
-
-    int check = cards.checkSize();
-    List<Widget> stacks = [];
-    double ttop=10;
-    double lleft= 10;
-    double rright=10;
-
-
-    if (check == 0){
-      stacks.add(
-        Positioned(
-                  top:ttop,
-                  left:0,
-                  right: 0,
-                  child: Card(
-                  margin: EdgeInsets.zero,
-                  elevation: 10,
-                  color:Colors.blueGrey,
-
-
-                      child: Container(
-
-                         width: double.infinity,
-                      // color: Colors.blue,
-                          height: 80,
-                          child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                               Container(
-                              height: 30,
-                              width: 70,
-                              decoration: BoxDecoration(
-                              image: DecorationImage(
-                              image: AssetImage("images/price.png"),fit: BoxFit.contain,
-                              )
+                            Padding(
+                              padding: const EdgeInsets.only(left:20.0),
+                              child: Text(cards.seeCard(i).getNameCard(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 38),),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top:5,left: 3),
+                              child: Row(
+                                children: <Widget>[
+                                  Container(
+                                    height: 60,
+                                    //color: Colors.red,
+                                    width: 70,
+                                    decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: AssetImage(cards.seeCard(i).getNamePayment()),
+                                          fit: BoxFit.contain,
 
-
-          ),
-          ),
-                                Container(
-                                width: 120,
-                                child: Center(child: Text("\$439990",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,fontSize: 23),))
-                                )
-                                ],
-                                ),
-                                ),
-
-                                ),
-                                ));
-
-  }
-  else{
-
-  for (int i=0; i< cards.checkSize(); i++){
-
-
-    stacks.add(
-
-        Positioned(
-            top: ttop,
-            left: lleft,
-            right: rright,
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Transform(
-                transform:  Matrix4.identity()
-                ..setEntry(3,2,0.01)
-               ..rotateX(0.05),
-                alignment: FractionalOffset.center,
-
-                child: Card(
-                  margin: EdgeInsets.zero,
-                  elevation: 8,
-                  color: cards.seeCard(i).getColor(),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20))
-                  ),
-                  child: GestureDetector(
-                    onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=> viewCard(cards.seeCard(i),i)));
-
-
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      height: 180,
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 10),
-                        child:  Column(
-
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(left:20.0),
-                                child: Text(cards.seeCard(i).getNameCard(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top:5,left: 3),
-                                child: Row(
-                                  children: <Widget>[
-                                    Container(
+                                        )
+                                    ),
+                                  ),
+                                  Container(
+                                    height: 40,
+                                    width: 90,
+                                    child: Center(
+                                      child: Text(
+                                        cards.seeCard(i).getMoney(), style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 23,),
+                                      ),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right:4.0),
+                                    child: Container(
+                                      //color: Colors.pinkAccent,
                                       height: 60,
-                                      //color: Colors.red,
-                                      width: 70,
+                                      width: 140,
+
                                       decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                            image: AssetImage(cards.seeCard(i).getNamePayment()),
-                                            fit: BoxFit.contain,
-
-                                          )
+                                        borderRadius: BorderRadius.all(Radius.circular(40),),color: Colors.red,
+                                        //boxShadow: [BoxShadow(color: Colors.black12,spreadRadius: 1,blurRadius: 2)]
                                       ),
+                                      child: Center(child: Text(cards.seeCard(i).getDayCount(),style: TextStyle(fontSize: 25,color: Colors.white,fontWeight: FontWeight.bold),)),
+
+
                                     ),
-                                    Container(
-                                      height: 40,
-                                      width: 90,
-                                      child: Center(
-                                        child: Text(
-                                         '\$ '+ cards.seeCard(i).getMoney(), style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 27,),
-                                        ),
-                                      ),
-                                    ),
-                                    Spacer(),
-                                    Padding(
-                                      padding: const EdgeInsets.only(right:4.0),
-                                      child: Container(
-                                        //color: Colors.pinkAccent,
-                                        height: 60,
-                                        width: 140,
-
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.all(Radius.circular(40),),color: cards.seeCard(i).getDayColor(),
-                                          //boxShadow: [BoxShadow(color: Colors.black12,spreadRadius: 1,blurRadius: 2)]
-                                        ),
-                                        child: Center(child: Text(checkDays(i),style: TextStyle(fontSize: 25,color: Colors.white,fontWeight: FontWeight.bold),)),
+                                  )
 
 
-                                      ),
-                                    )
+                                ],
+                              ),
 
-
-                                  ],
-                                ),
-
-                              )
-                            ]
-
-                        ),
-
+                            )
+                          ]
 
                       ),
+
+
                     ),
                   ),
 
 
                 ),
-              ),
-            )
-        ));
-    ttop+=140;
+              )
+          ));
+      ttop+=140;
 
-  }
+    }
   }
   return stacks;
-  }
+}
+
 
 
 

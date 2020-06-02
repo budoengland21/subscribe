@@ -8,7 +8,7 @@ import 'package:subscribeversion2/DataStorage/storedData.dart';
 class viewCard extends StatelessWidget {
   CardDetails card;
   int index;
-  ArrayOfCards a = new ArrayOfCards();
+
   viewCard(this.card, this.index);
 
   String checkSet(){
@@ -24,6 +24,7 @@ class viewCard extends StatelessWidget {
     }
 
     void delete() async{
+    ArrayOfCards a = new ArrayOfCards();
        storedData store = new storedData();
        a.removeCard(this.index);//removes from the array
 
@@ -73,7 +74,7 @@ class viewCard extends StatelessWidget {
                                 child: Text("EDIT", style: TextStyle(color: Colors.white),),
                                 color: Colors.black,
                                 onPressed: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> AddCard(this.card,this.index) ));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> AddCard(this.card,this.index,null) ));
                                 },
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20)
@@ -186,7 +187,7 @@ class viewCard extends StatelessWidget {
                                 color: Colors.black,
                                 ///delete from database
                                 onPressed: () {
-                                  a.removeCard(this.index);
+                             //    a.removeCard(this.index);
                                   delete();
                                   Navigator.pop(context);
                                 },

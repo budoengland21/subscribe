@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class CardDetails{
 // _ (private fields for attributes)
-  int cardId;
+
   String _nameCard;
   String _dayCount;
   String _color;
@@ -24,6 +24,8 @@ class CardDetails{
     _reminder=false;
    _renew=false;
   }
+
+
 
   String getMoney() => _money;
    void setMoney(String value) {
@@ -87,8 +89,14 @@ class CardDetails{
 
   String getDayCount() => _dayCount;
  void setDayCount(String value) {
+   if (int.parse(value) == 1){
+     _dayCount = value;
+   }
+   else{
+     _dayCount = value;
+   }
 
-    _dayCount = value;
+
   }
 
   String getNameCard() {

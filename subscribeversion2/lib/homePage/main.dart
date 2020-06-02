@@ -22,6 +22,8 @@ import 'cardStack.dart';
 storedData storage;//stored data class
 List<CardDetails> list = new List();
 ArrayOfCards a = new ArrayOfCards();
+BuildContext buildContext;
+
 
 class FrontPage extends StatefulWidget{// with WidgetsBindingObserver {
   @override
@@ -30,6 +32,9 @@ class FrontPage extends StatefulWidget{// with WidgetsBindingObserver {
 
 
 class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
+
+  ///keep state track
+  final myKey =   GlobalKey<FormState>();
 
 /// calls the singleton class
 
@@ -72,7 +77,7 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
 
       list  = await storage.getData();
       setState(() {
-
+         print("wtfff");
         a.addAll(list);
 
       //  print(a.seeCard(1).getDayCount());
@@ -88,8 +93,10 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
 
   @override
   Widget build(BuildContext context) {
+    buildContext = context;
 
     return Scaffold(
+      key: myKey,
       backgroundColor: Colors.black,
       appBar: AppBar(
         elevation: 10,
@@ -125,7 +132,7 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
                  [
               Stack(
 
-              children: cardStack(a, context),
+              children: stackOfCards(a, context),
               )]
                ), itemExtent: 900,
              )
@@ -158,7 +165,11 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
         backgroundColor: Colors.blueGrey,
         child: Icon(Icons.add,color: Colors.white,size: 30,),
         splashColor: Colors.lime,
-        onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context)=> AddCard(null,-1)));
+        onPressed: (){
+          //  Navigator.pop(context);
+            Navigator.push(context, MaterialPageRoute(builder: (context)=> AddCard(null,-1, myKey)));
+
+
         },
       ),
 

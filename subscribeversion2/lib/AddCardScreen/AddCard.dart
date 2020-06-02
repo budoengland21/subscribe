@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:subscribeversion2/DataStorage/ArrayOfCards.dart';
 import 'package:subscribeversion2/DataStorage/CardDetails.dart';
 import 'package:subscribeversion2/DataStorage/storedData.dart';
+import 'package:subscribeversion2/homePage/main.dart';
 
 
 
@@ -20,7 +21,8 @@ class AddCard extends StatefulWidget {
 
    CardDetails accessCard;
    int cardIndex;//index of card
-  AddCard(this.accessCard, this.cardIndex);///used to determine if being updated or not
+   GlobalKey key;
+  AddCard(this.accessCard, this.cardIndex, this.key);///used to determine if being updated or not
    @override
   _AddCardState createState() => _AddCardState();
 
@@ -30,7 +32,8 @@ class AddCard extends StatefulWidget {
 class _AddCardState extends State<AddCard> {
   //Controller to check if user changed a value in the text field box
   final TextEditingController textCheck = new TextEditingController();
-
+  CardDetails cardDetails = new CardDetails();
+  ArrayOfCards arrayOfCards = new ArrayOfCards();
   DateTime minDate(){
     int yr = DateTime.now().year;
     int month = firstTime.month;
@@ -39,8 +42,7 @@ class _AddCardState extends State<AddCard> {
     return DateTime(yr,month,day);
   }
 
-  CardDetails cardDetails = new CardDetails();
-  ArrayOfCards arrayOfCards = new ArrayOfCards();
+
 
   bool updating = false;
 
@@ -107,13 +109,7 @@ class _AddCardState extends State<AddCard> {
     if (firstTime.day == DateTime.now().day){
       x+=1;
     }
-    if (x == 1){
-      updateDays(x.toString()+ " DAY");
-    }
-    else{
-      updateDays(x.toString() + " DAYS");
-    }
-
+   updateDays(x.toString());
 
 
 
@@ -238,10 +234,14 @@ class _AddCardState extends State<AddCard> {
       removeColor();
     }
     else{
-      tempDays=val;
-      print("updating.....");
-
-      cardDetails.setDayCount(val);
+      //set the card to display the days
+      if (int.parse(val) == 1){
+        tempDays=val + " DAY";
+        print("updating.....");
+      }else{
+        tempDays=val + " DAYS";
+      }
+     cardDetails.setDayCount(val);
 
      // tempDays=val;
     }
@@ -267,6 +267,13 @@ class _AddCardState extends State<AddCard> {
 
       Navigator.of(context).pop(context);
       //day color left at default
+      print("THIS IS THE UPDATE");
+      //print(cardDetails.getCardId());
+      print(cardDetails.getDayColor());
+      print("id^^^^");
+      updating=false;
+      Navigator.pop(context);
+     // this.widget.key.;
       updateDatabase();
 
 
@@ -277,16 +284,17 @@ class _AddCardState extends State<AddCard> {
       if (cardColor == Colors.grey) {
         cardDetails.setColor(cardColor);
       }
-
+     // cardDetails.setCardId(cardIdValue+1);
       cardDetails.setRenew(renewOn);
       cardDetails.setReminder(isOn);
        cardDetails.setDayColor(Color.fromRGBO(26, 255, 49, 1));
        print(cardDetails.getDayCount());
-      arrayOfCards.addCard(cardDetails);
-      insertDatabase();
+     arrayOfCards.addCard(cardDetails); //print('cardID: $cardIdValue');
+     //  this.widget.key.currentState.build(context);
 
-    }
-    Navigator.of(context).pop();
+     //Navigator.push(context, MaterialPageRoute(builder: (context)=> FrontPage()));//insertDatabase();
+    } Navigator.pop(context);
+
   }
   ///set the remainder
   void checkReminderDays(String remDays){
@@ -317,7 +325,7 @@ class _AddCardState extends State<AddCard> {
   void updateDatabase(){
     storedData storage = storedData();
   //  cardDetails.setNameCard("kkk");
-    storage.updateRow(cardDetails);
+    storage.updateRow(cardDetails, this.widget.cardIndex);
   }
   ///___________________________________________________________________________
   @override
@@ -348,6 +356,7 @@ class _AddCardState extends State<AddCard> {
            cardDetails = temp;// gives access to colors and anything it has
           print('data------');
           print(cardDetails.getNameCard());
+//          print(cardDetails.getCardId());
           print(cardDetails.getColor());
           print('data-------');
 
@@ -583,7 +592,7 @@ class _AddCardState extends State<AddCard> {
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          updateDays("3 DAYS");
+                                          updateDays("3");
                                           colorDay();
                                         });
                                       },
@@ -618,7 +627,7 @@ class _AddCardState extends State<AddCard> {
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          updateDays("7 DAYS");
+                                          updateDays("7");
                                           colorDay1();
                                         });
                                       },
@@ -653,7 +662,7 @@ class _AddCardState extends State<AddCard> {
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          updateDays("14 DAYS");
+                                          updateDays("14");
                                           colorDay2();
                                         });
                                       },
@@ -686,7 +695,7 @@ class _AddCardState extends State<AddCard> {
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          updateDays("30 DAYS");
+                                          updateDays("30");
                                           colorDay3();
                                         });
                                       },

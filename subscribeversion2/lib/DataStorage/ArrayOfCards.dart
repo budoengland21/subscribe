@@ -8,6 +8,7 @@ import 'CardDetails.dart';
 class ArrayOfCards{
   static ArrayOfCards arrayOfCards;
 
+
   List<CardDetails> _storage;
   bool updated;
 
