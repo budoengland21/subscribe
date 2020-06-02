@@ -167,7 +167,9 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
         splashColor: Colors.lime,
         onPressed: (){
           //  Navigator.pop(context);
-            Navigator.push(context, MaterialPageRoute(builder: (context)=> AddCard(null,-1, myKey)));
+            Navigator.push(context, MaterialPageRoute(builder: (context)=> AddCard(null,-1, myKey))).then((value){
+              setState(() {});///rebuild state after 
+            });
 
 
         },
