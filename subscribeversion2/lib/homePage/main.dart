@@ -14,11 +14,12 @@ import 'cardStack.dart';
                 primaryColor: Colors.white,canvasColor: Color.fromRGBO(72, 72, 72, 1)
 
             ),
-            home: FrontPage(),
+            home: FrontPage(false),
           )
       );
     }
-
+///IF AN ERROR THEN IT HAS TO DO WITH THE THE NAVIGATION
+///PASSING THROUGH MAIN CLASS--------------------------------------------------------
 storedData storage;//stored data class
 List<CardDetails> list = new List();
 ArrayOfCards a = new ArrayOfCards();
@@ -26,6 +27,10 @@ BuildContext buildContext;
 
 
 class FrontPage extends StatefulWidget{// with WidgetsBindingObserver {
+  final bool hasPassed;
+  //constructor
+  FrontPage(this.hasPassed);
+
   @override
   _FrontPageState createState() => _FrontPageState();
 }
@@ -34,18 +39,21 @@ class FrontPage extends StatefulWidget{// with WidgetsBindingObserver {
 class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
 
   ///keep state track
-  final myKey =   GlobalKey<FormState>();
+  //final myKey =   GlobalKey<FormState>();
 
 /// calls the singleton class
 
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
-    // add the observer to register the events
-    WidgetsBinding.instance.addObserver(this);
+    if (!this.widget.hasPassed){
+      super.initState();
+      // add the observer to register the events
+      WidgetsBinding.instance.addObserver(this);
 
-    startDatabase();
+      startDatabase();
+    }
+
   }
 
   @override///Listens when app changes its lifecycle
@@ -69,15 +77,12 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
     super.dispose();
 
   }
+  ///Only runs once
   void startDatabase() async{
     storage = storedData();
     await storage.initializeDatabase();
-
-
-
-      list  = await storage.getData();
+  list  = await storage.getData();
       setState(() {
-         print("wtfff");
         a.addAll(list);
 
       //  print(a.seeCard(1).getDayCount());
@@ -96,7 +101,7 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
     buildContext = context;
 
     return Scaffold(
-      key: myKey,
+
       backgroundColor: Colors.black,
       appBar: AppBar(
         elevation: 10,
@@ -167,8 +172,8 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
         splashColor: Colors.lime,
         onPressed: (){
           //  Navigator.pop(context);
-            Navigator.push(context, MaterialPageRoute(builder: (context)=> AddCard(null,-1, myKey))).then((value){
-              setState(() {});///rebuild state after 
+            Navigator.push(context, MaterialPageRoute(builder: (context)=> AddCard(null,-1))).then((value){
+              setState(() {});///rebuild state after
             });
 
 

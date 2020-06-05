@@ -16,13 +16,14 @@ import 'package:subscribeversion2/homePage/main.dart';
 
 
 
+
 // ignore: must_be_immutable
 class AddCard extends StatefulWidget {
 
    CardDetails accessCard;
    int cardIndex;//index of card
-   GlobalKey key;
-  AddCard(this.accessCard, this.cardIndex, this.key);///used to determine if being updated or not
+
+  AddCard(this.accessCard, this.cardIndex);///used to determine if being updated or not
    @override
   _AddCardState createState() => _AddCardState();
 
@@ -265,15 +266,15 @@ class _AddCardState extends State<AddCard> {
       arrayOfCards.updatePerformed();
       arrayOfCards.replaceCard(this.widget.cardIndex, cardDetails);//update the view
 
-      Navigator.of(context).pop(context);
+      //Navigator.pop(context);
       //day color left at default
-      print("THIS IS THE UPDATE");
-      //print(cardDetails.getCardId());
-      print(cardDetails.getDayColor());
-      print("id^^^^");
+
       updating=false;
       Navigator.pop(context);
+      Navigator.pop(context); // REMOVE THE HOME ROUTE AND PUSH
      // this.widget.key.;
+      //Pushes the home route
+      Navigator.push(context, MaterialPageRoute(builder: (context)=> FrontPage(true)));
       updateDatabase();
 
 
@@ -292,8 +293,10 @@ class _AddCardState extends State<AddCard> {
      arrayOfCards.addCard(cardDetails); //print('cardID: $cardIdValue');
      //  this.widget.key.currentState.build(context);
 
-     //Navigator.push(context, MaterialPageRoute(builder: (context)=> FrontPage()));//insertDatabase();
-    } Navigator.pop(context);
+     //Navigator.push(context, MaterialPageRoute(builder: (context)=> FrontPage()));//
+      insertDatabase();
+    }
+    Navigator.pop(context);
 
   }
   ///set the remainder

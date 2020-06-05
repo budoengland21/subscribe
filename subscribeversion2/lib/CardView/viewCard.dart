@@ -4,6 +4,7 @@ import 'package:subscribeversion2/AddCardScreen/AddCard.dart';
 import 'package:subscribeversion2/DataStorage/ArrayOfCards.dart';
 import 'package:subscribeversion2/DataStorage/CardDetails.dart';
 import 'package:subscribeversion2/DataStorage/storedData.dart';
+import 'package:subscribeversion2/homePage/main.dart';
 
 class viewCard extends StatelessWidget {
   CardDetails card;
@@ -23,7 +24,7 @@ class viewCard extends StatelessWidget {
       }else{return "Not set";}
     }
 
-    void delete() async{
+    void delete() {
     ArrayOfCards a = new ArrayOfCards();
        storedData store = new storedData();
        a.removeCard(this.index);//removes from the array
@@ -74,7 +75,7 @@ class viewCard extends StatelessWidget {
                                 child: Text("EDIT", style: TextStyle(color: Colors.white),),
                                 color: Colors.black,
                                 onPressed: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> AddCard(this.card,this.index,null) ));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> AddCard(this.card,this.index) ));
                                 },
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20)
@@ -88,7 +89,7 @@ class viewCard extends StatelessWidget {
 
                         ),
                       ),
-                   ///space
+                        ///space
                         Padding(
                         padding: const EdgeInsets.only(top: 25.0,bottom: 25),
 
@@ -190,6 +191,9 @@ class viewCard extends StatelessWidget {
                              //    a.removeCard(this.index);
                                   delete();
                                   Navigator.pop(context);
+                                  //Now pop the main page, pass parameter to confirm so it doesn't go to init
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> FrontPage(true)));
+
                                 },
                                 elevation: 15,
                                 shape: RoundedRectangleBorder(

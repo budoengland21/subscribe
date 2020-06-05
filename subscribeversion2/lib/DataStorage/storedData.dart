@@ -287,7 +287,7 @@ class storedData{
      }
      else if (diff < 0){//then it past due
        //return "EXPIRED";
-       return "0";
+       return "-1";
      }
 
     // print("THIS IS DIFF: $diff");
@@ -296,7 +296,7 @@ class storedData{
      else{
        diff = nowDay;
      }
-    return diff.toString();// + " DAYS";
+    return diff.toString();
 
 
 

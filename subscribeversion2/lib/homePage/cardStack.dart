@@ -17,8 +17,7 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context)  {
   double ttop=10;
   double lleft= 0;
   double rright=0;
-  //cards.addCard(cards.seeCard(0));
-  print("why am i not building");
+
   if (check == 0){
     stacks.add(
         Positioned(
@@ -73,6 +72,7 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context)  {
               right: rright,
               child: GestureDetector(
                 onTap: (){
+
                   Navigator.push(context, MaterialPageRoute(builder: (context)=> viewCard(cards.seeCard(i),i)));
 
 
@@ -131,17 +131,17 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context)  {
                                       width: 140,
 
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(Radius.circular(40),),color: Colors.red,
+                                        borderRadius: BorderRadius.all(Radius.circular(40),),color: cards.seeCard(i).getDayColor()
                                         //boxShadow: [BoxShadow(color: Colors.black12,spreadRadius: 1,blurRadius: 2)]
                                       ),
-                                      child: Center(child: Text(cards.seeCard(i).getDayCount(),style: TextStyle(fontSize: 25,color: Colors.white,fontWeight: FontWeight.bold),)),
+
+                                      child: Center(child: Text(modifyView(cards.seeCard(i).getDayCount()),style: TextStyle(fontSize: 25,color: Colors.white,fontWeight: FontWeight.bold),)),
 
 
                                     ),
                                   )
 
-
-                                ],
+],
                               ),
 
                             )
@@ -162,6 +162,20 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context)  {
     }
   }
   return stacks;
+}
+
+String modifyView(String days){
+  if (days == "-1"){
+    return "EXPIRED";
+  }else if (days == "0"){
+    return "TODAY";
+  }
+  else if (days == "1"){
+    return days+ " DAY";
+  }
+  else{
+    return days+ " DAYS";
+  }
 }
 
 
