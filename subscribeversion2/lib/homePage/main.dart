@@ -47,6 +47,7 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
   void initState() {
     // TODO: implement initState
     if (!this.widget.hasPassed){
+      print("DATABSE ACTIVATING----------------------");
       super.initState();
       // add the observer to register the events
       WidgetsBinding.instance.addObserver(this);
@@ -62,6 +63,7 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
   //  super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed){// meaning the app resumed after dormant
       startDatabase();
+      print("RESUME");
     }else{
       //temporarily delete list so as not to add again
       a.removeAll();

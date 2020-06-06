@@ -66,9 +66,9 @@ class CardDetails{
   }
   Color getColor(){ // to retrieve string hex color and turn to color
   //  _temp = (Color(int.parse(_color.substring(1, 7), radix: 16) + 0xFF000000)); // changes String in hex format #f000000 to Color(0xf00000)
-    if (_temp == null){
+
       setHexColor(_color);
-    }
+
     return _temp;
   }
 
@@ -108,13 +108,18 @@ class CardDetails{
   ///sets the day color----------------------------------------------
   void setDayColor(Color c){
     // _dayColor = c;
+
      dayTemp = '#${c.value.toRadixString(16).substring(2)}'; //change eg color(blue) to hex #f00000
+    print('dayTemp: $dayTemp');
   }
   Color getDayColor(){
-   if (_dayColor == null){
-     setDayColorHex(dayTemp);
-   }
+   print('daycolor $_dayColor');
 
+
+     setDayColorHex(dayTemp);
+
+
+   print('daycolor again $_dayColor');
    return _dayColor;
   }
   void setDayColorHex(String c){

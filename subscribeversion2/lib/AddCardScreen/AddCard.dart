@@ -32,6 +32,7 @@ class AddCard extends StatefulWidget {
 
 class _AddCardState extends State<AddCard> {
   //Controller to check if user changed a value in the text field box
+  String oldName = "";
   final TextEditingController textCheck = new TextEditingController();
   CardDetails cardDetails = new CardDetails();
   ArrayOfCards arrayOfCards = new ArrayOfCards();
@@ -228,6 +229,7 @@ class _AddCardState extends State<AddCard> {
 
   //update day count
   void updateDays(String val) {
+
     if (val == "null"){
    //   tempDays = val;
       customDate=-1;
@@ -238,11 +240,17 @@ class _AddCardState extends State<AddCard> {
       //set the card to display the days
       if (int.parse(val) == 1){
         tempDays=val + " DAY";
+        cardDetails.setDayColor(Color.fromRGBO(255, 0, 0, 1)); //set to red
+
         print("updating.....");
       }else{
         tempDays=val + " DAYS";
+        cardDetails.setDayColor(Color.fromRGBO(26, 255, 49, 1));//else set to green
       }
+      print("check----------------------------");
+      print(cardDetails.getDayColor());
      cardDetails.setDayCount(val);
+      
 
      // tempDays=val;
     }
@@ -262,20 +270,27 @@ class _AddCardState extends State<AddCard> {
     if (updating) {
       cardDetails.setColor(cardColor);
 
+
+
       cardDetails.setRenew(renewOn);
-      arrayOfCards.updatePerformed();
-      arrayOfCards.replaceCard(this.widget.cardIndex, cardDetails);//update the view
+     // arrayOfCards.updatePerformed();
+
 
       //Navigator.pop(context);
       //day color left at default
 
-      updating=false;
-      Navigator.pop(context);
+
+      updateDatabase(oldName);
+      arrayOfCards.replaceCard(this.widget.cardIndex, cardDetails);//update the view
+      Navigator.pop(context);//removes the add card
+      Navigator.pop(context);//removes view card
       Navigator.pop(context); // REMOVE THE HOME ROUTE AND PUSH
      // this.widget.key.;
       //Pushes the home route
-      Navigator.push(context, MaterialPageRoute(builder: (context)=> FrontPage(true)));
-      updateDatabase();
+     Navigator.push(context, MaterialPageRoute(builder: (context)=> FrontPage(true)));
+
+      updating=false;
+      oldName = "";
 
 
     }
@@ -288,15 +303,16 @@ class _AddCardState extends State<AddCard> {
      // cardDetails.setCardId(cardIdValue+1);
       cardDetails.setRenew(renewOn);
       cardDetails.setReminder(isOn);
-       cardDetails.setDayColor(Color.fromRGBO(26, 255, 49, 1));
+
        print(cardDetails.getDayCount());
      arrayOfCards.addCard(cardDetails); //print('cardID: $cardIdValue');
      //  this.widget.key.currentState.build(context);
 
      //Navigator.push(context, MaterialPageRoute(builder: (context)=> FrontPage()));//
       insertDatabase();
+      Navigator.pop(context);
     }
-    Navigator.pop(context);
+
 
   }
   ///set the remainder
@@ -325,10 +341,10 @@ class _AddCardState extends State<AddCard> {
     storedData storage = storedData();
     storage.insertDb(cardDetails);
   }
-  void updateDatabase(){
+  void updateDatabase(String val){
     storedData storage = storedData();
   //  cardDetails.setNameCard("kkk");
-    storage.updateRow(cardDetails, this.widget.cardIndex);
+    storage.updateRow(cardDetails, val);
   }
   ///___________________________________________________________________________
   @override
@@ -340,6 +356,7 @@ class _AddCardState extends State<AddCard> {
         setState(() {
           updating = true;
           CardDetails temp = this.widget.accessCard;
+          oldName = temp.getNameCard(); //used for updating
           updateCardName(temp.getNameCard());
         //  textCheck = temp.getNameCard();
           updateDays(temp.getDayCount());
@@ -355,12 +372,13 @@ class _AddCardState extends State<AddCard> {
           updateMoney(temp.getMoney());
 
 
+
           //clear it
            cardDetails = temp;// gives access to colors and anything it has
           print('data------');
           print(cardDetails.getNameCard());
 //          print(cardDetails.getCardId());
-          print(cardDetails.getColor());
+          print(cardDetails.getDayColor());
           print('data-------');
 
           this.widget.accessCard = null;

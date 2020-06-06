@@ -9,7 +9,7 @@ import 'package:subscribeversion2/homePage/main.dart';
 class viewCard extends StatelessWidget {
   CardDetails card;
   int index;
-
+  ArrayOfCards a = new ArrayOfCards();
   viewCard(this.card, this.index);
 
   String checkSet(){
@@ -25,12 +25,14 @@ class viewCard extends StatelessWidget {
     }
 
     void delete() {
-    ArrayOfCards a = new ArrayOfCards();
-       storedData store = new storedData();
-       a.removeCard(this.index);//removes from the array
+
+
+    storedData store = new storedData();
+
 
       // int val = await store.getID(this.index);
        store.deleteItem(a.seeCard(this.index));
+       a.removeCard(this.index);//removes from the array
 
        print("size");
        print(a.checkSize());
@@ -189,11 +191,14 @@ class viewCard extends StatelessWidget {
                                 ///delete from database
                                 onPressed: () {
                              //    a.removeCard(this.index);
-                                  delete();
+                                 delete();
+
                                   Navigator.pop(context);
+
+                                  Navigator.pop(context);//remove the  main page too
                                   //Now pop the main page, pass parameter to confirm so it doesn't go to init
                                   Navigator.push(context, MaterialPageRoute(builder: (context)=> FrontPage(true)));
-
+                                 // delete();
                                 },
                                 elevation: 15,
                                 shape: RoundedRectangleBorder(

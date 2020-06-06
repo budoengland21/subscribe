@@ -54,7 +54,7 @@ class storedData{
      Directory directory = await getApplicationDocumentsDirectory();
      String path = join(directory.path, 'subscribe.db');
      //open database
-     var myDatabase = await openDatabase(path, version: 27, onCreate: _createDatabase);
+     var myDatabase = await openDatabase(path, version: 28, onCreate: _createDatabase);
      return myDatabase;
 
 
@@ -90,7 +90,8 @@ class storedData{
    }
 
    Map<String, dynamic> _mapItems(CardDetails card){
-     print('inserting $card.getCardId()');
+     print('inserting');
+
      return{
 
 
@@ -110,31 +111,36 @@ class storedData{
      };
    }
 
-   Future<int> getIndex(int cardIndex) async{
+   Future<int> getIndex(String cardName) async{
      Database db = await getDatabase();
-    List<Map> map= await db.rawQuery('SELECT COUNT (*) from $tblName WHERE id = $id');/// this just retrieves the id of the row
-     //int val = map[cardIndex]['id'];
-    var x =  map[0].values.toList(); //it's dynamic so change to list then integer
-    int v = x[0];
-     return v;
+
+    List<Map> map= await db.rawQuery('SELECT * from $tblName WHERE cardName = ?', [cardName]);/// this just retrieves the id of the row
+     int val = map[0]['id'];
+
+   // var x =  map[0].values.toList(); //it's dynamic so change to list then integer
+   // int v = x[0];
+    print(val);
+   //print("index $v");
+     return val;
 
 
 
    }
    ///Update card, when card clicked on
-   Future<void> updateRow(CardDetails card, int cardIndex) async{
+   Future<void> updateRow(CardDetails card, String oldName) async{
      Database db = await getDatabase();
      print("----------------");
     // print(card.getDayCount());
-     print(getIndex(cardIndex));
-     int index = await getIndex(cardIndex);
+     //print(getIndex(cardIndex));
+    int index = await getIndex(oldName);
 
 
  //    print(cardCol);
-     print("----------------");
+    // print("----------------");
      Map map = _mapItems(card);
      print(map.toString());
-     int count = await db.update(tblName, map,where: '$id=?', whereArgs: [index]);
+    int count = await db.update(tblName, map,where: '$id=?', whereArgs: [index]);
+
     /* int count = await db.rawUpdate('UPDATE $tblName SET '
          '$cardName=?, $days=?, $dayColor=?, $color=?,'
          '$reminder=?, $reminder_days=?, $paymentType=?,'
@@ -232,7 +238,8 @@ class storedData{
    String findDayColor(String cal, int remainder){
      //check reminder days
      //String check = days;
-    
+     print("diiff: $diff");
+
      if (remainder == 0){
        if (diff == 1){//meaning 1 day remaining
          return "#FF0000";//red color to mean 1 day remaining
