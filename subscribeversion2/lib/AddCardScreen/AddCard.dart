@@ -33,7 +33,13 @@ class AddCard extends StatefulWidget {
 class _AddCardState extends State<AddCard> {
   //Controller to check if user changed a value in the text field box
   String oldName = "";
-  final TextEditingController textCheck = new TextEditingController();
+  DateTime endVal= DateTime.now();
+  String customText = "Custom";
+  bool customTapped = false; // check if custom button tapped
+   final TextEditingController textCheck = new TextEditingController(); //track of the name of subscription
+   final TextEditingController amountController = new TextEditingController();//keep track of amount
+
+  //textCheck =
   CardDetails cardDetails = new CardDetails();
   ArrayOfCards arrayOfCards = new ArrayOfCards();
   DateTime minDate(){
@@ -55,17 +61,10 @@ class _AddCardState extends State<AddCard> {
   String tempDays = '';
 
   //color for payment containers
-  Color selected = Color.fromRGBO(97, 97, 97, 1);
-  Color selected1 = Color.fromRGBO(97, 97, 97, 1);
-  Color selected2 = Color.fromRGBO(97, 97, 97, 1);
-  Color selected3 = Color.fromRGBO(97, 97, 97, 1);
+  Color selected,selected1,selected2,selected3 = Color.fromRGBO(97, 97, 97, 1);
+//color for days selector
+  Color days0,days1,days2,days3,days4= Color.fromRGBO(97, 97, 97, 1);
 
-  //color for days selector
-  Color days0 = Color.fromRGBO(97, 97, 97, 1);
-  Color days1 = Color.fromRGBO(97, 97, 97, 1);
-  Color days2 = Color.fromRGBO(97, 97, 97, 1);
-  Color days3 =Color.fromRGBO(97, 97, 97, 1);
-  Color days4 = Color.fromRGBO(97, 97, 97, 1);
 
   bool checkOn = false; // for the color containers checker
   Color cardColor = Colors.grey;
@@ -232,18 +231,25 @@ class _AddCardState extends State<AddCard> {
 
     if (val == "null"){
    //   tempDays = val;
+      print("HOWWWWWWW");
       customDate=-1;
       tempDays="";
       removeColor();
     }
     else{
+      print("came thru---------");
       //set the card to display the days
       if (int.parse(val) == 1){
         tempDays=val + " DAY";
         cardDetails.setDayColor(Color.fromRGBO(255, 0, 0, 1)); //set to red
 
         print("updating.....");
-      }else{
+
+      }else if (int.parse(val) == 0){ // WHEN USER is updating and it's 0 days
+        tempDays = "TODAY";
+        cardDetails.setDayColor(Color.fromRGBO(255, 0, 0, 1)); //set to red
+      }
+      else{
         tempDays=val + " DAYS";
         cardDetails.setDayColor(Color.fromRGBO(26, 255, 49, 1));//else set to green
       }
@@ -357,15 +363,25 @@ class _AddCardState extends State<AddCard> {
           updating = true;
           CardDetails temp = this.widget.accessCard;
           oldName = temp.getNameCard(); //used for updating
+
+          //set the text in controller
+          textCheck.text = oldName;
+          amountController.text = temp.getMoney();
           updateCardName(temp.getNameCard());
         //  textCheck = temp.getNameCard();
           updateDays(temp.getDayCount());
           updateColor(temp.getColor());
           updatePaymentType(temp.getNamePayment());
+          if (temp.getNamePayment() == "Debit"){
+            make();}else if (temp.getNamePayment()== "Credit"){make1();}else if (temp.getNamePayment() == "Gift card"){make3();}else{make2();}
           isOn = temp.getReminder();
           if (isOn){
             cardDetails.setReminder(isOn);
-            defaultDay = temp.getReminderDays().toString()+" days";
+            if (temp.getReminderDays() == 1){
+              defaultDay = temp.getReminderDays().toString()+" day";
+            }else{
+              defaultDay = temp.getReminderDays().toString()+" days";
+          }
           }
           checkReminderDays(temp.getReminderDays().toString());
           renewOn = temp.getRenew();
@@ -518,8 +534,10 @@ class _AddCardState extends State<AddCard> {
                               child: TextField(
                                 style: TextStyle(color: Colors.white),
 
+
                                 decoration: InputDecoration(
-                                  labelText: "Subscription name",focusColor: Colors.white,
+                                  labelText: "Subscription name",
+                                  focusColor: Colors.white,
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.all(
                                         Radius.circular(15)),borderSide: BorderSide(color: Colors.white),),
@@ -531,14 +549,14 @@ class _AddCardState extends State<AddCard> {
                                 onChanged: (val) {
                                   setState(() {
                                     updateCardName(val);
+
                                   });
                                 },
                                 inputFormatters: [
                                   LengthLimitingTextInputFormatter(15),
                                 ],
                                 //no need for controller unless you want to use it
-                             //   controller: textCheck, // Obtain text from textbox
-                                  ///rgb(255,241,118)hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+                                controller: textCheck, // Obtain text from textbox
 
 
                               ),
@@ -595,7 +613,7 @@ class _AddCardState extends State<AddCard> {
                               padding: EdgeInsets.only(top:15),
                               child: Row(
                                 children: <Widget>[
-                                  Text("End Cycle",style: TextStyle(fontSize: 20,color: Colors.white),)
+                                  Text("End Cycle After:",style: TextStyle(fontSize: 20,color: Colors.white),)
                                 ],
                               ),
                             ),
@@ -612,6 +630,7 @@ class _AddCardState extends State<AddCard> {
                                   children: <Widget>[
                                     GestureDetector(
                                       onTap: () {
+                                        customTapped = false;
                                         setState(() {
                                           updateDays("3");
                                           colorDay();
@@ -647,6 +666,7 @@ class _AddCardState extends State<AddCard> {
                                     ),
                                     GestureDetector(
                                       onTap: () {
+                                        customTapped = false;
                                         setState(() {
                                           updateDays("7");
                                           colorDay1();
@@ -682,6 +702,7 @@ class _AddCardState extends State<AddCard> {
 
                                     GestureDetector(
                                       onTap: () {
+                                        customTapped = false;
                                         setState(() {
                                           updateDays("14");
                                           colorDay2();
@@ -715,6 +736,7 @@ class _AddCardState extends State<AddCard> {
                                     ),
                                     GestureDetector(
                                       onTap: () {
+                                        customTapped = false;
                                         setState(() {
                                           updateDays("30");
                                           colorDay3();
@@ -752,14 +774,16 @@ class _AddCardState extends State<AddCard> {
 
                                     GestureDetector(
                                       onTap: () {
-
+                                          customTapped = true;
                                           DatePicker.showDatePicker(context,
                                               showTitleActions: true,
                                               minTime: minDate(),
                                               maxTime: DateTime(DateTime.now().year+5),
                                               onConfirm: (val){///after done pressed
                                                 print(val);
-                                                setState(() { colorCustom();
+                                                setState(() {
+                                                  endVal = val; // changes value of custom text
+                                                  colorCustom();
                                                   //calculateDays(val);
                                                   calculateD(val);
                                                   //updateDays(val)
@@ -789,15 +813,7 @@ class _AddCardState extends State<AddCard> {
                                       },
                                     //getTime();},
                                       child: Container(
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment
-                                                .center,
-                                            children: <Widget>[
-
-                                              Text("Custom", style: TextStyle(
-                                                  fontSize: 20),),
-                                            ],
-                                          ),
+                                          child: customContainer(),
 
 
                                           width: 100,
@@ -1064,6 +1080,7 @@ class _AddCardState extends State<AddCard> {
                                   // color: Colors.black,
                                   width: 120,
                                   child: TextField(
+
                                     decoration: InputDecoration(
                                       prefixIcon: Icon(Icons.attach_money,
                                         color: Colors.green,),
@@ -1074,6 +1091,7 @@ class _AddCardState extends State<AddCard> {
 
                                       //block digits with comma, hyphen etc.
                                     ),style: TextStyle(color: Colors.white),
+                                    controller: amountController,
                                     keyboardType: TextInputType.number,
                                     inputFormatters: [
                                       BlacklistingTextInputFormatter(
@@ -1180,24 +1198,41 @@ class _AddCardState extends State<AddCard> {
     return containers;
   }
 
+  Column customContainer(){
+    if (updating || customTapped){
+      return
+        Column(
+          mainAxisAlignment: MainAxisAlignment
+              .center,
 
-  bool _func(DateTime day) {
-    if ((day.isAfter(DateTime(2020, 1, 5)) &&
-        day.isBefore(DateTime(2020, 1, 9)))) {
-      return true;
-    }
+          children: <Widget>[
 
-    if ((day.isAfter(DateTime(2020, 1, 10)) &&
-        day.isBefore(DateTime(2020, 1, 15)))) {
-      return true;
-    }
-    if ((day.isAfter(DateTime(2020, 2, 5)) &&
-        day.isBefore(DateTime(2020, 2, 17)))) {
-      return true;
-    }
+            Text(endVal.day.toString(), style: TextStyle(
+                fontSize: 40),),
+             Text(endVal.month.toString() + "/" + endVal.year.toString(), style: TextStyle(
+            fontSize: 20),),
 
-    return false;
+
+
+          ],
+        );
+    }
+    return Column(
+      mainAxisAlignment: MainAxisAlignment
+          .center,
+      children: <Widget>[
+
+        Text(customText, style: TextStyle(
+            fontSize: 20),),
+      ],
+    );
   }
+
+
+
+
+
+
 
 
 }

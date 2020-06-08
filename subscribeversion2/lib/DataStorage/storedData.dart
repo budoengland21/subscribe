@@ -202,7 +202,10 @@ class storedData{
        bool ans;
        bool renew;
      //  c=new Color(maps[index]['$color']).value as Color;
+       print("LOOK DOWN REMINDER");
+       print(maps[index]['$reminder']);
        if (maps[index]['$reminder'] == "true"){
+
          card.setReminderDays((maps[index]['$reminder_days']));
          ans = true;
        }else{ans=false; card.setReminderDays(0);//dummy value instead of null
