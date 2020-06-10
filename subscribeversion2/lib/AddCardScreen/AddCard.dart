@@ -38,7 +38,12 @@ class _AddCardState extends State<AddCard> {
   bool customTapped = false; // check if custom button tapped
    final TextEditingController textCheck = new TextEditingController(); //track of the name of subscription
    final TextEditingController amountController = new TextEditingController();//keep track of amount
+  int storeAns; //keeps track of the days if user presses renew on/off to set state;
+  bool inCycle = false; //determine if it was in a cycle and re activate the days by storeAns
 
+  int diff; //calculate the difference between days for cycle
+  int customDiff; // calculate difference between custom cycle
+  bool notStarted=false; // check if cycle has started
   //textCheck =
   CardDetails cardDetails = new CardDetails();
   ArrayOfCards arrayOfCards = new ArrayOfCards();
@@ -61,9 +66,16 @@ class _AddCardState extends State<AddCard> {
   String tempDays = '';
 
   //color for payment containers
-  Color selected,selected1,selected2,selected3 = Color.fromRGBO(97, 97, 97, 1);
+  Color selected= Color.fromRGBO(97, 97, 97, 1);
+  Color selected1= Color.fromRGBO(97, 97, 97, 1);
+  Color selected2= Color.fromRGBO(97, 97, 97, 1);
+  Color selected3 = Color.fromRGBO(97, 97, 97, 1);
 //color for days selector
-  Color days0,days1,days2,days3,days4= Color.fromRGBO(97, 97, 97, 1);
+  Color days0 = Color.fromRGBO(97, 97, 97, 1);
+  Color days1 = Color.fromRGBO(97, 97, 97, 1);
+  Color days2=Color.fromRGBO(97, 97, 97, 1);
+  Color days3 = Color.fromRGBO(97, 97, 97, 1);
+  Color days4= Color.fromRGBO(97, 97, 97, 1);
 
 
   bool checkOn = false; // for the color containers checker
@@ -79,7 +91,7 @@ class _AddCardState extends State<AddCard> {
 
   //used to check if switch is on
   bool isOn = false;
-  bool renewOn = false;
+  bool renewOn = true;
   List<String> days = ["1 day", "3 days", "7 days"];
   String defaultDay = "3 days";
 
@@ -106,15 +118,62 @@ class _AddCardState extends State<AddCard> {
   ///calculate date range
 
   void calculateD(DateTime custom){
-    int x = custom.difference(firstTime).inDays;
+     customDiff = custom.difference(firstTime).inDays;
     if (firstTime.day == DateTime.now().day){
-      x+=1;
+      customDiff+=1;
     }
-   updateDays(x.toString());
+   updateDays(customDiff.toString());
+
+  }
+// calculate days for 7 days, 3 months but not for custom
+  void calculateCycleDays(int val){
+    diff = DateTime.now().difference(firstTime).inDays;
+    int ans;
+    //check if it was in a cycle and user changed renew option
+    print("lokkkk $inCycle");
+
+    if ((firstTime.day == DateTime.now().day || firstTime.isAfter(DateTime.now()))  ){// check if beginng cycle is equal or ahead
+      print('yes5');
+      if (firstTime.day == DateTime.now().day ){ // if equal then just make days equal
+        ans = val;
+        print('yes1');
+      }else{
+        ans=val;
+        //but let user know it hasn't started
+        notStarted= true;
+      }
+
+
+    }
+    else if (diff < val && !inCycle ){
+      print('p');
+      ans = val - diff;
+
+    }
+    ///open if statement to check if reminder on
+    if (diff > val){
+      print('yes2');
+      int rem = diff % val;
+      if (rem == 0){//hence no remainder, then it's 2day
+        ans = 0;
+      }else{//find the remainder, then set the cycle days, all assuming repeat on
+         if (renewOn){
+           ans = val-rem;
+           inCycle = true;
 
 
 
-    //return x;
+
+         }else{//user didn't set renew, so its expired
+           ans = -1;
+
+
+         }
+      }
+
+    }
+     print(ans);
+     updateDays(ans.toString());
   }
 
   //Reupdate card name as user types
@@ -223,7 +282,7 @@ class _AddCardState extends State<AddCard> {
   //Update money
   void updateMoney(String amount) {
     cardDetails.setMoney(amount);
-    tempAmount = amount;
+    tempAmount = '\$ '+amount;
   }
 
   //update day count
@@ -240,7 +299,7 @@ class _AddCardState extends State<AddCard> {
       print("came thru---------");
       //set the card to display the days
       if (int.parse(val) == 1){
-        tempDays=val + " DAY";
+        tempDays="IN "+ val + " DAY";
         cardDetails.setDayColor(Color.fromRGBO(255, 0, 0, 1)); //set to red
 
         print("updating.....");
@@ -248,9 +307,15 @@ class _AddCardState extends State<AddCard> {
       }else if (int.parse(val) == 0){ // WHEN USER is updating and it's 0 days
         tempDays = "TODAY";
         cardDetails.setDayColor(Color.fromRGBO(255, 0, 0, 1)); //set to red
+      }else if(int.parse(val) == -1){
+        tempDays = "EXPIRED";
+        cardDetails.setDayColor(Color.fromRGBO(255, 0, 0, 1)); //set to red
+      }else if (notStarted){
+        tempDays="STARTS IN "+val + " DAYS";
+        cardDetails.setDayColor(Color.fromRGBO(26, 255, 49, 1));//else set to green
       }
       else{
-        tempDays=val + " DAYS";
+        tempDays="IN "+val + " DAYS";
         cardDetails.setDayColor(Color.fromRGBO(26, 255, 49, 1));//else set to green
       }
       print("check----------------------------");
@@ -510,7 +575,7 @@ class _AddCardState extends State<AddCard> {
 
           //THIS IS WHERE WE PUT ALL THE CHILDREN_________________________________
           SliverFixedExtentList(
-            itemExtent: 795, //height of each widget in the listdelegate
+            itemExtent: 860, //height of each widget in the listdelegate
             //for my case since its one widget, make height reasonable size
             //divide the items
 
@@ -580,7 +645,7 @@ class _AddCardState extends State<AddCard> {
                                     onPressed: (){
                                       DatePicker.showDatePicker(context,
                                       showTitleActions: true,
-                                      minTime: DateTime.now(),
+                                      minTime: DateTime(DateTime.now().year - 1),
                                           maxTime: DateTime(DateTime.now().year+5),
                                        onConfirm: (val){///after done pressed
                                         print(val);
@@ -590,7 +655,9 @@ class _AddCardState extends State<AddCard> {
                                           formatDate(val);///where it formats date
                                           firstTime = val; ///update the date selected
                                           updateDays("null");
+                                          notStarted = false; //reset again
                                           removeColor();
+                                          inCycle = false; ///reset this so the cycle can be activated
                                         });
                                        }, currentTime: DateTime.now(),locale: LocaleType.en
 
@@ -632,8 +699,13 @@ class _AddCardState extends State<AddCard> {
                                       onTap: () {
                                         customTapped = false;
                                         setState(() {
-                                          updateDays("3");
+
                                           colorDay();
+                                          storeAns=7;
+                                          calculateCycleDays(7);
+
+
+
                                         });
                                       },
                                       child: Container(
@@ -644,9 +716,9 @@ class _AddCardState extends State<AddCard> {
 
 
                                             children: <Widget>[
-                                              Text("3", style: TextStyle(
+                                              Text("1", style: TextStyle(
                                                   fontSize: 40),),
-                                              Text("DAYS", style: TextStyle(
+                                              Text("WEEK", style: TextStyle(
                                                   fontSize: 20),),
                                             ],
                                           ),
@@ -668,8 +740,10 @@ class _AddCardState extends State<AddCard> {
                                       onTap: () {
                                         customTapped = false;
                                         setState(() {
-                                          updateDays("7");
+
                                           colorDay1();
+                                          storeAns=14;
+                                          calculateCycleDays(14);
                                         });
                                       },
                                       child: Container(
@@ -679,9 +753,9 @@ class _AddCardState extends State<AddCard> {
                                                 .center,
 
                                             children: <Widget>[
-                                              Text("7", style: TextStyle(
+                                              Text("2", style: TextStyle(
                                                   fontSize: 40),),
-                                              Text("DAYS", style: TextStyle(
+                                              Text("WEEKS", style: TextStyle(
                                                   fontSize: 20),),
                                             ],
 
@@ -704,8 +778,10 @@ class _AddCardState extends State<AddCard> {
                                       onTap: () {
                                         customTapped = false;
                                         setState(() {
-                                          updateDays("14");
+                                          calculateCycleDays(30);
                                           colorDay2();
+                                          storeAns=30;
+
                                         });
                                       },
                                       child: Container(
@@ -714,9 +790,9 @@ class _AddCardState extends State<AddCard> {
                                                 .center,
 
                                             children: <Widget>[
-                                              Text("14", style: TextStyle(
+                                              Text("1", style: TextStyle(
                                                   fontSize: 40),),
-                                              Text("DAYS", style: TextStyle(
+                                              Text("MONTH", style: TextStyle(
                                                   fontSize: 20),),
                                             ],
                                           ),
@@ -738,8 +814,10 @@ class _AddCardState extends State<AddCard> {
                                       onTap: () {
                                         customTapped = false;
                                         setState(() {
-                                          updateDays("30");
+                                          calculateCycleDays(90);
                                           colorDay3();
+                                          storeAns=90;
+
                                         });
                                       },
                                       child: Container(
@@ -748,9 +826,9 @@ class _AddCardState extends State<AddCard> {
                                                 .center,
 
                                             children: <Widget>[
-                                              Text("1", style: TextStyle(
+                                              Text("3", style: TextStyle(
                                                   fontSize: 40),),
-                                              Text("MONTH", style: TextStyle(
+                                              Text("MONTHS", style: TextStyle(
                                                   fontSize: 20),),
                                             ],
                                           ),
@@ -829,11 +907,40 @@ class _AddCardState extends State<AddCard> {
                                 ),
                               ),
                             ),
+                            ///Added the repeat cycle  option
+                            Padding(
+                              padding: const EdgeInsets.only(top: 12.0),
+                              child: Row(
+                                children: <Widget>[
+                                  Text("Repeat Cycle",
+                                    style: TextStyle(fontSize: 20,color: Colors.white),),
+                                  Spacer(),
+                                  Switch(inactiveTrackColor:Color.fromRGBO(72, 72, 72, 1),activeColor:Color.fromRGBO(255, 241, 118, 1),
+                                      value: renewOn,
+                                      onChanged: (
+                                          val) { // onchanged takes parameter of whats changed
+                                        setState(() {
+                                          renewOn = val;
+                                        //  inCycle = true;
+
+                                            calculateCycleDays(storeAns);
+
+
+                                          // openDrawer(isOn);
+                                        });
+                                      }
+                                  ),
+
+                                ],
+                              ),
+                            ),
+
+
 
                             Padding(
                               padding: const EdgeInsets.only(top: 10.0),
                               child: Container(
-                                height: 5, color: Color.fromRGBO(72, 72, 72, 1),
+                                height: 3, color: Color.fromRGBO(72, 72, 72, 1),
                               ),
                             ),
 
@@ -848,6 +955,7 @@ class _AddCardState extends State<AddCard> {
                                 ),
                               ),
                             ),
+                            
 
 
                             Padding(
@@ -871,6 +979,7 @@ class _AddCardState extends State<AddCard> {
                                 ],
                               ),
                             ),
+
 
                             Visibility(
                               visible: isOn,
@@ -910,6 +1019,13 @@ class _AddCardState extends State<AddCard> {
                                 ],
                               ),
                             ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 15.0),
+                              child: Container(
+                                height: 3, color: Color.fromRGBO(72, 72, 72, 1),
+                              ),
+                            ),
+
                             ///HORIZONTAL RULER
 
                             Padding(
@@ -1031,39 +1147,19 @@ class _AddCardState extends State<AddCard> {
                             ),
 
                             Padding(
-                              padding: const EdgeInsets.only(top: 10.0),
+                              padding: const EdgeInsets.only(top: 15.0),
                               child: Container(
-                                height: 5, color: Color.fromRGBO(72, 72, 72, 1),
+                                height: 3, color: Color.fromRGBO(72, 72, 72, 1),
                               ),
                             ),
 
 
-                            Padding(
-                              padding: const EdgeInsets.only(top: 12.0),
-                              child: Row(
-                                children: <Widget>[
-                                  Text("AutoRenew",
-                                    style: TextStyle(fontSize: 20,color: Colors.white),),
-                                  Spacer(),
-                                  Switch(inactiveTrackColor:Color.fromRGBO(72, 72, 72, 1),activeColor:Color.fromRGBO(255, 241, 118, 1),
-                                      value: renewOn,
-                                      onChanged: (
-                                          val) { // onchanged takes parameter of whats changed
-                                        setState(() {
-                                          renewOn = val;
-                                          // openDrawer(isOn);
-                                        });
-                                      }
-                                  ),
-
-                                ],
-                              ),
-                            ),
 
 
-                            SizedBox(
-                              height: 15,
-                            ),
+
+                           SizedBox(
+                             height: 15,
+                           ),
                             Row(
                               children: <Widget>[
                                 //Text("Amount", style: TextStyle(fontSize: 20),),
