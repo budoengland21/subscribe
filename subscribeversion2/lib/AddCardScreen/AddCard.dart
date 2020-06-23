@@ -115,22 +115,48 @@ class _AddCardState extends State<AddCard> {
     }
 
   }
-  ///calculate date range
+  ///calculate date range for custom set days
 
   void calculateD(DateTime custom){
      customDiff = custom.difference(firstTime).inDays;
+
+
+     int val;
     if (firstTime.day == DateTime.now().day){
       customDiff+=1;
+      updateDays(customDiff.toString(),true);
+
+
+      ///when cycle hasn't started
+    }else if(firstTime.isAfter(DateTime.now())){
+     // customDiff+=1; //fix one day bug
+      val = firstTime.day - DateTime.now().day; ///  stores when the cycle starts
+      print("val of cycle not started: $val");
+      notStarted = true;
+      updateDays(val.toString(), true);
+
+      ///when the begin cycle is before today date
+    }else{
+      val = custom.day - DateTime.now().day;
+      print("val of cycle before: $val");
+      updateDays(val.toString(),true);
+      notStarted=false;
+
+
     }
-   updateDays(customDiff.toString());
+
+     print('customCycle $customDiff'); /// we store this in the database , this is the custom cycle
+
 
   }
 // calculate days for 7 days, 3 months but not for custom
   void calculateCycleDays(int val){
-    diff = DateTime.now().difference(firstTime).inDays;
+    diff = (DateTime.now().difference(firstTime).inDays); //changes to positive if begin > today's date
+
     int ans;
     //check if it was in a cycle and user changed renew option
     print("lokkkk $inCycle");
+    print('here $diff');
 
     if ((firstTime.day == DateTime.now().day || firstTime.isAfter(DateTime.now()))  ){// check if beginng cycle is equal or ahead
       print('yes5');
@@ -138,20 +164,27 @@ class _AddCardState extends State<AddCard> {
         ans = val;
         print('yes1');
       }else{
-        ans=val;
+        //to fix one day bug
+        //then it's one day, due to date bug
+        //print('else 1 $diff');
+        diff = diff.abs();
+        diff+=1;
+        ans=diff;
+        print('else $diff');
         //but let user know it hasn't started
+        // let user know it starts in diff days.
         notStarted= true;
       }
 
 
     }
-    else if (diff < val && !inCycle ){
+    else if (diff <= val && !inCycle ){
       print('p');
       ans = val - diff;
 
     }
     ///open if statement to check if reminder on
-    if (diff > val){
+    if (diff > val || inCycle){
       print('yes2');
       int rem = diff % val;
       if (rem == 0){//hence no remainder, then it's 2day
@@ -173,7 +206,7 @@ class _AddCardState extends State<AddCard> {
 
     }
      print(ans);
-     updateDays(ans.toString());
+     updateDays(ans.toString(),false);
   }
 
   //Reupdate card name as user types
@@ -286,7 +319,7 @@ class _AddCardState extends State<AddCard> {
   }
 
   //update day count
-  void updateDays(String val) {
+  void updateDays(String val, bool isCustom) {
 
     if (val == "null"){
    //   tempDays = val;
@@ -298,24 +331,24 @@ class _AddCardState extends State<AddCard> {
     else{
       print("came thru---------");
       //set the card to display the days
-      if (int.parse(val) == 1){
-        tempDays="IN "+ val + " DAY";
+      if (int.parse(val) == 1 && !notStarted){
+        tempDays="DUE IN "+ val + " DAY";
         cardDetails.setDayColor(Color.fromRGBO(255, 0, 0, 1)); //set to red
 
         print("updating.....");
 
       }else if (int.parse(val) == 0){ // WHEN USER is updating and it's 0 days
-        tempDays = "TODAY";
+        tempDays = "DUE TODAY";
         cardDetails.setDayColor(Color.fromRGBO(255, 0, 0, 1)); //set to red
       }else if(int.parse(val) == -1){
         tempDays = "EXPIRED";
         cardDetails.setDayColor(Color.fromRGBO(255, 0, 0, 1)); //set to red
       }else if (notStarted){
-        tempDays="STARTS IN "+val + " DAYS";
+        tempDays="CYCLE STARTS IN "+val + " DAYS";
         cardDetails.setDayColor(Color.fromRGBO(26, 255, 49, 1));//else set to green
       }
       else{
-        tempDays="IN "+val + " DAYS";
+        tempDays="DUE IN "+val + " DAYS";
         cardDetails.setDayColor(Color.fromRGBO(26, 255, 49, 1));//else set to green
       }
       print("check----------------------------");
@@ -434,7 +467,7 @@ class _AddCardState extends State<AddCard> {
           amountController.text = temp.getMoney();
           updateCardName(temp.getNameCard());
         //  textCheck = temp.getNameCard();
-          updateDays(temp.getDayCount());
+          updateDays(temp.getDayCount(),false);
           updateColor(temp.getColor());
           updatePaymentType(temp.getNamePayment());
           if (temp.getNamePayment() == "Debit"){
@@ -618,7 +651,7 @@ class _AddCardState extends State<AddCard> {
                                   });
                                 },
                                 inputFormatters: [
-                                  LengthLimitingTextInputFormatter(15),
+                                  LengthLimitingTextInputFormatter(12),
                                 ],
                                 //no need for controller unless you want to use it
                                 controller: textCheck, // Obtain text from textbox
@@ -654,7 +687,7 @@ class _AddCardState extends State<AddCard> {
                                               new FocusNode());
                                           formatDate(val);///where it formats date
                                           firstTime = val; ///update the date selected
-                                          updateDays("null");
+                                          updateDays("null",false);
                                           notStarted = false; //reset again
                                           removeColor();
                                           inCycle = false; ///reset this so the cycle can be activated
@@ -922,8 +955,10 @@ class _AddCardState extends State<AddCard> {
                                         setState(() {
                                           renewOn = val;
                                         //  inCycle = true;
+                                        if (!customTapped){ ///doesn't apply to custom
+                                          calculateCycleDays(storeAns);
+                                        }
 
-                                            calculateCycleDays(storeAns);
 
 
                                           // openDrawer(isOn);
