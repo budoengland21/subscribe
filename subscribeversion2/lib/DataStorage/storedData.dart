@@ -22,6 +22,7 @@ class storedData{
   String reminder_days = 'Reminder_days';
   String paymentType = 'Payment_type';
   String autoRenew = 'Auto_renew';
+  String cycleDays = 'Cycle';
   String money = 'money';
   String actualDate = 'actualDate';//store date it was made
 
@@ -54,7 +55,7 @@ class storedData{
      Directory directory = await getApplicationDocumentsDirectory();
      String path = join(directory.path, 'subscribe.db');
      //open database
-     var myDatabase = await openDatabase(path, version: 28, onCreate: _createDatabase);
+     var myDatabase = await openDatabase(path, version: 29, onCreate: _createDatabase);
      return myDatabase;
 
 
@@ -73,6 +74,7 @@ class storedData{
          '$reminder_days INTEGER,'
          '$paymentType TEXT,'
            '$autoRenew TEXT, '
+           '$cycleDays INTEGER,' // ADDED THE CYCLE TO DATABASE
            '$money TEXT,'
            '$actualDate TEXT)');
      }
@@ -104,6 +106,7 @@ class storedData{
        '$reminder_days': card.getReminderDays(),
       '$paymentType': card.getNamePayment().toString(),
        '$autoRenew': card.getRenew().toString(),
+       '$cycleDays': card.getCycleDays(),
        '$money': card.getMoney(),
        '$actualDate': DateTime.now().toString()
 
@@ -202,8 +205,8 @@ class storedData{
        bool ans;
        bool renew;
      //  c=new Color(maps[index]['$color']).value as Color;
-       print("LOOK DOWN REMINDER");
-       print(maps[index]['$reminder']);
+    //   print("LOOK DOWN REMINDER");
+   //    print(maps[index]['$reminder']);
        if (maps[index]['$reminder'] == "true"){
 
          card.setReminderDays((maps[index]['$reminder_days']));
@@ -214,15 +217,17 @@ class storedData{
          renew=true;} else{renew=false;}
        card.setNameCard(maps[index]['$cardName']);
        print("seee"+maps[index]['$days']);
-       String val = getDifference(maps[index]['$actualDate'], maps[index]['$days']);//calculate the difference
+
+       ///calculate the difference and check whether to repeat the cycle
+       String val = getDifference(maps[index]['$actualDate'], maps[index]['$days'],renew, maps[index]['$cycleDays']);
        String d_color = findDayColor(maps[index]['$dayColor'],card.getReminderDays());
-       print("DY COLOR $d_color");
+     //  print("DY COLOR $d_color");
        card.setDayColorHex(d_color);
        card.setDayCount(val);
+       card.setCycleDays(maps[index]['$cycleDays']); //set the cycle can only be changed when edited out
 
 
-
-       card.setHexColor((maps[index]['$color']));///temporary
+       card.setHexColor((maps[index]['$color']));
        card.setReminder(ans);
      // card.setReminderDays((maps[index]['$reminder_days']));
        card.NamePayment(maps[index]['$paymentType']);
@@ -269,8 +274,9 @@ class storedData{
    }
    ///gets the difference in days and update the subscription
   ///Method will also be used for the notification
-   String getDifference(String dateString, String days){
+   String getDifference(String dateString, String days, bool cycleStatus, int cycleCount){
      DateTime now = DateTime.now();
+
      int nowDay =  int.parse(days);
 
 
@@ -278,31 +284,33 @@ class storedData{
 
       diff = now.difference(saved).inDays; //leave as original if same as day (ie it is 0)
 
-     print ("this is difference-->>> $diff");
-     print ("this is the day made-->>> $nowDay");
-     print("this is the day created-->> $saved");
-     // check if 0, fix same day bug
+     ///checks if one day has passed, then updates the day
      if ((diff == 0 && saved.day !=now.day)){
        diff = nowDay-1;
      }
+     ///checks if diff days same as days for cycle, then it's set today
      else if (diff == nowDay){
 
       // return "TODAY";
-       return "0";
+       diff = 0;
+     }
 
-
-    }
+     ///subtracts days based on how many have passed
      else if (diff > 0){
        diff = nowDay - diff;
      }
-     else if (diff < 0){//then it past due
-       //return "EXPIRED";
-       return "-1";
-     }
 
-    // print("THIS IS DIFF: $diff");
+     ///it's past due, so check if renew on, then repeat cycle else make it expired
+     else if (diff < 0){
+       // if cycle on, reset days
+       if (cycleStatus){
+         diff = cycleCount - 1;
+       }else{// then it is expired
+         diff = -1;
+       }
+    }
 
-     //then its the same day
+     /// then its the same day and no change
      else{
        diff = nowDay;
      }

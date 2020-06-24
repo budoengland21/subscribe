@@ -15,6 +15,9 @@ class CardDetails{
   String _money;
   Color _temp;
   Color _dayColor;
+  int _cycleDays;
+
+
 
   String dayTemp;
 
@@ -26,6 +29,11 @@ class CardDetails{
   }
 
 
+  int getCycleDays() => _cycleDays;
+
+  void setCycleDays(int value) {
+    _cycleDays = value;
+  }
 
   String getMoney() => _money;
    void setMoney(String value) {

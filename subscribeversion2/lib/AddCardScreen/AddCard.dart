@@ -92,8 +92,8 @@ class _AddCardState extends State<AddCard> {
   //used to check if switch is on
   bool isOn = false;
   bool renewOn = true;
-  List<String> days = ["1 day", "3 days", "7 days"];
-  String defaultDay = "3 days";
+  List<String> days = ["1 day", "3 days", "5 days", "7 days", "Custom"];
+  String defaultDay = "1 day";
 
   ///storing dates, first time stores date first time entered
   String defaultDate = "Today";
@@ -144,14 +144,14 @@ class _AddCardState extends State<AddCard> {
 
 
     }
-
+     cardDetails.setCycleDays(customDiff);
      print('customCycle $customDiff'); /// we store this in the database , this is the custom cycle
 
 
   }
 // calculate days for 7 days, 3 months but not for custom
   void calculateCycleDays(int val){
-    diff = (DateTime.now().difference(firstTime).inDays); //changes to positive if begin > today's date
+    diff = (DateTime.now().difference(firstTime).inDays);
 
     int ans;
     //check if it was in a cycle and user changed renew option
@@ -205,8 +205,9 @@ class _AddCardState extends State<AddCard> {
       }
 
     }
-     print(ans);
-     updateDays(ans.toString(),false);
+
+    cardDetails.setCycleDays(val); /// we store this in the database , this is the regular cycle
+    updateDays(ans.toString(),false);
   }
 
   //Reupdate card name as user types
@@ -455,40 +456,41 @@ class _AddCardState extends State<AddCard> {
   Widget build(BuildContext context) {
     //Since default color is black
    // cardDetails.setColor(Colors.black); //set the color
-
+/// This is what user sees when card is being updated
       if (this.widget.accessCard != null){
         setState(() {
           updating = true;
-          CardDetails temp = this.widget.accessCard;
-          oldName = temp.getNameCard(); //used for updating
+          cardDetails = this.widget.accessCard; /// code added, simplifes setting things, test so cycle option must be included in cardDetails
+         // CardDetails temp = this.widget.accessCard;
+          oldName = cardDetails.getNameCard(); //used for updating
 
           //set the text in controller
           textCheck.text = oldName;
-          amountController.text = temp.getMoney();
-          updateCardName(temp.getNameCard());
+          amountController.text = cardDetails.getMoney();
+          updateCardName(cardDetails.getNameCard());
         //  textCheck = temp.getNameCard();
-          updateDays(temp.getDayCount(),false);
-          updateColor(temp.getColor());
-          updatePaymentType(temp.getNamePayment());
-          if (temp.getNamePayment() == "Debit"){
-            make();}else if (temp.getNamePayment()== "Credit"){make1();}else if (temp.getNamePayment() == "Gift card"){make3();}else{make2();}
-          isOn = temp.getReminder();
+          updateDays(cardDetails.getDayCount(),false);
+          updateColor(cardDetails.getColor());
+          updatePaymentType(cardDetails.getNamePayment());
+          if (cardDetails.getNamePayment() == "Debit"){
+            make();}else if (cardDetails.getNamePayment()== "Credit"){make1();}else if (cardDetails.getNamePayment() == "Gift card"){make3();}else{make2();}
+          isOn = cardDetails.getReminder();
           if (isOn){
-            cardDetails.setReminder(isOn);
-            if (temp.getReminderDays() == 1){
-              defaultDay = temp.getReminderDays().toString()+" day";
+          //  cardDetails.setReminder(isOn);
+            if (cardDetails.getReminderDays() == 1){
+              defaultDay = cardDetails.getReminderDays().toString()+" day";
             }else{
-              defaultDay = temp.getReminderDays().toString()+" days";
+              defaultDay = cardDetails.getReminderDays().toString()+" days";
           }
           }
-          checkReminderDays(temp.getReminderDays().toString());
-          renewOn = temp.getRenew();
-          updateMoney(temp.getMoney());
+          checkReminderDays(cardDetails.getReminderDays().toString());
+          renewOn = cardDetails.getRenew();
+          updateMoney(cardDetails.getMoney());
 
 
 
           //clear it
-           cardDetails = temp;// gives access to colors and anything it has
+         //  cardDetails = temp;// gives access to colors and anything it has
           print('data------');
           print(cardDetails.getNameCard());
 //          print(cardDetails.getCardId());
