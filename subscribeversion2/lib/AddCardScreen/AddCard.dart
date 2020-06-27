@@ -44,8 +44,14 @@ class _AddCardState extends State<AddCard> {
   int storeAns; //keeps track of the days if user presses renew on/off to set state;
   bool inCycle = false; //determine if it was in a cycle and re activate the days by storeAns
 
-  int diff; //calculate the difference between days for cycle
+  int diff = -1; //calculate the difference between days for cycle
   int customDiff; // calculate difference between custom cycle
+  int storeCycleDays = -1; ///keeps track of cycle days for dialog box to pop an error if needed
+  bool cycleDialog = false;
+  bool cycleNum = false;
+  bool userCancel = false; /// checks if cancelled
+  /// for the dialog boxes
+
   bool notStarted=false; // check if cycle has started
   //textCheck =
   CardDetails cardDetails = new CardDetails();
@@ -147,6 +153,7 @@ class _AddCardState extends State<AddCard> {
 
 
     }
+    storeCycleDays = customDiff;
      cardDetails.setCycleDays(customDiff);
      print('customCycle $customDiff'); /// we store this in the database , this is the custom cycle
 
@@ -208,7 +215,7 @@ class _AddCardState extends State<AddCard> {
       }
 
     }
-
+    storeCycleDays = val;
     cardDetails.setCycleDays(val); /// we store this in the database , this is the regular cycle
     updateDays(ans.toString(),false);
   }
@@ -381,6 +388,9 @@ class _AddCardState extends State<AddCard> {
 
 
       cardDetails.setRenew(renewOn);
+      print(isOn);
+      print('lopppppppppppppppp');
+      cardDetails.setReminder(isOn);
      // arrayOfCards.updatePerformed();
 
 
@@ -428,90 +438,131 @@ class _AddCardState extends State<AddCard> {
     return  await showDialog(context: context,
       barrierDismissible: false, //user cant exit unless press cancel or set
       builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.black,
-          title: Text('Set custom reminder',style: TextStyle(color:Colors.white),),
+        return StatefulBuilder(
+          builder: (context, setState){
+           return  AlertDialog(
 
-          content: SingleChildScrollView(
-            child: ListBody( // makes list of items
+            backgroundColor: Colors.black,
+            title: Text('Set custom reminder',style: TextStyle(color:Colors.white),),
 
-           reverse: true,
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
+            content: SingleChildScrollView(
+              child: ListBody( // makes list of items
+
+             reverse: true,
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
 
 
-                    Row(
-                      children: <Widget>[
-                        Text('Remind me',style: TextStyle(color:Colors.white),),
-                        SizedBox(
-                          width: 24,
-                        ),
-                        Container(
-                          width: 44,
-                          height: 30,
-                          child: TextField(
-
-                            decoration: InputDecoration(
-
-                              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color.fromRGBO(72, 72, 72, 1)),),
-                               //focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color:Color.fromRGBO(72, 72, 72, 1) ))
-                            ),style: TextStyle(color: Colors.white,),
-
-                            controller: daySelector,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              BlacklistingTextInputFormatter(
-                                  RegExp('[,|-]|[ ]|[.]')),
-                              //WhitelistingTextInputFormatter.digitsOnly],
-
-                            ],
+                      Row(
+                        children: <Widget>[
+                          Text('Remind me',style: TextStyle(color:Colors.white),),
+                          SizedBox(
+                            width: 24,
                           ),
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text('(days before)',style: TextStyle(color:Colors.white),)
+                          Container(
+                            width: 44,
+                            height: 30,
+                            child: TextField(
+
+                              decoration: InputDecoration(
+
+                                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color.fromRGBO(72, 72, 72, 1)),),
+                                 //focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color:Color.fromRGBO(72, 72, 72, 1) ))
+                              ),style: TextStyle(color: Colors.white,),
+
+                              controller: daySelector,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                BlacklistingTextInputFormatter(
+                                    RegExp('[,|-]|[ ]|[.]')),
+                                //WhitelistingTextInputFormatter.digitsOnly],
+
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text('(days before)',style: TextStyle(color:Colors.white),)
 
 
-                      ],
-                    )//,
-                  ],
-                )
+                        ],
+                      ),//,
+                      Visibility(
+                        visible: cycleDialog,
+                        child: Text("Please select a cycle", style: TextStyle(color: Colors.red)),
+                      ),
+                      Visibility(
+                        visible: cycleNum,
+                        child: Text("Reminder should be in range of cycle",style: TextStyle(color: Colors.red),),
+                      )
+
+                    ],
+                  )
 
 
 
-                //Text('Error')
-              ],
+                  //Text('Error')
+                ],
+              ),
+
             ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Cancel',style:TextStyle(color:Color.fromRGBO(72, 72, 72, 1)),),
+                onPressed:(){
+                  setState((){
+                    userCancel = true;
+                    cycleDialog = false;
+                    cycleNum = false;
+                    Navigator.of(context).pop();
+                  });
+                 // Navigator.of(context).pop();
+                  //return 'null';
+                },
+              ),
+             // Spacer(),
+              FlatButton(
+                child: Text('Set',style:TextStyle(color:Color.fromRGBO(72, 72, 72, 1))),
+                onPressed: () {
+                  print(storeCycleDays);
 
-          ),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Cancel',style:TextStyle(color:Color.fromRGBO(72, 72, 72, 1)),),
-              onPressed:(){
-                Navigator.of(context).pop();
-                //return 'null';
-              },
-            ),
-           // Spacer(),
-            FlatButton(
-              child: Text('Set',style:TextStyle(color:Color.fromRGBO(72, 72, 72, 1))),
-              onPressed: () {
-                Navigator.of(context).pop();
-               // String val =  daySelector.text;
-               // return val;
+                  if (storeCycleDays == -1){
+                    setState(() {
+                      userCancel = false;
 
-                //check cycle and show error
-              },
-            )
-          ],
-        );
-      }
-    );
+                      cycleDialog = true;
+                    });
+                  }else if (int.parse(obtainDay()) == 0 || int.parse(obtainDay()) > storeCycleDays)
+                    setState(() {
+                      cycleNum = true;
+                      userCancel=false;
+                    });
+                  else{
+                    setState(() {
+                      cycleDialog = false;
+                      cycleNum = false;
+                      userCancel=false;
+                      Navigator.of(context).pop();
+                    });
+
+                  }
+
+                 // String val =  daySelector.text;
+                 // return val;
+
+                  //check cycle and show error
+                },
+              )
+            ]);
+      } );
+        });
+
+    }
 
 
-  }
+
   String obtainDay() {
     return daySelector.text;
   }
@@ -519,7 +570,7 @@ class _AddCardState extends State<AddCard> {
 
   ///set the remainder
   void checkReminderDays(String remDays){
-    if (renewOn){
+    if (isOn){
       int i= calculateRem(remDays);
       cardDetails.setReminderDays(i);
     }
@@ -582,13 +633,31 @@ class _AddCardState extends State<AddCard> {
           //  cardDetails.setReminder(isOn);
             if (cardDetails.getReminderDays() == 1){
               defaultDay = cardDetails.getReminderDays().toString()+" day";
+              checkReminderDays(cardDetails.getReminderDays().toString() + " day");
+
             }else{
-              defaultDay = cardDetails.getReminderDays().toString()+" days";
+              /// Add the custom day to the list
+              if (cardDetails.getReminderDays() == 1 ||
+                  cardDetails.getReminderDays()== 3 ||
+                  cardDetails.getReminderDays() == 5){
+                ///testing
+
+              }else{
+                days.add(cardDetails.getReminderDays().toString()+ " days");
+                daySelector.text = cardDetails.getReminderDays().toString();
+              }
+                defaultDay = cardDetails.getReminderDays().toString()+" days";
+
+              checkReminderDays(cardDetails.getReminderDays().toString()+ " days");
+             }
+          }else{
+            cardDetails.setReminderDays(0);
           }
-          }
-          checkReminderDays(cardDetails.getReminderDays().toString());
+
+
           renewOn = cardDetails.getRenew();
           updateMoney(cardDetails.getMoney());
+          storeCycleDays = cardDetails.getCycleDays();
 
 
 
@@ -1059,8 +1128,9 @@ class _AddCardState extends State<AddCard> {
                                           val) { // onchanged takes parameter of whats changed
                                         setState(() {
                                           renewOn = val;
-                                        //  inCycle = true;
-                                        if (!customTapped){ ///doesn't apply to custom
+                                       //  inCycle = val;
+                                        if (!customTapped && diff != -1 ){ ///doesn't apply to custom
+                                        //  print('wwwwwwwwwwwwwwwww');
                                           calculateCycleDays(storeAns);
                                         }
 
@@ -1134,7 +1204,11 @@ class _AddCardState extends State<AddCard> {
                                     // default is 3 days
                                     onChanged: (newvalue) async  {
                                     if (newvalue == "Custom") {
-                                      await dayPickerBox();}
+                                      await dayPickerBox();
+                                      if (userCancel){
+                                        newvalue= days[0];
+                                      }
+                                    }
 
 
                                       setState(()  {
