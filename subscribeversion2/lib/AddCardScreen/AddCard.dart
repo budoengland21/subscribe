@@ -38,6 +38,9 @@ class _AddCardState extends State<AddCard> {
   bool customTapped = false; // check if custom button tapped
    final TextEditingController textCheck = new TextEditingController(); //track of the name of subscription
    final TextEditingController amountController = new TextEditingController();//keep track of amount
+  final  TextEditingController daySelector = new TextEditingController(); // keep track of custom days selected
+
+
   int storeAns; //keeps track of the days if user presses renew on/off to set state;
   bool inCycle = false; //determine if it was in a cycle and re activate the days by storeAns
 
@@ -92,7 +95,7 @@ class _AddCardState extends State<AddCard> {
   //used to check if switch is on
   bool isOn = false;
   bool renewOn = true;
-  List<String> days = ["1 day", "3 days", "5 days", "7 days", "Custom"];
+  List<String> days = ["1 day", "3 days", "5 days", "Custom"];
   String defaultDay = "1 day";
 
   ///storing dates, first time stores date first time entered
@@ -420,6 +423,100 @@ class _AddCardState extends State<AddCard> {
 
 
   }
+  ///this displays the dialog box
+  Future<void> dayPickerBox() async{
+    return  await showDialog(context: context,
+      barrierDismissible: false, //user cant exit unless press cancel or set
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.black,
+          title: Text('Set custom reminder',style: TextStyle(color:Colors.white),),
+
+          content: SingleChildScrollView(
+            child: ListBody( // makes list of items
+
+           reverse: true,
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+
+
+                    Row(
+                      children: <Widget>[
+                        Text('Remind me',style: TextStyle(color:Colors.white),),
+                        SizedBox(
+                          width: 24,
+                        ),
+                        Container(
+                          width: 44,
+                          height: 30,
+                          child: TextField(
+
+                            decoration: InputDecoration(
+
+                              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color.fromRGBO(72, 72, 72, 1)),),
+                               //focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color:Color.fromRGBO(72, 72, 72, 1) ))
+                            ),style: TextStyle(color: Colors.white,),
+
+                            controller: daySelector,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              BlacklistingTextInputFormatter(
+                                  RegExp('[,|-]|[ ]|[.]')),
+                              //WhitelistingTextInputFormatter.digitsOnly],
+
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text('(days before)',style: TextStyle(color:Colors.white),)
+
+
+                      ],
+                    )//,
+                  ],
+                )
+
+
+
+                //Text('Error')
+              ],
+            ),
+
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Cancel',style:TextStyle(color:Color.fromRGBO(72, 72, 72, 1)),),
+              onPressed:(){
+                Navigator.of(context).pop();
+                //return 'null';
+              },
+            ),
+           // Spacer(),
+            FlatButton(
+              child: Text('Set',style:TextStyle(color:Color.fromRGBO(72, 72, 72, 1))),
+              onPressed: () {
+                Navigator.of(context).pop();
+               // String val =  daySelector.text;
+               // return val;
+
+                //check cycle and show error
+              },
+            )
+          ],
+        );
+      }
+    );
+
+
+  }
+  String obtainDay() {
+    return daySelector.text;
+  }
+
+
   ///set the remainder
   void checkReminderDays(String remDays){
     if (renewOn){
@@ -433,10 +530,15 @@ class _AddCardState extends State<AddCard> {
   int calculateRem(String x){
     if (x== days[0]){
       return 1;
-    }else if (x==days[1]){
+    }else if (x==days[1] || x == null){
       return 3;
+    }else if (x== days[2]){
+      return 5;
+
     }else{
-      return 7;
+      print(x);
+    //  return 0;
+      return int.parse(daySelector.text); // thus it is custom
     }
   }
 
@@ -467,6 +569,7 @@ class _AddCardState extends State<AddCard> {
           //set the text in controller
           textCheck.text = oldName;
           amountController.text = cardDetails.getMoney();
+
           updateCardName(cardDetails.getNameCard());
         //  textCheck = temp.getNameCard();
           updateDays(cardDetails.getDayCount(),false);
@@ -1029,16 +1132,75 @@ class _AddCardState extends State<AddCard> {
                                   DropdownButton(iconEnabledColor: Color.fromRGBO(255, 241, 118, 1),
                                     value: defaultDay,style: TextStyle(color: Colors.white),
                                     // default is 3 days
-                                    onChanged: (newvalue) {
-                                      setState(() {
+                                    onChanged: (newvalue) async  {
+                                    if (newvalue == "Custom") {
+                                      await dayPickerBox();}
+
+
+                                      setState(()  {
                                         FocusScope.of(context).requestFocus( ///it will clear all focus of the textfield
                                             new FocusNode());
-                                        checkReminderDays(newvalue);
+
+                                        if (newvalue == "Custom") {
+
+
+                                          ///set up dialog box for user to access
+                                          // String val =  dayPickerBox() as String;
+                                          // await dayPickerBox() ;
+                                          String s = obtainDay() + " days";
+                                          //String s = st  " days";
+                                          int i = int.parse(obtainDay());
+                                          ///Check for duplicates
+                                          if (i == 1 || i == 3 || i == 5){
+                                            if (i == 1){
+                                              checkReminderDays(i.toString() + " day");
+                                              defaultDay = i.toString() + " day"; //since it already exists
+
+                                            }
+                                            else{
+                                              checkReminderDays(s);
+                                            defaultDay = i.toString() + " days"; //since it already exists
+                                            }
+
+                                          }
+                                          ///Update the dropdown with custom value
+                                          else{
+                                            if (days.length > 4) {
+                                              ///get rid of the custom days they previously selected
+                                              days.removeLast();
+                                              days.removeLast();
+                                              days.add(s);
+                                              days.add("Custom");
+                                              checkReminderDays(s);
+                                              defaultDay = days[3]; //add new days to dropdown
+
+                                            }
+
+                                            else{
+                                              days.removeLast();
+                                              days.add(s);
+                                              days.add("Custom");
+                                              checkReminderDays(s);
+                                                defaultDay = days[3];
+                                            }
+
+                                          }
 
 
 
 
-                                        defaultDay = newvalue;
+                                          // days.insert(3, daySelector.text);
+                                          print(days);
+
+                                          /// This if it is not custom
+                                        }
+
+
+                                         else{
+                                          checkReminderDays(newvalue);
+                                          defaultDay = newvalue;
+                                        }
+
                                       });
                                     },
                                     //items takes in values(days) and puts them in list for dropdown
