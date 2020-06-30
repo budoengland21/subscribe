@@ -111,18 +111,8 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context)  {
                                   padding: const EdgeInsets.only(top:5,left: 3),
                                   child: Row(
                                     children: <Widget>[
-                                      Container(
-                                        height: 60,
-                                        //color: Colors.red,
-                                        width: 70,
-                                        decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                              image: AssetImage(cards.seeCard(i).getNamePayment()),
-                                              fit: BoxFit.contain,
+                                      checkPayment(i, cards),
 
-                                            )
-                                        ),
-                                      ),
                                       Container(
                                         height: 40,
                                         width: 90,
@@ -188,6 +178,30 @@ String modifyView(String days){
   else{
     return days+ " DAYS";
   }
+}
+
+Container checkPayment(int i, ArrayOfCards a){
+  if (a.seeCard(i).getNamePayment() != null){
+    return (
+        Container(
+          height: 60,
+          //color: Colors.red,
+          width: 70,
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(a.seeCard(i).getNamePayment()),
+                fit: BoxFit.contain,
+
+              )
+          ),
+        )
+    );
+
+  }return Container(
+    height: 60,
+    //color: Colors.red,
+    width: 70,
+  );
 }
 
 

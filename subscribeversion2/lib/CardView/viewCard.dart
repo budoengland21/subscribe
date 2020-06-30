@@ -40,6 +40,24 @@ class viewCard extends StatelessWidget {
 
     }
 
+    Container checkPay(){
+      if (card.getNamePayment() != null){
+       return  Container(
+            height: 50,width: 70,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(this.card.getNamePayment(),
+                ),fit: BoxFit.cover,
+              ),));
+
+
+      }  return
+        Container(
+            height: 50,width: 70,
+           child: Text("None",style: TextStyle(color: Colors.white,),)
+        );
+    }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -130,13 +148,8 @@ class viewCard extends StatelessWidget {
                         children: <Widget>[
                           Text("Payment type",style: TextStyle(color:Colors.white,fontSize: 30)),
                           Spacer(),
-                          Container(
-                            height: 50,width: 70,
-                          decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage(this.card.getNamePayment(),
-                               ),fit: BoxFit.cover,
-                          ),))
+                          checkPay(),
+
 
                         ],
 

@@ -45,10 +45,21 @@ class CardDetails{
     _renew = value;
   }
 
-  String getNamePayment() => _namePayment;
-  void NamePayment(String value) {
-    _namePayment = value;
+  String getNamePayment() {
+    if (_namePayment == "None") {
+      return null;
+
+    }else {
+      return _namePayment;
+    }
+   // _namePayment;
   }
+  void NamePayment(String value) {
+    if (value == null){
+      _namePayment = "None";
+    }else{
+    _namePayment = value;
+  }}
 
   int getReminderDays() {
     if (_reminder){
@@ -145,20 +156,47 @@ class CardDetails{
      return dayTemp;
   }
 
+  ///checks to see if the remainder days is valid, if renew is off
+  ///based on the days remaining
+
+  ///1 = means invalid
+  int checkRemDays(bool renewal, int daysNow){
+    //List i = new List();
+     if (!renewal){
+       if (daysNow == 2 || daysNow == 1|| daysNow == 0){
+         return 1; // so 3 is invalid
+       }else{
+         return 0; //meaning all good
+       }
+     }else{
+       return 0;
+     }
+
+  }
+
 
 
   ///Checks if all fields were filled
   ///if not then button can't be selected
-  bool checkAll(){
-    if ((_nameCard!=null) && (_dayCount!=null)  &&
-        (_namePayment!=null) && (_money!=null) ){
-      //also insert into database
-     // insertDatabase();
+  ///0 - all empty
+  ///1 - mane empty
+  ///2 - days not set
+  ///3 - amount not set
+  ///4 = all set
+  int checkAll(){
+   if (_nameCard == null && _dayCount == null && _money == null){
+     return 0;
+   }
+   else if (_nameCard == null){
+     return 1;
+   }else if (_dayCount == null){
+     return 2;
+   }else if (_money == null){
+     return 3;
+   }else{
+     return 4;
+   }
 
-      return true;
-    }else{
-      return false;
-    }
   }
 
 
