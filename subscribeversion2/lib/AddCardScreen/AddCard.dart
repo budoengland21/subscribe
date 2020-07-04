@@ -4,11 +4,13 @@
 
 
 import 'dart:ui';
+import 'package:intl/intl.dart'; /// for datetime
 
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 import 'package:flutter/services.dart';
+import 'package:keyboard_visibility/keyboard_visibility.dart';
 import 'package:subscribeversion2/DataStorage/ArrayOfCards.dart';
 import 'package:subscribeversion2/DataStorage/CardDetails.dart';
 import 'package:subscribeversion2/DataStorage/storedData.dart';
@@ -30,14 +32,18 @@ class AddCard extends StatefulWidget {
 
 }
 
+
 class _AddCardState extends State<AddCard> {
+
   //Controller to check if user changed a value in the text field box
   String oldName = "";
-  DateTime endVal= DateTime.now();
+  // endVal= DateTime.now();
   String customText = "Custom";
   bool customTapped = false; // check if custom button tapped
    final TextEditingController textCheck = new TextEditingController(); //track of the name of subscription
    final TextEditingController amountController = new TextEditingController();//keep track of amount
+
+
   final  TextEditingController daySelector = new TextEditingController(); // keep track of custom days selected
 
   ///error fields for checking fields
@@ -46,6 +52,8 @@ class _AddCardState extends State<AddCard> {
   bool daysError = false;
   Color amountError = Colors.white;
 
+  bool trackr = false; // determine if amount pressed for first time
+  String goodAmount=""; // regex remover
 
   int storeAns; //keeps track of the days if user presses renew on/off to set state;
   bool inCycle = false; //determine if it was in a cycle and re activate the days by storeAns
@@ -66,6 +74,23 @@ class _AddCardState extends State<AddCard> {
   ArrayOfCards arrayOfCards = new ArrayOfCards();
 
   double op = 0.5; /// determines opacity of button
+
+  bool keyboardState; /// store the state of the keyboard
+
+  @protected
+  void initState(){
+    super.initState();
+
+
+   /* keyboardState = KeyboardVisibilityNotification().isKeyboardVisible;
+    KeyboardVisibilityNotification().addNewListener(
+      onChange: (bool visible){
+       keyboardState = visible;
+
+      }
+    );*/
+  }
+
 
   ///the min date for custom
   DateTime minDate(){
@@ -130,7 +155,8 @@ class _AddCardState extends State<AddCard> {
       defaultDate = "Today";
     }
     else{
-      defaultDate = d.day.toString()+"-"+d.month.toString()+"-"+d.year.toString();
+      defaultDate = DateFormat.yMMMd().format(d);
+      //defaultDate = d.day.toString()+"-"+d.month.toString()+"-"+d.year.toString();
       firstTime = d;
 
     }
@@ -366,7 +392,7 @@ class _AddCardState extends State<AddCard> {
         tempDays = "EXPIRED";
         cardDetails.setDayColor(Color.fromRGBO(255, 0, 0, 1)); //set to red
       }else if (notStarted){ //*NOT STARTED :
-        tempDays="NOT STARTED: "+val + " DAY(S)";
+        tempDays="FUTURE: "+val + " DAY(S)";
         cardDetails.setDayColor(Color.fromRGBO(26, 255, 49, 1));//else set to green
       }
       else{
@@ -642,7 +668,7 @@ class _AddCardState extends State<AddCard> {
           updateColor(cardDetails.getColor());
           updatePaymentType(cardDetails.getNamePayment());
           if (cardDetails.getNamePayment() == "Debit"){
-            make();}else if (cardDetails.getNamePayment()== "Credit"){make1();}else if (cardDetails.getNamePayment() == "Gift card"){make3();}else{make2();}
+            make();}else if (cardDetails.getNamePayment()== "Credit"){make1();}else if (cardDetails.getNamePayment() == "Gift card"){make2();}else{make3();}
           isOn = cardDetails.getReminder();
           if (isOn){
           //  cardDetails.setReminder(isOn);
@@ -668,8 +694,22 @@ class _AddCardState extends State<AddCard> {
           }else{
             cardDetails.setReminderDays(0);
           }
+          int cyc = cardDetails.getCycleDays();
+          if (cyc == 7){
+            colorDay();
+          }else if (cyc == 14){
+            colorDay1();
+          }else if (cyc == 30){
+            colorDay2();
+          }else if (cyc == 90){
+            colorDay3();
+          }else{
+            //customText = cyc.toString() + "days";
+            customTapped = true;
+            //daysError = false;
+            colorCustom();
+          }
 
-          print(cardDetails.getCycleDays());
           renewOn = cardDetails.getRenew();
           updateMoney(cardDetails.getMoney());
           storeCycleDays = int.parse(cardDetails.getDayCount());
@@ -981,7 +1021,7 @@ class _AddCardState extends State<AddCard> {
                                         customTapped = false;
                                         setState(() {
                                           daysError = false;
-
+                                          //print("SEE:$keyboardState");
                                           colorDay1();
                                           storeAns=14;
                                           calculateCycleDays(14);
@@ -1104,9 +1144,9 @@ class _AddCardState extends State<AddCard> {
                                               onConfirm: (val){///after done pressed
                                                 print(val);
                                                 setState(() {
-                                                  daysError = true;
+                                                  daysError = false;
 
-                                                  endVal = val; // changes value of custom text
+                                               //   endVal = val; // changes value of custom text
                                                   colorCustom();
                                                   //calculateDays(val);
                                                   calculateD(val);
@@ -1534,20 +1574,39 @@ class _AddCardState extends State<AddCard> {
                                       //block digits with comma, hyphen etc.
                                     ),style: TextStyle(color: Colors.white),
                                     controller: amountController,
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.number, maxLength: 6,
                                     inputFormatters: [
                                       BlacklistingTextInputFormatter(
                                           RegExp('[,|-]|[ ]')),
                                       //WhitelistingTextInputFormatter.digitsOnly],
 
                                     ],
+
+                                    ///will be used to determine if first time clicked
+                                    onSubmitted: (val){
+                                      if (val.endsWith(".")){
+                                        setState(() {
+                                          amountController.text+="0";
+                                          updateMoney(amountController.text);
+                                          amountError= Colors.white;
+                                        });
+                                        
+                                      }
+                                    },
+
+
                                     onChanged: (val) { //takes parameter
+                                         checkAmount(val);
                                       setState(() {
+                                        amountError=Colors.white;
+
                                         nameError = Colors.white;
-                                        if (cardDetails.checkAll() ==4){
+
+                                        if (cardDetails.checkAll() ==4 && amountController.text != ""){
                                           op = 1;
                                         }
-                                        updateMoney(val);
+                                        print(amountController.text);
+                                        updateMoney(amountController.text);
                                       });
                                     },),//decoration: BoxDecoration(border: Border(left:BorderSide.none,right:BorderSide.none,top:BorderSide.none,),borderRadius: BorderRadius.all(Radius.circular(9)),),
                                 )
@@ -1574,8 +1633,9 @@ class _AddCardState extends State<AddCard> {
                                     int i = cardDetails.checkRemDays(renewOn, storeCycleDays);
                                     int x = cardDetails.checkAll();
 
+
                                     ///checks if everything is set
-                                    if (x ==4 && i == 0){
+                                    if (x ==4 && i == 0 && amountController.text != ""){
                                       ///go to home screen add card
                                       errorCheck = false;
                                       op = 1;
@@ -1594,7 +1654,7 @@ class _AddCardState extends State<AddCard> {
                                       setState(() {
                                         daysError = true;
                                       });
-                                    }else if (x == 3){// money not set
+                                    }else if (x == 3 || amountController.text == ""){// money not set
                                       setState(() {
                                         amountError = Colors.red;
                                       });
@@ -1678,7 +1738,8 @@ class _AddCardState extends State<AddCard> {
   }
 
   Column customContainer(){
-    if (updating || customTapped){
+    int x = cardDetails.getCycleDays();
+    if (customTapped){
       return
         Column(
           mainAxisAlignment: MainAxisAlignment
@@ -1686,9 +1747,10 @@ class _AddCardState extends State<AddCard> {
 
           children: <Widget>[
 
-            Text(endVal.day.toString(), style: TextStyle(
+
+            Text(x.toString(), style: TextStyle(
                 fontSize: 40),),
-             Text(endVal.month.toString() + "/" + endVal.year.toString(), style: TextStyle(
+             Text("DAYS", style: TextStyle(
             fontSize: 20),),
 
 
@@ -1705,6 +1767,46 @@ class _AddCardState extends State<AddCard> {
             fontSize: 20),),
       ],
     );
+  }
+
+
+  void checkAmount(String val) {
+
+
+
+   String p = r'(^[0-9]{0,4}(.)?[0-9]{0,2}$)';
+
+    RegExp regExp = new RegExp(p);
+    if (amountController.text.startsWith(".")||
+        amountController.text.startsWith(",")||
+        amountController.text.startsWith(" ")||
+        amountController.text.startsWith("-")){
+
+        amountController.text = amountController.text.substring(1,);
+
+
+
+    }
+    if (!regExp.hasMatch(val)){
+
+
+      print("NOT VALID");
+
+      amountController.text = amountController.text.substring(0,amountController.text.length-1);
+
+      //then it ends with dot
+    }
+    else{
+      goodAmount = val;
+      print ("ACCEPTED");
+    }
+
+  //  print("SEE:$keyboardState");
+
+   amountController.selection = TextSelection.fromPosition(
+       TextPosition(offset: amountController.text.length)
+   );
+
   }
 
 
