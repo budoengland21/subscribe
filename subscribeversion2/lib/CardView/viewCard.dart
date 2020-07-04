@@ -15,8 +15,12 @@ class viewCard extends StatelessWidget {
   String checkSet(){
     if (this.card.getReminderDays() == 0){
       return "Not set";
-    }else{
-      return this.card.getReminderDays().toString();
+
+    }else if (this.card.getReminderDays() == 135){
+      return "Same day";
+    }
+    else{
+      return this.card.getReminderDays().toString() + " days";
     }}
     String checkRenew(){
       if (this.card.getRenew()){
@@ -54,7 +58,7 @@ class viewCard extends StatelessWidget {
       }  return
         Container(
             height: 50,width: 70,
-           child: Text("None",style: TextStyle(color: Colors.white,),)
+           child: Center(child: Text("None",style: TextStyle(color: Colors.white,fontSize: 24),))
         );
     }
 
@@ -63,7 +67,7 @@ class viewCard extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        elevation: 0,
+        elevation: 0,iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: Colors.black,),
       body:
         Column(
@@ -119,7 +123,7 @@ class viewCard extends StatelessWidget {
                         children: <Widget>[
                           Text("Days remaining",style: TextStyle(color:Colors.white,fontSize: 30)),
                           Spacer(),
-                          Text(this.card.getDayCount(), style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold,fontSize: 25))
+                          Text(this.card.getDayCount()+" days", style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold,fontSize: 25))
                         ],
 
                       ),
@@ -134,7 +138,7 @@ class viewCard extends StatelessWidget {
                         children: <Widget>[
                           Text("Amount",style: TextStyle(color:Colors.white,fontSize: 30)),
                           Spacer(),
-                          Text(this.card.getMoney(), style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold,fontSize: 25))
+                          Text("\$ "+this.card.getMoney(), style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold,fontSize: 25))
 
                         ],
 
@@ -164,7 +168,7 @@ class viewCard extends StatelessWidget {
                           Text("Reminder",style: TextStyle(color:Colors.white,fontSize: 30)),
                           Spacer(),
                           Text(checkSet(), style: TextStyle(color:Colors.white
-                              ,fontSize: 25))
+                              ,fontSize: 25,fontWeight: FontWeight.bold))
 
                         ],
 
@@ -176,7 +180,7 @@ class viewCard extends StatelessWidget {
                       ),
                       Row(
                         children: <Widget>[
-                          Text("Autorenew",style: TextStyle(color:Colors.white,fontSize: 30)),
+                          Text("Repeat Cycle",style: TextStyle(color:Colors.white,fontSize: 30)),
                           Spacer(),
                           Text(checkRenew(), style: TextStyle(color:Colors.white
                               ,fontSize: 25))

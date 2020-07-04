@@ -668,7 +668,8 @@ class _AddCardState extends State<AddCard> {
           updateColor(cardDetails.getColor());
           updatePaymentType(cardDetails.getNamePayment());
           if (cardDetails.getNamePayment() == "Debit"){
-            make();}else if (cardDetails.getNamePayment()== "Credit"){make1();}else if (cardDetails.getNamePayment() == "Gift card"){make2();}else{make3();}
+            make();}else if (cardDetails.getNamePayment() == "Paypal"){make3();}///nothing
+          else if (cardDetails.getNamePayment()== "Credit"){make1();}else if (cardDetails.getNamePayment() == "Gift card"){make2();}//else{make3();}
           isOn = cardDetails.getReminder();
           if (isOn){
           //  cardDetails.setReminder(isOn);
@@ -687,9 +688,18 @@ class _AddCardState extends State<AddCard> {
                 days.add(cardDetails.getReminderDays().toString()+ " days");
                 daySelector.text = cardDetails.getReminderDays().toString();
               }
+              ///for same day
+              if (cardDetails.getReminderDays() == 135){
+                defaultDay = "Same day";
+                checkReminderDays(days[0]);
+              }
+              else{
                 defaultDay = cardDetails.getReminderDays().toString()+" days";
+                checkReminderDays(cardDetails.getReminderDays().toString()+ " days");
+              }
 
-              checkReminderDays(cardDetails.getReminderDays().toString()+ " days");
+
+
              }
           }else{
             cardDetails.setReminderDays(0);
@@ -775,18 +785,9 @@ class _AddCardState extends State<AddCard> {
                         Row(
                           children: <Widget>[
                             //Payment image container
-                            Container(
+                            //
+                            obtainPay(),
 
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: AssetImage(tempPay),
-                                    fit: BoxFit.contain
-                                ),
-
-                              ),
-                              width: 60,
-                              height: 60,
-                            ),
                             SizedBox(
                               width: 10,
                             ),
@@ -1807,6 +1808,32 @@ class _AddCardState extends State<AddCard> {
        TextPosition(offset: amountController.text.length)
    );
 
+  }
+
+
+  Container obtainPay(){
+    if (cardDetails.getNamePayment() != null){
+      return
+        Container(
+
+
+          decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage(tempPay),
+                fit: BoxFit.contain
+            ),
+
+          ),
+          width: 60,
+          height: 60,
+        );
+    }else{
+      return
+        Container(
+          width: 60,
+          height: 60,
+        );
+    }
   }
 
 
