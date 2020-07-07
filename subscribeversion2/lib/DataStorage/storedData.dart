@@ -284,6 +284,10 @@ class storedData{
 
       diff = now.difference(saved).inDays; //leave as original if same as day (ie it is 0)
 
+     print('diff in days $diff');
+
+     print('day made---> $saved');
+
      ///checks if one day has passed, then updates the day
      if ((diff == 0 && saved.day !=now.day)){
        diff = nowDay-1;

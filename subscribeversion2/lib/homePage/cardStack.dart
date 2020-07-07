@@ -5,20 +5,34 @@ import 'package:subscribeversion2/DataStorage/ArrayOfCards.dart';
 ///
 /// creates a stack of cards to display on the home screen
 
-
-List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context)  {
+List determineType(String c , ArrayOfCards array){
+  if (c == "pass"){
+    return array.obtainPast();
+  }else if (c == "upcoming"){
+    return null;
+  //  return array.obtainUpcoming();// add to database to inform user
+  }else{
+    return array.obtainIncoming();
+  }
+}
+List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardType)  {
   //ArrayOfCards cards = new ArrayOfCards();
   //cards.addCard()
   ///use if statement check if 0, then show balance
   print("passed here");
-  print((cards.checkSize()));
+ // print((cards.checkSize()));
 
-  int check = cards.checkSize();
+
   List<Widget> stacks = [];
   double ttop=10;
   double lleft= 0;
   double rright=0;
 
+
+  List stackType = determineType(cardType,cards);
+  int check = stackType.length;
+
+  print('size---> $check');
   if (check == 0){
     stacks.add(
         Positioned(
@@ -64,7 +78,7 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context)  {
   else{
 
 
-    for (int i=0; i< cards.checkSize(); i++){
+    for (int i=0; i< check; i++){
 
       stacks.add(
           Positioned(
@@ -83,14 +97,14 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context)  {
                   child: GestureDetector(
                     onTap: (){
 
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=> viewCard(cards.seeCard(i),i)));
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> viewCard(stackType[i],i)));
 
 
                     },
                     child: Card(
                       margin: EdgeInsets.zero,
                       elevation: 10,
-                      color: cards.seeCard(i).getColor(),
+                      color: stackType[i].getColor(),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(40))
                       ),
@@ -105,20 +119,20 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context)  {
                               children: <Widget>[
                                 Padding(
                                   padding: const EdgeInsets.only(left:20.0),
-                                  child: Text(cards.seeCard(i).getNameCard(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 38),),
+                                  child: Text(stackType[i].getNameCard(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 38,),),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(top:5,left: 3),
                                   child: Row(
                                     children: <Widget>[
-                                      checkPayment(i, cards),
+                                      checkPayment(i, stackType),
 
                                       Container(
                                         height: 40,
                                         width: 90,
                                         child: Center(
                                           child: Text(
-                                            '\$ ' + cards.seeCard(i).getMoney(), style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 23,),
+                                            '\$ ' + stackType[i].getMoney(), style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 23,),
                                           ),
                                         ),
                                       ),
@@ -131,11 +145,11 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context)  {
                                           width: 140,
 
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.all(Radius.circular(40),),color: cards.seeCard(i).getDayColor()
+                                            borderRadius: BorderRadius.all(Radius.circular(40),),color: stackType[i].getDayColor()
                                             //boxShadow: [BoxShadow(color: Colors.black12,spreadRadius: 1,blurRadius: 2)]
                                           ),
 
-                                          child: Center(child: Text(modifyView(cards.seeCard(i).getDayCount()),style: TextStyle(fontSize: 25,color: Colors.white,fontWeight: FontWeight.bold),)),
+                                          child: Center(child: Text(modifyView(stackType[i].getDayCount()),style: TextStyle(fontSize: 25,color: Colors.white,fontWeight: FontWeight.bold),)),
 
 
                                         ),
@@ -180,8 +194,8 @@ String modifyView(String days){
   }
 }
 
-Container checkPayment(int i, ArrayOfCards a){
-  if (a.seeCard(i).getNamePayment() != null){
+Container checkPayment(int i, List stack){
+  if (stack[i].getNamePayment() != null){
     return (
         Container(
           height: 60,
@@ -189,7 +203,7 @@ Container checkPayment(int i, ArrayOfCards a){
           width: 70,
           decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(a.seeCard(i).getNamePayment()),
+                image: AssetImage(stack[i].getNamePayment()),
                 fit: BoxFit.contain,
 
               )

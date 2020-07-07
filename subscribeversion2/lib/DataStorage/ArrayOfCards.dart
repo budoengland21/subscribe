@@ -25,6 +25,28 @@ class ArrayOfCards{
 
    }
 
+   List<CardDetails> obtainPast(){
+     List<CardDetails> past = new List();
+     for (int i =0; i < _storage.length; i++){
+       if (int.parse(_storage[i].getDayCount()) < 0){
+         past.add(_storage[i]);
+       }
+     }return past;
+
+   }
+   List<CardDetails> obtainIncoming(){
+     List<CardDetails> incoming = new List();
+     for (int i =0; i < _storage.length; i++){
+       if (int.parse(_storage[i].getDayCount()) >= 0){
+         incoming.add(_storage[i]);
+       }
+     }return incoming;
+
+
+   }
+
+
+
    void updatePerformed(){
      updated = true;
    }

@@ -108,12 +108,9 @@ class CardDetails{
 
   String getDayCount() => _dayCount;
  void setDayCount(String value) {
-   if (int.parse(value) == 1){
+
      _dayCount = value;
-   }
-   else{
-     _dayCount = value;
-   }
+
 
 
   }

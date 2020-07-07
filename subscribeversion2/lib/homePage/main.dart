@@ -3,6 +3,9 @@ import 'package:subscribeversion2/AddCardScreen/AddCard.dart';
 import 'package:subscribeversion2/DataStorage/ArrayOfCards.dart';
 import 'package:subscribeversion2/DataStorage/CardDetails.dart';
 import 'package:subscribeversion2/DataStorage/storedData.dart';
+import 'package:subscribeversion2/homePage/IncomingCards.dart';
+import 'package:subscribeversion2/homePage/UpcomingCards.dart';
+import 'package:subscribeversion2/homePage/pastCards.dart';
 
 
 import 'cardStack.dart';
@@ -40,6 +43,7 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
 
   ///keep state track
   //final myKey =   GlobalKey<FormState>();
+  int current = 0; /// index of the tab
 
 /// calls the singleton class
 
@@ -71,7 +75,7 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
   }
 
 
-
+/// get rid of observer that keep track if app is dormant
   @override
   void dispose() {
     // TODO: implement dispose
@@ -95,13 +99,20 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
 
 
   }
+  
+
 
 
 
   @override
   Widget build(BuildContext context) {
     buildContext = context;
-
+    ///list of the tabs for their bodies
+    final tabs = [
+      pastCards(a, buildContext),
+      IncomingCards(a, buildContext),
+      UpcomingCards(a, buildContext)
+    ];
     return Scaffold(
 
       backgroundColor: Colors.black,
@@ -131,38 +142,33 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
       ),
 
       body:
-          CustomScrollView(
-            slivers: <Widget>[
+     tabs[current],
+     bottomNavigationBar: BottomNavigationBar(
+     currentIndex: current,
+      items: <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          title: Text('Past'),
+          icon: Icon(Icons.ac_unit),
 
-             SliverFixedExtentList(
-               delegate: SliverChildListDelegate(
-                 [
-              Stack(
+        ),
+        BottomNavigationBarItem(
+          title: Text('Incoming'),
+          icon: Icon(Icons.access_alarm),
 
-              children: stackOfCards(a, context),
-              )]
-               ), itemExtent: 900,
-             )
-            ],
-          ),
+        ),
+        BottomNavigationBarItem(
+          title: Text('Upcoming'),
+          icon: Icon(Icons.ac_unit),
 
+        )
 
+      ],
+      onTap: (index){
+        setState(() {
+          current = index;
+        });
 
-           
-         
-
-
-
-
-
-
-
-
-
-
-
-
-
+      },),
 
 
 

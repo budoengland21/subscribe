@@ -181,6 +181,8 @@ class _AddCardState extends State<AddCard> {
       val = customDiff;
       print("val of cycle not started: $val");
       notStarted = true;
+      ///set to option not started to put in appropiate list
+     // cardDetails.setUpcoming(tr)
       updateDays(val.toString(), true);
 
       ///when the begin cycle is before today date
