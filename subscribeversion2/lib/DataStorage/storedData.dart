@@ -23,8 +23,10 @@ class storedData{
   String paymentType = 'Payment_type';
   String autoRenew = 'Auto_renew';
   String cycleDays = 'Cycle';
+  String statusCheck = 'status'; //
   String money = 'money';
   String actualDate = 'actualDate';//store date it was made
+  String dateNow = 'DateNow'; // used to calculate the database and compare days passed each time app opened
 
   int diff;
 
@@ -55,7 +57,7 @@ class storedData{
      Directory directory = await getApplicationDocumentsDirectory();
      String path = join(directory.path, 'subscribe.db');
      //open database
-     var myDatabase = await openDatabase(path, version: 29, onCreate: _createDatabase);
+     var myDatabase = await openDatabase(path, version: 34, onCreate: _createDatabase);
      return myDatabase;
 
 
@@ -74,9 +76,13 @@ class storedData{
          '$reminder_days INTEGER,'
          '$paymentType TEXT,'
            '$autoRenew TEXT, '
-           '$cycleDays INTEGER,' // ADDED THE CYCLE TO DATABASE
+           '$cycleDays INTEGER,'
+           '$statusCheck STRING,' // ADDED THE STATUS TO DATABASE
+
            '$money TEXT,'
-           '$actualDate TEXT)');
+           '$actualDate TEXT,'
+           '$dateNow TEXT)'
+           );
      }
      catch(Exception){
        print (Exception);
@@ -107,8 +113,10 @@ class storedData{
       '$paymentType': card.getNamePayment().toString(),
        '$autoRenew': card.getRenew().toString(),
        '$cycleDays': card.getCycleDays(),
+       '$statusCheck': card.getStatus().toString(),
        '$money': card.getMoney(),
-       '$actualDate': DateTime.now().toString()
+       '$actualDate': card.getDate().toString(),
+       '$dateNow': DateTime.now().toString(),
 
 
      };
@@ -204,6 +212,13 @@ class storedData{
 
        bool ans;
        bool renew;
+       bool startedCheck;
+       if (maps[index]['$statusCheck']== "true"){
+         startedCheck = true;
+       }else{
+         startedCheck = false;
+       }
+
      //  c=new Color(maps[index]['$color']).value as Color;
     //   print("LOOK DOWN REMINDER");
    //    print(maps[index]['$reminder']);
@@ -219,13 +234,21 @@ class storedData{
        print("seee"+maps[index]['$days']);
 
        ///calculate the difference and check whether to repeat the cycle
-       String val = getDifference(maps[index]['$actualDate'], maps[index]['$days'],renew, maps[index]['$cycleDays']);
+       String val = getDifference(maps[index]['$dateNow'], maps[index]['$days'],renew, maps[index]['$cycleDays'],startedCheck);
        String d_color = findDayColor(maps[index]['$dayColor'],card.getReminderDays());
      //  print("DY COLOR $d_color");
        card.setDayColorHex(d_color);
        card.setDayCount(val);
        card.setCycleDays(maps[index]['$cycleDays']); //set the cycle can only be changed when edited out
 
+       //check if subscription hasn't started
+
+       if (!startedCheck){/// if false then let user know hasn't started
+         card.updateStatus();
+       }
+
+       ///obtain date created
+       card.setDate(DateTime.parse(maps[index]['$actualDate']));
 
        card.setHexColor((maps[index]['$color']));
        card.setReminder(ans);
@@ -274,7 +297,7 @@ class storedData{
    }
    ///gets the difference in days and update the subscription
   ///Method will also be used for the notification
-   String getDifference(String dateString, String days, bool cycleStatus, int cycleCount){
+   String getDifference(String dateString, String days, bool cycleStatus, int cycleCount, bool hasStarted){
      DateTime now = DateTime.now();
 
      int nowDay =  int.parse(days);
@@ -282,14 +305,22 @@ class storedData{
 
      DateTime saved = DateTime.parse(dateString);
 
-      diff = now.difference(saved).inDays; //leave as original if same as day (ie it is 0)
+     // time isn't accounted for
+      diff = DateTime(now.year, now.month,now.day).difference
+        (DateTime(saved.year,saved.month,saved.day)).inDays; //leave as original if same as day (ie it is 0)
 
      print('diff in days $diff');
 
      print('day made---> $saved');
 
+     //first check if upcoming
+     if (!hasStarted){
+       diff = nowDay;
+     }
+
+
      ///checks if one day has passed, then updates the day
-     if ((diff == 0 && saved.day !=now.day)){
+     else if ((diff == 0 && saved.day !=now.day)){
        diff = nowDay-1;
      }
      ///checks if diff days same as days for cycle, then it's set today

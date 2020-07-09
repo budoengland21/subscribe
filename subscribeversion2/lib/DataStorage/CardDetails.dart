@@ -16,6 +16,8 @@ class CardDetails{
   Color _temp;
   Color _dayColor;
   int _cycleDays;
+  bool _status; ///represents if subscription has started, false if upcoming
+  DateTime created; ///stores the day created, so as to view when updating page
 
 
 
@@ -26,6 +28,25 @@ class CardDetails{
   CardDetails(){
     _reminder=false;
    _renew=false;
+   _status = true; //default that it has started
+  }
+
+  ///once called, then it hasn't started
+  void updateStatus(){
+    print("CHANGED");
+    _status = false;
+  }
+
+  bool getStatus(){
+    return _status;
+  }
+
+  void setDate(DateTime startingDate){
+    created = startingDate;
+
+  }
+  DateTime getDate(){
+    return created;
   }
 
 

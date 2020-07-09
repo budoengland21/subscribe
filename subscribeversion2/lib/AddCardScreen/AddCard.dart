@@ -147,6 +147,9 @@ class _AddCardState extends State<AddCard> {
   DateTime customD;
 
   DateTime firstTime = DateTime.now();
+
+
+
   ///calculate what value goes to button, format date
   void formatDate(DateTime d){
     customD = d;
@@ -160,6 +163,8 @@ class _AddCardState extends State<AddCard> {
       firstTime = d;
 
     }
+    //set the date for subscription, if updating, it will also change it
+
 
   }
   ///calculate date range for custom set days
@@ -181,8 +186,14 @@ class _AddCardState extends State<AddCard> {
       val = customDiff;
       print("val of cycle not started: $val");
       notStarted = true;
+      print("WTFFFFFFFFFFFFFFFFFFFFF");
       ///set to option not started to put in appropiate list
-     // cardDetails.setUpcoming(tr)
+
+      //
+
+
+
+
       updateDays(val.toString(), true);
 
       ///when the begin cycle is before today date
@@ -216,12 +227,7 @@ class _AddCardState extends State<AddCard> {
         //then it's one day, due to date bug
         //print('else 1 $diff');
         ans = val;
-      //  diff = diff.abs();
-    //    diff+=1;
-     //   ans=diff;
-    //    print('else $diff');
-        //but let user know it hasn't started
-        // let user know it starts in diff days.
+
         notStarted= true;
       }
 
@@ -265,7 +271,7 @@ class _AddCardState extends State<AddCard> {
 
   void make() {
     //just using length of colorcontain just coz its same255,241,118
-    selected = Color.fromRGBO(255, 241, 118, 1);
+    selected = Color.fromRGBO(255, 241, 118, 0.8);
     selected1 = Color.fromRGBO(72, 72, 72, 1);
     selected2 = Color.fromRGBO(72, 72, 72, 1);
     selected3 = Color.fromRGBO(72, 72, 72, 1);
@@ -273,7 +279,7 @@ class _AddCardState extends State<AddCard> {
 
   void make1() {
     //just using length of colorcontain just coz its same
-    selected1 = Color.fromRGBO(255, 241, 118, 1);
+    selected1 = Color.fromRGBO(255, 241, 118, 0.8);
     selected = Color.fromRGBO(72, 72, 72, 1);
     selected2 = Color.fromRGBO(72, 72, 72, 1);
     selected3 = Color.fromRGBO(72, 72, 72, 1);
@@ -281,7 +287,7 @@ class _AddCardState extends State<AddCard> {
 
   void make2() {
     //just using length of colorcontain just coz its same
-    selected2 =  Color.fromRGBO(255, 241, 118, 1);
+    selected2 =  Color.fromRGBO(255, 241, 118, 0.8);
     selected = Color.fromRGBO(72, 72, 72, 1);
     selected3 = Color.fromRGBO(72, 72, 72, 1);
     selected1 = Color.fromRGBO(72, 72, 72, 1);
@@ -289,7 +295,7 @@ class _AddCardState extends State<AddCard> {
 
   void make3() {
     //just using length of colorcontain just coz its same
-    selected3 = Color.fromRGBO(255, 241, 118, 1);
+    selected3 = Color.fromRGBO(255, 241, 118, 0.8);
     selected = Color.fromRGBO(72, 72, 72, 1);
     selected1 = Color.fromRGBO(72, 72, 72, 1);
     selected2 = Color.fromRGBO(72, 72, 72, 1);
@@ -297,7 +303,7 @@ class _AddCardState extends State<AddCard> {
 
 
   void colorDay() {
-    days0 =  Color.fromRGBO(255, 241, 118, 1);
+    days0 =  Color.fromRGBO(255, 241, 118, 0.8);
     days1 = Color.fromRGBO(72, 72, 72, 1);
     days2 = Color.fromRGBO(72, 72, 72, 1);
     days3 = Color.fromRGBO(72, 72, 72, 1);
@@ -306,7 +312,7 @@ class _AddCardState extends State<AddCard> {
 
   void colorDay1() {
     days0 = Color.fromRGBO(72, 72, 72, 1);
-    days1 =  Color.fromRGBO(255, 241, 118, 1);
+    days1 =  Color.fromRGBO(255, 241, 118, 0.8);
     days2 = Color.fromRGBO(72, 72, 72, 1);
     days3 = Color.fromRGBO(72, 72, 72, 1);;
     days4 = Color.fromRGBO(72, 72, 72, 1);
@@ -315,7 +321,7 @@ class _AddCardState extends State<AddCard> {
   void colorDay2() {
     days0 = Color.fromRGBO(72, 72, 72, 1);
     days1 = Color.fromRGBO(72, 72, 72, 1);
-    days2 =  Color.fromRGBO(255, 241, 118, 1);
+    days2 =  Color.fromRGBO(255, 241, 118, 0.8);
     days3 = Color.fromRGBO(72, 72, 72, 1);
     days4 = Color.fromRGBO(72, 72, 72, 1);
   }
@@ -324,7 +330,7 @@ class _AddCardState extends State<AddCard> {
     days0 =Color.fromRGBO(72, 72, 72, 1);
     days1 = Color.fromRGBO(72, 72, 72, 1);
     days2 = Color.fromRGBO(72, 72, 72, 1);
-    days3 =  Color.fromRGBO(255, 241, 118, 1);
+    days3 =  Color.fromRGBO(255, 241, 118, 0.8);
     days4 = Color.fromRGBO(72, 72, 72, 1);
   }
   void colorCustom(){
@@ -332,7 +338,7 @@ class _AddCardState extends State<AddCard> {
     days1 =  Color.fromRGBO(72, 72, 72, 1);
     days2 =  Color.fromRGBO(72, 72, 72, 1);
     days3 = Color.fromRGBO(72, 72, 72, 1);
-    days4 =  Color.fromRGBO(255, 241, 118, 1);
+    days4 =  Color.fromRGBO(255, 241, 118, 0.8);
 
   }
   void removeColor(){
@@ -395,6 +401,7 @@ class _AddCardState extends State<AddCard> {
         cardDetails.setDayColor(Color.fromRGBO(255, 0, 0, 1)); //set to red
       }else if (notStarted){ //*NOT STARTED :
         tempDays="FUTURE: "+val + " DAY(S)";
+        cardDetails.updateStatus(); ///set to false not started to be in upcoming
         cardDetails.setDayColor(Color.fromRGBO(26, 255, 49, 1));//else set to green
       }
       else{
@@ -434,7 +441,7 @@ class _AddCardState extends State<AddCard> {
       //Navigator.pop(context);
       //day color left at default
 
-
+     cardDetails.setDate(firstTime);
       updateDatabase(oldName);
       arrayOfCards.replaceCard(this.widget.cardIndex, cardDetails);//update the view
       Navigator.pop(context);//removes the add card
@@ -458,7 +465,8 @@ class _AddCardState extends State<AddCard> {
      // cardDetails.setCardId(cardIdValue+1);
       cardDetails.setRenew(renewOn);
       cardDetails.setReminder(isOn);
-
+      /// sets the date
+      cardDetails.setDate(firstTime);
        print(cardDetails.getDayCount());
      arrayOfCards.addCard(cardDetails); //print('cardID: $cardIdValue');
      //  this.widget.key.currentState.build(context);
@@ -725,6 +733,9 @@ class _AddCardState extends State<AddCard> {
           renewOn = cardDetails.getRenew();
           updateMoney(cardDetails.getMoney());
           storeCycleDays = int.parse(cardDetails.getDayCount());
+
+          //format begin cycle for user to see
+          formatDate(cardDetails.getDate());
 
 
 
@@ -1000,9 +1011,9 @@ class _AddCardState extends State<AddCard> {
 
                                             children: <Widget>[
                                               Text("1", style: TextStyle(
-                                                  fontSize: 40),),
+                                                  fontSize: 40,color: Colors.white),),
                                               Text("WEEK", style: TextStyle(
-                                                  fontSize: 20),),
+                                                  fontSize: 20,color: Colors.white),),
                                             ],
                                           ),
 
@@ -1038,9 +1049,9 @@ class _AddCardState extends State<AddCard> {
 
                                             children: <Widget>[
                                               Text("2", style: TextStyle(
-                                                  fontSize: 40),),
+                                                  fontSize: 40,color: Colors.white),),
                                               Text("WEEKS", style: TextStyle(
-                                                  fontSize: 20),),
+                                                  fontSize: 20,color: Colors.white),),
                                             ],
 
                                           ),
@@ -1076,9 +1087,9 @@ class _AddCardState extends State<AddCard> {
 
                                             children: <Widget>[
                                               Text("1", style: TextStyle(
-                                                  fontSize: 40),),
+                                                  fontSize: 40,color: Colors.white),),
                                               Text("MONTH", style: TextStyle(
-                                                  fontSize: 20),),
+                                                  fontSize: 20,color: Colors.white),),
                                             ],
                                           ),
 
@@ -1114,9 +1125,9 @@ class _AddCardState extends State<AddCard> {
 
                                             children: <Widget>[
                                               Text("3", style: TextStyle(
-                                                  fontSize: 40),),
+                                                  fontSize: 40,color: Colors.white),),
                                               Text("MONTHS", style: TextStyle(
-                                                  fontSize: 20),),
+                                                  fontSize: 20,color: Colors.white),),
                                             ],
                                           ),
 
@@ -1314,7 +1325,7 @@ class _AddCardState extends State<AddCard> {
                                           //String s = st  " days";
                                           int i = int.parse(obtainDay());
                                           ///Check for duplicates
-                                          if (i == 1 || i == 3 || i == 5){
+                                          if (i == 1 || i == 3){
                                             if (i == 1){
                                               checkReminderDays(i.toString() + " day");
                                               defaultDay = i.toString() + " day"; //since it already exists
@@ -1752,9 +1763,9 @@ class _AddCardState extends State<AddCard> {
 
 
             Text(x.toString(), style: TextStyle(
-                fontSize: 40),),
+                fontSize: 40,color: Colors.white),),
              Text("DAYS", style: TextStyle(
-            fontSize: 20),),
+            fontSize: 20,color: Colors.white),),
 
 
 
@@ -1767,7 +1778,7 @@ class _AddCardState extends State<AddCard> {
       children: <Widget>[
 
         Text(customText, style: TextStyle(
-            fontSize: 20),),
+            fontSize: 20,color: Colors.white),),
       ],
     );
   }

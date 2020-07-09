@@ -6,12 +6,15 @@ import 'package:subscribeversion2/DataStorage/ArrayOfCards.dart';
 /// creates a stack of cards to display on the home screen
 
 List determineType(String c , ArrayOfCards array){
+  print(c);
   if (c == "pass"){
     return array.obtainPast();
   }else if (c == "upcoming"){
-    return null;
-  //  return array.obtainUpcoming();// add to database to inform user
+
+    //return null;
+    return array.obtainUpcoming();// add to database to inform user
   }else{
+
     return array.obtainIncoming();
   }
 }

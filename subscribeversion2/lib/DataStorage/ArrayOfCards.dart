@@ -37,12 +37,25 @@ class ArrayOfCards{
    List<CardDetails> obtainIncoming(){
      List<CardDetails> incoming = new List();
      for (int i =0; i < _storage.length; i++){
-       if (int.parse(_storage[i].getDayCount()) >= 0){
+       if (int.parse(_storage[i].getDayCount()) >= 0 && _storage[i].getStatus()){
          incoming.add(_storage[i]);
        }
      }return incoming;
 
 
+   }
+
+   List<CardDetails> obtainUpcoming(){
+     List<CardDetails> upcoming = new List();
+     for (int i=0; i< _storage.length; i++){
+       print(_storage[i].getStatus());
+       print("status up");
+       if (!_storage[i].getStatus()){///if status false, then upcoming
+         upcoming.add(_storage[i]);
+
+        }
+
+     }return upcoming;
    }
 
 
