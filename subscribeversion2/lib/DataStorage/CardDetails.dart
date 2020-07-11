@@ -28,14 +28,16 @@ class CardDetails{
   CardDetails(){
     _reminder=false;
    _renew=false;
-   _status = true; //default that it has started
+ //  _status = true; //default that it has started
   }
 
   ///once called, then it hasn't started
-  void updateStatus(){
+  void updateStatus(bool val){
     print("CHANGED");
-    _status = false;
+    _status = val;
   }
+
+
 
   bool getStatus(){
     return _status;

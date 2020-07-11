@@ -68,6 +68,7 @@ class _AddCardState extends State<AddCard> {
   bool userCancel = false; /// checks if cancelled
   /// for the dialog boxes
 
+  bool statusCheck; /// used for determing if upcoming for updates
   bool notStarted=false; // check if cycle has started
   //textCheck =
   CardDetails cardDetails = new CardDetails();
@@ -227,6 +228,9 @@ class _AddCardState extends State<AddCard> {
         //then it's one day, due to date bug
         //print('else 1 $diff');
         ans = val;
+        diff = diff.abs();
+        diff+=1;
+        print("starts in: $diff");
 
         notStarted= true;
       }
@@ -395,17 +399,25 @@ class _AddCardState extends State<AddCard> {
 
       }else if (int.parse(val) == 0){ // WHEN USER is updating and it's 0 days
         tempDays = "DUE TODAY";
+        statusCheck = true;
+
         cardDetails.setDayColor(Color.fromRGBO(255, 0, 0, 1)); //set to red
       }else if(int.parse(val) == -1){
         tempDays = "EXPIRED";
+        statusCheck = true;
+
         cardDetails.setDayColor(Color.fromRGBO(255, 0, 0, 1)); //set to red
       }else if (notStarted){ //*NOT STARTED :
         tempDays="FUTURE: "+val + " DAY(S)";
-        cardDetails.updateStatus(); ///set to false not started to be in upcoming
+        statusCheck = false;
+
+
         cardDetails.setDayColor(Color.fromRGBO(26, 255, 49, 1));//else set to green
       }
       else{
         tempDays="DUE IN "+val + " DAY(S)";
+        statusCheck = true;
+
         cardDetails.setDayColor(Color.fromRGBO(26, 255, 49, 1));//else set to green
       }
       cardDetails.setDayCount(val);
@@ -435,11 +447,14 @@ class _AddCardState extends State<AddCard> {
       print(isOn);
       print('lopppppppppppppppp');
       cardDetails.setReminder(isOn);
+     cardDetails.updateStatus(statusCheck); ///update status based on upcoming
+
      // arrayOfCards.updatePerformed();
 
 
       //Navigator.pop(context);
       //day color left at default
+
 
      cardDetails.setDate(firstTime);
       updateDatabase(oldName);
@@ -459,6 +474,7 @@ class _AddCardState extends State<AddCard> {
     ///Adds a new card
     // set the autorenew and remainder
     else {
+      cardDetails.updateStatus(statusCheck);
       if (cardColor == Colors.grey) {
         cardDetails.setColor(cardColor);
       }
@@ -729,6 +745,9 @@ class _AddCardState extends State<AddCard> {
             //daysError = false;
             colorCustom();
           }
+          print(cardDetails.getStatus());
+          statusCheck = cardDetails.getStatus();
+          print('STATUS-----> $statusCheck');
 
           renewOn = cardDetails.getRenew();
           updateMoney(cardDetails.getMoney());
@@ -790,7 +809,7 @@ class _AddCardState extends State<AddCard> {
                       .of(context)
                       .size
                       .width) - 100,
-                    color: cardColor,
+                    color: cardColor.withOpacity(0.8),
                     //CARD DETAILS REAL TIME UPDATE
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -1723,7 +1742,7 @@ class _AddCardState extends State<AddCard> {
       Colors.lightGreen,
       Colors.teal,
       Colors.blue,
-      Colors.yellowAccent,
+      Colors.lime,
       Colors.orange,
       Colors.cyanAccent
     ];
@@ -1742,7 +1761,7 @@ class _AddCardState extends State<AddCard> {
 //                            //color: Colors.teal,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(50)),
-                  color: colorLst[i]),
+                  color: colorLst[i].withOpacity(0.8)),
             ),
           )
       );

@@ -36,6 +36,7 @@ class viewCard extends StatelessWidget {
 
       // int val = await store.getID(this.index);
        store.deleteItem(a.seeCard(this.index));
+       print('this is index delete:$index');
        a.removeCard(this.index);//removes from the array
 
        print("size");

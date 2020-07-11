@@ -24,34 +24,53 @@ class ArrayOfCards{
      return arrayOfCards;
 
    }
+///we need to obtain the index hence list in list
+  ///better implementation using map
+   List<List> obtainPast(){
 
-   List<CardDetails> obtainPast(){
-     List<CardDetails> past = new List();
+     List<List> past = new List();
      for (int i =0; i < _storage.length; i++){
        if (int.parse(_storage[i].getDayCount()) < 0){
-         past.add(_storage[i]);
+         List temp = new List();
+         temp.add(_storage[i]);
+         temp.add(i);
+         past.add(temp);
+        // temp.clear();
        }
      }return past;
 
    }
-   List<CardDetails> obtainIncoming(){
-     List<CardDetails> incoming = new List();
+   List<List> obtainIncoming(){
+
+     List<List> incoming = new List();
      for (int i =0; i < _storage.length; i++){
        if (int.parse(_storage[i].getDayCount()) >= 0 && _storage[i].getStatus()){
-         incoming.add(_storage[i]);
+         List temp = new List();
+         temp.add(_storage[i]);
+         temp.add(i);
+         incoming.add(temp);
+        // temp.clear();
+         print(incoming);
+
        }
      }return incoming;
 
 
    }
 
-   List<CardDetails> obtainUpcoming(){
-     List<CardDetails> upcoming = new List();
+   List<List> obtainUpcoming(){
+
+     List<List> upcoming = new List();
      for (int i=0; i< _storage.length; i++){
        print(_storage[i].getStatus());
-       print("status up");
+       print("RT000001");
        if (!_storage[i].getStatus()){///if status false, then upcoming
-         upcoming.add(_storage[i]);
+         List temp = new List();
+         temp.add(_storage[i]);
+         temp.add(i);
+         upcoming.add(temp);
+      //   temp.clear();
+
 
         }
 

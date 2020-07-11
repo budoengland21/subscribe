@@ -243,9 +243,9 @@ class storedData{
 
        //check if subscription hasn't started
 
-       if (!startedCheck){/// if false then let user know hasn't started
-         card.updateStatus();
-       }
+
+         card.updateStatus(startedCheck);
+
 
        ///obtain date created
        card.setDate(DateTime.parse(maps[index]['$actualDate']));
@@ -312,7 +312,7 @@ class storedData{
      print('diff in days $diff');
 
      print('day made---> $saved');
-
+     print("this is the cycle-----> $cycleStatus, $diff");
      //first check if upcoming
      if (!hasStarted){
        diff = nowDay;
@@ -327,7 +327,7 @@ class storedData{
      else if (diff == nowDay){
 
       // return "TODAY";
-       diff = 0;
+       diff = -1;
      }
 
      ///subtracts days based on how many have passed
@@ -336,12 +336,13 @@ class storedData{
      }
 
      ///it's past due, so check if renew on, then repeat cycle else make it expired
-     else if (diff < 0){
+     else if (diff < 0 || diff==-1){
        // if cycle on, reset days
+
        if (cycleStatus){
          diff = cycleCount - 1;
        }else{// then it is expired
-         diff = -1;
+         diff = -2;
        }
     }
 

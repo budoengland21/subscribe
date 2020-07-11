@@ -31,6 +31,7 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardT
   double lleft= 0;
   double rright=0;
 
+  ///NEED INDEX OF ARRAY OF CARDS AND NOT THE LIST TO UPDATE AND DELETE
 
   List stackType = determineType(cardType,cards);
   int check = stackType.length;
@@ -100,14 +101,14 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardT
                   child: GestureDetector(
                     onTap: (){
 
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=> viewCard(stackType[i],i)));
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> viewCard(stackType[i][0],stackType[i][1])));
 
 
                     },
                     child: Card(
                       margin: EdgeInsets.zero,
                       elevation: 10,
-                      color: stackType[i].getColor(),
+                      color: stackType[i][0].getColor(),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(40))
                       ),
@@ -122,7 +123,7 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardT
                               children: <Widget>[
                                 Padding(
                                   padding: const EdgeInsets.only(left:20.0),
-                                  child: Text(stackType[i].getNameCard(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 38,),),
+                                  child: Text(stackType[i][0].getNameCard(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 38,),),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(top:5,left: 3),
@@ -135,7 +136,7 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardT
                                         width: 90,
                                         child: Center(
                                           child: Text(
-                                            '\$ ' + stackType[i].getMoney(), style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 23,),
+                                            '\$ ' + stackType[i][0].getMoney(), style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 23,),
                                           ),
                                         ),
                                       ),
@@ -148,11 +149,11 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardT
                                           width: 140,
 
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.all(Radius.circular(40),),color: stackType[i].getDayColor()
+                                            borderRadius: BorderRadius.all(Radius.circular(40),),color: stackType[i][0].getDayColor()
                                             //boxShadow: [BoxShadow(color: Colors.black12,spreadRadius: 1,blurRadius: 2)]
                                           ),
 
-                                          child: Center(child: Text(modifyView(stackType[i].getDayCount()),style: TextStyle(fontSize: 25,color: Colors.white,fontWeight: FontWeight.bold),)),
+                                          child: Center(child: Text(modifyView(stackType[i][0].getDayCount()),style: TextStyle(fontSize: 25,color: Colors.white,fontWeight: FontWeight.bold),)),
 
 
                                         ),
@@ -198,7 +199,7 @@ String modifyView(String days){
 }
 
 Container checkPayment(int i, List stack){
-  if (stack[i].getNamePayment() != null){
+  if (stack[i][0].getNamePayment() != null){
     return (
         Container(
           height: 60,
@@ -206,7 +207,7 @@ Container checkPayment(int i, List stack){
           width: 70,
           decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(stack[i].getNamePayment()),
+                image: AssetImage(stack[i][0].getNamePayment()),
                 fit: BoxFit.contain,
 
               )
