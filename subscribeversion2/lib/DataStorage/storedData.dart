@@ -27,8 +27,11 @@ class storedData{
   String money = 'money';
   String actualDate = 'actualDate';//store date it was made
   String dateNow = 'DateNow'; // used to calculate the database and compare days passed each time app opened
+  String futureDays = 'Future';
 
   int diff;
+  int future;
+  int dateCreated;
 
 
   factory storedData(){
@@ -57,7 +60,7 @@ class storedData{
      Directory directory = await getApplicationDocumentsDirectory();
      String path = join(directory.path, 'subscribe.db');
      //open database
-     var myDatabase = await openDatabase(path, version: 34, onCreate: _createDatabase);
+     var myDatabase = await openDatabase(path, version: 35, onCreate: _createDatabase);
      return myDatabase;
 
 
@@ -81,8 +84,9 @@ class storedData{
 
            '$money TEXT,'
            '$actualDate TEXT,'
-           '$dateNow TEXT)'
-           );
+           ' $dateNow TEXT,'
+           '$futureDays INTEGER)');
+
      }
      catch(Exception){
        print (Exception);
@@ -117,6 +121,7 @@ class storedData{
        '$money': card.getMoney(),
        '$actualDate': card.getDate().toString(),
        '$dateNow': DateTime.now().toString(),
+       '$futureDays': card.getFuture(),
 
 
      };
@@ -206,13 +211,18 @@ class storedData{
      
      return List.generate(maps.length, (index){
        CardDetails card=new CardDetails();
-       //print(maps.length);
-       //return new CardDetails();
-       //maps[index]['$id'],
 
        bool ans;
        bool renew;
        bool startedCheck;
+        future = maps[index]['$futureDays'];
+        ///code checks difference between suscription created vs now
+        DateTime real = DateTime.now();
+        DateTime temp = DateTime.parse(maps[index]['$actualDate']);///begin cycle
+        dateCreated = DateTime(real.year, real.month,real.day).difference
+          (DateTime(temp.year,temp.month,temp.day)).inDays;
+
+
        if (maps[index]['$statusCheck']== "true"){
          startedCheck = true;
        }else{
@@ -233,15 +243,26 @@ class storedData{
        card.setNameCard(maps[index]['$cardName']);
        print("seee"+maps[index]['$days']);
 
+       ///update hasStarted if future == 0
+
+
        ///calculate the difference and check whether to repeat the cycle
        String val = getDifference(maps[index]['$dateNow'], maps[index]['$days'],renew, maps[index]['$cycleDays'],startedCheck);
-       String d_color = findDayColor(maps[index]['$dayColor'],card.getReminderDays());
-     //  print("DY COLOR $d_color");
+       print('This is the new future $future');
+       if (future == 0){
+         card.updateStatus(true);
+         startedCheck = true;
+       }
+       String d_color = findDayColor(maps[index]['$dayColor']);
+       print(" COLOR $d_color");
+       print('started --- $startedCheck');
        card.setDayColorHex(d_color);
        card.setDayCount(val);
        card.setCycleDays(maps[index]['$cycleDays']); //set the cycle can only be changed when edited out
 
-       //check if subscription hasn't started
+       ///set the future days
+       card.setFutureDays(future);
+
 
 
          card.updateStatus(startedCheck);
@@ -266,33 +287,25 @@ class storedData{
      });
    }
 
-   String findDayColor(String cal, int remainder){
+   String findDayColor(String cal){
      //check reminder days
      //String check = days;
-     print("diiff: $diff");
+     print("Days remaining updated-->: $diff");
 
-     if (remainder == 0){
-       if (diff == 1){//meaning 1 day remaining
-         return "#FF0000";//red color to mean 1 day remaining
-       }else{
-         return cal;//green color as default
-       }
+     ///code simplified so just check the days
+     ///if it is 1 day/today then ---> RED
+     ///ELSE --> GREEN
+
+     ///now we'll use diff to keep track of the days
+     ///and hence if its 1 day or today then it's red
+     if (diff <= 1 ){
+       return "#FF0000";//red color
+     }else{
+       print("how da f");
+       return cal;
      }
-     else{//then user set a reminder, so check the day they set it
-        if (diff == 0 || diff < 0){
-         return "#FF0000";
-       }
-       else{
-         //int val = int.parse(days.substring(0,1));
-         if (diff == remainder){
-           return "#FF0000";
-         }
-         else{
-           return cal;//green as default if reminder not reached
-         }
-         
-       }
-     }
+
+
 
    }
    ///gets the difference in days and update the subscription
@@ -303,51 +316,95 @@ class storedData{
      int nowDay =  int.parse(days);
 
 
-     DateTime saved = DateTime.parse(dateString);
+     DateTime saved = DateTime.parse(dateString);///technically the begin cycle too
 
-     // time isn't accounted for
+     ///difference between begin cycle and now (dateCreated) too
       diff = DateTime(now.year, now.month,now.day).difference
         (DateTime(saved.year,saved.month,saved.day)).inDays; //leave as original if same as day (ie it is 0)
 
      print('diff in days $diff');
 
-     print('day made---> $saved');
-     print("this is the cycle-----> $cycleStatus, $diff");
+
      //first check if upcoming
-     if (!hasStarted){
+
+     print('diff in days btwn begin cycle: $dateCreated');
+     print("has it started: $hasStarted");
+
+
+     ///check if in upcoming and its starts todY
+     ///so the difference between today date and date it was made==0, then it has reached that day
+     if(!hasStarted && dateCreated==0){//then the cycle has started so put in incoming
+       print("No longer a future");
+       future=0;
        diff = nowDay;
      }
 
+      ///check after  it is today
+     ///so dateCreated will be greater than cycle and it is either expired
+     ///or ready for renewal,
+     ///eg, if cycle is 7 days and date created =7,(so due today)
+     ///when database checked again date created=8, then check if above cycle(
+     ///by adding +1) , see if renewal is set to update it or expire it
+
+     else if (dateCreated == cycleCount+1){
+       if (cycleStatus){
+         print("Cycle started again");
+         diff = cycleCount - 1;
+       }else{// then it is expired
+         print("I AM EXPIRED");
+         diff = -1;
+       }
+     }
+
+
 
      ///checks if one day has passed, then updates the day
-     else if ((diff == 0 && saved.day !=now.day)){
-       diff = nowDay-1;
-     }
+   // else if ((diff == 0)){// && saved.day !=now.day)){
+
+
+     //    diff = nowDay-1;//Nowday is the days remaining
+
+
+    // }
      ///checks if diff days same as days for cycle, then it's set today
      else if (diff == nowDay){
+       print("ITS TODAY");
 
-      // return "TODAY";
-       diff = -1;
+        // return "TODAY";
+        diff = 0;
+
+
+
      }
 
      ///subtracts days based on how many have passed
-     else if (diff > 0){
-       diff = nowDay - diff;
+     ///set the diff to be the days remaining to show on the display
+     else if (diff >= 0){
+        diff = nowDay - diff;
+
+
+     }
+     ///if its expired,leave as is
+     else if (diff < 0){
+       //diff= diff.abs(); ///just to show how many days expired by
+       print("STILL EXPIRED");
+       diff = -1;
      }
 
-     ///it's past due, so check if renew on, then repeat cycle else make it expired
-     else if (diff < 0 || diff==-1){
+     ////it's past due, so check if renew on, then repeat cycle else make it expired
+   /*  else if (diff < 0 || diff==-1){
        // if cycle on, reset days
 
        if (cycleStatus){
          diff = cycleCount - 1;
        }else{// then it is expired
-         diff = -2;
+         diff = -1;
        }
-    }
+    }*/
 
      /// then its the same day and no change
-     else{
+     else{//assume it comes here only if diff< then it's a future
+       print("it's defo a future that's still not yet");
        diff = nowDay;
      }
     return diff.toString();

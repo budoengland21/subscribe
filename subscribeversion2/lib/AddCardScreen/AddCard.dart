@@ -46,6 +46,8 @@ class _AddCardState extends State<AddCard> {
 
   final  TextEditingController daySelector = new TextEditingController(); // keep track of custom days selected
 
+
+   CardDetails tempState = new CardDetails(); ///saves a temp state of the card
   ///error fields for checking fields
   //booleaan c;
   Color nameError =  Colors.white;
@@ -77,7 +79,9 @@ class _AddCardState extends State<AddCard> {
   double op = 0.5; /// determines opacity of button
 
   bool keyboardState; /// store the state of the keyboard
+  int reduceFuture =0;  ///store value for the future cards
 
+  bool isExpired = false; ///determine when renew on if expired
   @protected
   void initState(){
     super.initState();
@@ -96,7 +100,7 @@ class _AddCardState extends State<AddCard> {
   ///the min date for custom
   DateTime minDate(){
     int yr = DateTime.now().year;
-    int month = firstTime.month;
+    int month = DateTime.now().month;
 
     int day = firstTime.day+3;
     return DateTime(yr,month,day);
@@ -231,6 +235,7 @@ class _AddCardState extends State<AddCard> {
         diff = diff.abs();
         diff+=1;
         print("starts in: $diff");
+        reduceFuture = diff;
 
         notStarted= true;
       }
@@ -393,7 +398,7 @@ class _AddCardState extends State<AddCard> {
       //set the card to display the days
       if (int.parse(val) == 1 && !notStarted){
         tempDays="DUE IN "+ val + " DAY";
-        cardDetails.setDayColor(Color.fromRGBO(255, 0, 0, 1)); //set to red
+        cardDetails.setDayColor(Color.fromRGBO(26, 255, 49, 1)); //set to green
 
         print("updating.....");
 
@@ -405,6 +410,7 @@ class _AddCardState extends State<AddCard> {
       }else if(int.parse(val) == -1){
         tempDays = "EXPIRED";
         statusCheck = true;
+        isExpired = true;
 
         cardDetails.setDayColor(Color.fromRGBO(255, 0, 0, 1)); //set to red
       }else if (notStarted){ //*NOT STARTED :
@@ -442,7 +448,7 @@ class _AddCardState extends State<AddCard> {
       cardDetails.setColor(cardColor);
 
 
-
+      cardDetails.setFutureDays(reduceFuture);///set days reduce the future
       cardDetails.setRenew(renewOn);
       print(isOn);
       print('lopppppppppppppppp');
@@ -474,6 +480,7 @@ class _AddCardState extends State<AddCard> {
     ///Adds a new card
     // set the autorenew and remainder
     else {
+      cardDetails.setFutureDays(reduceFuture); ///set days reduce the future
       cardDetails.updateStatus(statusCheck);
       if (cardColor == Colors.grey) {
         cardDetails.setColor(cardColor);
@@ -670,6 +677,11 @@ class _AddCardState extends State<AddCard> {
   //  cardDetails.setNameCard("kkk");
     storage.updateRow(cardDetails, val);
   }
+
+  Future<bool> undoChanges() async{
+    arrayOfCards.replaceCard(this.widget.cardIndex, tempState);//
+    return true;
+  }
   ///Builder
   ///______________________________________________________________________________________________________________________________________________________________________________________________________________________________________
   @override
@@ -678,6 +690,7 @@ class _AddCardState extends State<AddCard> {
    // cardDetails.setColor(Colors.black); //set the color
 /// This is what user sees when card is being updated
       if (this.widget.accessCard != null){
+        tempState = this.widget.accessCard;///stores the state incase press back
         setState(() {
           updating = true;
           cardDetails = this.widget.accessCard; /// code added, simplifes setting things, test so cycle option must be included in cardDetails
@@ -733,12 +746,18 @@ class _AddCardState extends State<AddCard> {
           int cyc = cardDetails.getCycleDays();
           if (cyc == 7){
             colorDay();
+
+          //  customTapped = false;
           }else if (cyc == 14){
             colorDay1();
+
+        //    storeAns=14;  customTapped = false; calculateCycleDays(storeAns); inCycle=false;
           }else if (cyc == 30){
             colorDay2();
+          // storeAns=30;  customTapped = false; calculateCycleDays(storeAns);inCycle=false;
           }else if (cyc == 90){
             colorDay3();
+            //storeAns=90;  customTapped = false; calculateCycleDays(storeAns);inCycle=false;
           }else{
             //customText = cyc.toString() + "days";
             customTapped = true;
@@ -748,6 +767,7 @@ class _AddCardState extends State<AddCard> {
           print(cardDetails.getStatus());
           statusCheck = cardDetails.getStatus();
           print('STATUS-----> $statusCheck');
+          reduceFuture = cardDetails.getFuture();
 
           renewOn = cardDetails.getRenew();
           updateMoney(cardDetails.getMoney());
@@ -755,6 +775,7 @@ class _AddCardState extends State<AddCard> {
 
           //format begin cycle for user to see
           formatDate(cardDetails.getDate());
+
 
 
 
@@ -773,963 +794,985 @@ class _AddCardState extends State<AddCard> {
 
 
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: CustomScrollView(
+    return WillPopScope(
+
+      onWillPop: () {
+        undoChanges();
 
 
-        slivers: <Widget>[
+      },
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: CustomScrollView(
 
 
-          SliverAppBar(
-            backgroundColor: Color.fromRGBO(97, 97, 97, 1),
+          slivers: <Widget>[
 
-            //forceElevated: true,
-            //floating: true,
-            pinned: true,
-            elevation: 10,
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.greenAccent, size: 35,),
-              onPressed: () {Navigator.pop(context);},),
-            // appBar:AppBar(leading: IconButton(icon:Icon(Icons.arrow_back,color: Colors.black,size: 30,),),)//leading: IconButton(icon:Icon(Icons.arrow_back,color: Colors.black,size: 30,),),
 
-            // color that appear when scroll up
-            expandedHeight: 250,
-            //height of actual view
+            SliverAppBar(
+              backgroundColor: Color.fromRGBO(97, 97, 97, 1),
 
-            flexibleSpace: FlexibleSpaceBar(
+              //forceElevated: true,
+              //floating: true,
+              pinned: true,
+              elevation: 10,
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back, color: Colors.greenAccent, size: 35,),
+                onPressed: () {Navigator.pop(context);},),
+              // appBar:AppBar(leading: IconButton(icon:Icon(Icons.arrow_back,color: Colors.black,size: 30,),),)//leading: IconButton(icon:Icon(Icons.arrow_back,color: Colors.black,size: 30,),),
 
-              background:
-              Center(
-                child: Card(
+              // color that appear when scroll up
+              expandedHeight: 250,
+              //height of actual view
 
-                  elevation: 60,
-                  child: Container(
-                    height: 150, width: (MediaQuery
-                      .of(context)
-                      .size
-                      .width) - 100,
-                    color: cardColor.withOpacity(0.8),
-                    //CARD DETAILS REAL TIME UPDATE
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            //Payment image container
-                            //
-                            obtainPay(),
+              flexibleSpace: FlexibleSpaceBar(
 
-                            SizedBox(
-                              width: 10,
-                            ),
+                background:
+                Center(
+                  child: Card(
 
-                            // Text card container
-                            Text(
+                    elevation: 60,
+                    child: Container(
+                      height: 150, width: (MediaQuery
+                        .of(context)
+                        .size
+                        .width) - 100,
+                      color: cardColor.withOpacity(0.8),
+                      //CARD DETAILS REAL TIME UPDATE
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              //Payment image container
+                              //
+                              obtainPay(),
 
-                              tempName, style: TextStyle(fontSize: 25,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: 60,
+                              SizedBox(
+                                width: 10,
+                              ),
 
-                        ),
-                        Row(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.only(left: 15.0),
+                              // Text card container
+                              Expanded(
                                 child: Text(
-                                tempAmount, style: TextStyle(fontSize: 22,
+
+                                  tempName, style: TextStyle(fontSize: 25,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 60,
+
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(left: 15.0),
+                                  child: Text(
+                                  tempAmount, style: TextStyle(fontSize: 22,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Spacer(),
+
+                              Text(
+                                tempDays, style: TextStyle(fontSize: 22,
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold),
                               ),
-                            ),
-                            Spacer(),
-
-                            Text(
-                              tempDays, style: TextStyle(fontSize: 22,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
 
 
-                      ],
+                        ],
+                      ),
+
                     ),
-
                   ),
                 ),
               ),
             ),
-          ),
 
 
-          //THIS IS WHERE WE PUT ALL THE CHILDREN_________________________________
-          SliverFixedExtentList(
-            itemExtent: 860, //height of each widget in the listdelegate
-            //for my case since its one widget, make height reasonable size
-            //divide the items
+            //THIS IS WHERE WE PUT ALL THE CHILDREN_________________________________
+            SliverFixedExtentList(
+              itemExtent: 868, //height of each widget in the listdelegate
+              //for my case since its one widget, make height reasonable size
+              //divide the items
 
-            delegate: SliverChildListDelegate(
-                [
-                  //Using c
-                  // ard coz material needed for textbox
-                  Card(
-                    color: Colors.black,//ytttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
-
-
-                    child: Padding(
-                        padding: const EdgeInsets.only(
-                            top: 20.0, left: 5, right: 5),
-
-                        child: Column(
-                          children: <Widget>[
-                            Theme(
-                              data: Theme.of(context).copyWith(hintColor: Colors.white,primaryColor: Colors.white),
-
-                              child: TextField(
-                                style: TextStyle(color: Colors.white),
+              delegate: SliverChildListDelegate(
+                  [
+                    //Using c
+                    // ard coz material needed for textbox
+                    Card(
+                      color: Colors.black,//ytttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
 
 
-                                decoration: InputDecoration(
-                                  labelText: "Subscription name",
-                                //  errorBorder:OutlineInputBorder(borderSide: BorderSide(color: nameError)),
-                                  focusColor: Colors.white,
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(15)),borderSide: BorderSide(color: nameError),),
-                                  prefixIcon: Icon(
-                                    Icons.credit_card, color: Colors.white,),
+                      child: Padding(
+                          padding: const EdgeInsets.only(
+                              top: 20.0, left: 5, right: 5),
+
+                          child: Column(
+                            children: <Widget>[
+                              Theme(
+                                data: Theme.of(context).copyWith(hintColor: Colors.white,primaryColor: Colors.white),
+
+                                child: TextField(
+                                  style: TextStyle(color: Colors.white),
+
+
+                                  decoration: InputDecoration(
+                                    labelText: "Subscription name",
+                                  //  errorBorder:OutlineInputBorder(borderSide: BorderSide(color: nameError)),
+                                    focusColor: Colors.white,
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(15)),borderSide: BorderSide(color: nameError),),
+                                    prefixIcon: Icon(
+                                      Icons.credit_card, color: Colors.white,),
+
+                                  ),
+
+                                  //Takes in a string variable
+                                  onChanged: (val) {
+                                 //   val = checkInputText(val);
+                                    setState(() {
+                                      if (cardDetails.checkAll() ==4){
+                                        op = 1;
+                                      }
+                                      updateCardName(val);
+                                      amountError = Colors.white;
+
+                                    });
+                                  },maxLength: 12,
+                                //  keyboardType: TextInputType.text,
+                                  inputFormatters: [// LengthLimitingTextInputFormatter(12),
+
+
+                                    //WhitelistingTextInputFormatter.digitsOnly],
+
+                                  ],
+
+                                  //no need for controller unless you want to use it
+                                  controller: textCheck, // Obtain text from textbox
+
 
                                 ),
-                                //Takes in a string variable
-                                onChanged: (val) {
-                                  setState(() {
-                                    if (cardDetails.checkAll() ==4){
-                                      op = 1;
-                                    }
-                                    updateCardName(val);
-                                    amountError = Colors.white;
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 15),
+                                child: Row(
+                                  children: <Widget>[
+                                    Text("Begin cycle: ",style: TextStyle(fontSize: 20,color: Colors.white),),
+                                    Spacer(),
+                                    RaisedButton(
+                                      ///adding icon in button + name
+                                      color: Color.fromRGBO(72, 72, 72, 1),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Icon(Icons.calendar_today,color: Colors.white,),
+                                          SizedBox(width: 10,),
+                                          Text(defaultDate,style: TextStyle(color: Colors.white),),
+                                        ],
+                                      ),
+                                      onPressed: (){
+                                        DatePicker.showDatePicker(context,
+                                        showTitleActions: true,
+                                        minTime: DateTime(DateTime.now().year - 1),
+                                            maxTime: DateTime(DateTime.now().year+5),
+                                         onConfirm: (val){///after done pressed
+                                          print(val);
+                                          setState(() {
+                                            FocusScope.of(context).requestFocus( ///it will clear all focus of the textfield
+                                                new FocusNode());
+                                            formatDate(val);///where it formats date
+                                            firstTime = val; ///update the date selected
+                                            updateDays("null",false);
+                                            notStarted = false; //reset again
+                                            removeColor();
+                                            inCycle = false; ///reset this so the cycle can be activated
+                                          });
+                                         }, currentTime: DateTime.now(),locale: LocaleType.en
 
-                                  });
-                                },
-                                inputFormatters: [
-                                  LengthLimitingTextInputFormatter(12),
-                                ],
-                                //no need for controller unless you want to use it
-                                controller: textCheck, // Obtain text from textbox
 
+                                        );
+
+                                      },
+                                    )
+
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
 
                               ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 15),
-                              child: Row(
-                                children: <Widget>[
-                                  Text("Begin cycle: ",style: TextStyle(fontSize: 20,color: Colors.white),),
-                                  Spacer(),
-                                  RaisedButton(
-                                    ///adding icon in button + name
-                                    color: Color.fromRGBO(72, 72, 72, 1),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(Icons.calendar_today,color: Colors.white,),
-                                        SizedBox(width: 10,),
-                                        Text(defaultDate,style: TextStyle(color: Colors.white),),
-                                      ],
+
+                              Padding(
+
+                                padding: EdgeInsets.only(top:15),
+                                child: Row(
+                                  children: <Widget>[
+                                    Text("End Cycle After:",style: TextStyle(fontSize: 20,color: Colors.white),),
+                                    SizedBox(
+                                      width: 5,
                                     ),
-                                    onPressed: (){
-                                      DatePicker.showDatePicker(context,
-                                      showTitleActions: true,
-                                      minTime: DateTime(DateTime.now().year - 1),
-                                          maxTime: DateTime(DateTime.now().year+5),
-                                       onConfirm: (val){///after done pressed
-                                        print(val);
-                                        setState(() {
+
+                                    Text("*",style: TextStyle(color: Colors.grey, fontSize: 15),),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Visibility(
+                                      visible: daysError,
+                                      child: Text("Enter when cycle ends",style: TextStyle(color:Colors.red),),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              Padding(
+                                padding: const EdgeInsets.only(top: 15.0),
+                                child: Container(
+                                  height: 90,
+                                  color: Colors.black,
+                                  width: double.infinity,
+
+                                  child: ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children: <Widget>[
+                                      GestureDetector(
+                                        onTap: () {
+                                          customTapped = false;
+                                          setState(() {
+                                            daysError = false;
+
+                                            colorDay();
+                                            storeAns=7;
+                                            calculateCycleDays(7);
+
+
+
+                                          });
+                                        },
+                                        child: Container(
+
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment
+                                                  .center,
+
+
+                                              children: <Widget>[
+                                                Text("1", style: TextStyle(
+                                                    fontSize: 40,color: Colors.white),),
+                                                Text("WEEK", style: TextStyle(
+                                                    fontSize: 20,color: Colors.white),),
+                                              ],
+                                            ),
+
+
+                                            width: 100,
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius
+                                                    .circular(30),
+                                                border: Border.all(width: 1.5),
+                                                color: days0)
+
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 15,
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          customTapped = false;
+                                          setState(() {
+                                            daysError = false;
+                                            //print("SEE:$keyboardState");
+                                            colorDay1();
+                                            storeAns=14;
+                                            calculateCycleDays(14);
+                                          });
+                                        },
+                                        child: Container(
+
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment
+                                                  .center,
+
+                                              children: <Widget>[
+                                                Text("2", style: TextStyle(
+                                                    fontSize: 40,color: Colors.white),),
+                                                Text("WEEKS", style: TextStyle(
+                                                    fontSize: 20,color: Colors.white),),
+                                              ],
+
+                                            ),
+
+
+                                            width: 100,
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius
+                                                    .circular(30),
+                                                border: Border.all(width: 1.5),
+                                                color: days1)
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 15,
+                                      ),
+
+                                      GestureDetector(
+                                        onTap: () {
+                                          customTapped = false;
+                                          setState(() {
+                                            daysError = false;
+                                            calculateCycleDays(30);
+                                            colorDay2();
+                                            storeAns=30;
+
+                                          });
+                                        },
+                                        child: Container(
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment
+                                                  .center,
+
+                                              children: <Widget>[
+                                                Text("1", style: TextStyle(
+                                                    fontSize: 40,color: Colors.white),),
+                                                Text("MONTH", style: TextStyle(
+                                                    fontSize: 20,color: Colors.white),),
+                                              ],
+                                            ),
+
+
+                                            width: 100,
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius
+                                                    .circular(30),
+                                                border: Border.all(width: 1.5),
+                                                color: days2)
+
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 15,
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+
+                                          customTapped = false;
+                                          setState(() {
+                                            daysError=false;
+                                            calculateCycleDays(90);
+                                            colorDay3();
+                                            storeAns=90;
+
+                                          });
+                                        },
+                                        child: Container(
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment
+                                                  .center,
+
+                                              children: <Widget>[
+                                                Text("3", style: TextStyle(
+                                                    fontSize: 40,color: Colors.white),),
+                                                Text("MONTHS", style: TextStyle(
+                                                    fontSize: 20,color: Colors.white),),
+                                              ],
+                                            ),
+
+
+                                            width: 100,
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius
+                                                    .circular(30),
+                                                border: Border.all(width: 1.5),
+                                                color: days3)
+
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 15,
+                                      ),
+
+                                      ///where the range of dates is made,bug user can select previous
+                                      ///dates which shouldn't be allowed
+
+                                      GestureDetector(
+                                        onTap: () {
+                                            customTapped = true;
+                                            DatePicker.showDatePicker(context,
+                                                showTitleActions: true,
+                                                minTime: minDate(),
+                                                maxTime: DateTime(DateTime.now().year+5),
+                                                onConfirm: (val){///after done pressed
+                                                  print(val);
+                                                  setState(() {
+                                                    daysError = false;
+
+                                                 //   endVal = val; // changes value of custom text
+                                                    colorCustom();
+                                                    //calculateDays(val);
+                                                    calculateD(val);
+                                                    //updateDays(val)
+
+                                                   // formatDate(val);///where it formats date
+
+                                                  });
+                                                }, currentTime: DateTime.now(),locale: LocaleType.en
+
+
+                                            );
+
+
+                                         /* final List<DateTime> picked = await DateRagePicker.showDatePicker(
+                                              context: context,
+                                              selectableDayPredicate: _func(2020, 1, 10),//DateTime(DateTime.now().year).difference(DateTime(DateTime.now().year)).inDays,
+
+                                          initialFirstDate: new DateTime.now(),
+                                              initialLastDate: (new DateTime.now()),
+                                              //selectableDayPredicate: new DateTime.now(),
+                                              firstDate: new DateTime (DateTime.now().year),//beginning year
+                                              lastDate: new DateTime(DateTime.now().year + 5));
+                                          if (picked != null && picked.length == 2) {
+                                         //   print(picked[0].);
+                                            print(picked);
+                                          }*/
+                                        },
+                                      //getTime();},
+                                        child: Container(
+                                            child: customContainer(),
+
+
+                                            width: 100,
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(
+                                                  30),
+                                              border: Border.all(width: 1.5),color: days4)
+
+                                        ),
+                                      ),
+
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              ///Added the repeat cycle  option
+                              Padding(
+                                padding: const EdgeInsets.only(top: 12.0),
+                                child: Row(
+                                  children: <Widget>[
+                                    Text("Repeat Cycle",
+                                      style: TextStyle(fontSize: 20,color: Colors.white),),
+                                    Spacer(),
+                                    Switch(inactiveTrackColor:Color.fromRGBO(72, 72, 72, 1),activeColor:Color.fromRGBO(255, 241, 118, 1),
+                                        value: renewOn,
+                                        onChanged: (
+                                            val) { // onchanged takes parameter of whats changed
+                                          setState(() {
+                                            renewOn = val;
+                                         //  inCycle = val;
+                                          if (!customTapped && diff != -1 ){ ///doesn't apply to custom
+                                          //  print('wwwwwwwwwwwwwwwww');
+                                            calculateCycleDays(storeAns);
+                                          }
+
+
+
+                                            // openDrawer(isOn);
+                                          });
+                                        }
+                                    ),
+
+                                  ],
+                                ),
+                              ),
+
+
+
+                              Padding(
+                                padding: const EdgeInsets.only(top: 10.0),
+                                child: Container(
+                                  height: 3, color: Color.fromRGBO(72, 72, 72, 1),
+                                ),
+                              ),
+
+                              Padding(
+                                padding: const EdgeInsets.only(top: 12.0),
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 45,
+                                  child: ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children: colorContainers(),
+                                  ),
+                                ),
+                              ),
+
+
+
+                              Padding(
+                                padding: const EdgeInsets.only(top: 12.0),
+                                child: Row(
+                                  children: <Widget>[
+                                    Text("Set Reminder",
+                                      style: TextStyle(fontSize: 20,color: Colors.white),),
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                    Text("(Optional)",style: TextStyle(color: Colors.grey, fontSize: 15),),
+                                    Spacer(),
+                                    Switch(inactiveTrackColor:Color.fromRGBO(72, 72, 72, 1),activeColor:Color.fromRGBO(255, 241, 118, 1),
+                                        value: isOn,
+                                        onChanged: (
+                                            checker) { // onchanged takes parameter of whats changed
+                                          setState(() {
+                                            if (isExpired){ //expired no need to set reminder
+                                              isOn = false;
+                                            }else{
+                                              isOn = checker;
+                                            }
+
+                                            // openDrawer(isOn);
+                                          });
+                                        }
+                                    ),
+
+                                  ],
+                                ),
+                              ),
+
+
+                              Visibility(
+                                visible: isOn,
+                                child: Row(
+                                  children: <Widget>[
+                                    Text(
+                                      "Remind me", style: TextStyle(fontSize: 20,color: Colors.white),
+                                    ),
+                                    Spacer(),
+                                    DropdownButton(iconEnabledColor: Color.fromRGBO(255, 241, 118, 1),
+                                      value: defaultDay,style: TextStyle(color: Colors.white),
+                                      elevation: 8,
+                                      // default is 3 days
+                                      onChanged: (newvalue) async  {
+                                      if (newvalue == "Custom") {
+                                        await dayPickerBox();
+                                        if (userCancel){
+                                          newvalue= days[0];
+                                        }
+                                      }
+
+
+                                        setState(()  {
                                           FocusScope.of(context).requestFocus( ///it will clear all focus of the textfield
                                               new FocusNode());
-                                          formatDate(val);///where it formats date
-                                          firstTime = val; ///update the date selected
-                                          updateDays("null",false);
-                                          notStarted = false; //reset again
-                                          removeColor();
-                                          inCycle = false; ///reset this so the cycle can be activated
+
+                                          errorCheck = false; // remove the error when user changing rem days
+
+                                          if (newvalue == "Custom") {
+
+
+                                            ///set up dialog box for user to access
+                                            // String val =  dayPickerBox() as String;
+                                            // await dayPickerBox() ;
+                                            String s = obtainDay() + " days";
+                                            //String s = st  " days";
+                                            int i = int.parse(obtainDay());
+                                            ///Check for duplicates
+                                            if (i == 1 || i == 3){
+                                              if (i == 1){
+                                                checkReminderDays(i.toString() + " day");
+                                                defaultDay = i.toString() + " day"; //since it already exists
+
+                                              }
+                                              else{
+                                                checkReminderDays(s);
+                                              defaultDay = i.toString() + " days"; //since it already exists
+                                              }
+
+                                            }
+                                            ///Update the dropdown with custom value
+                                            else{
+                                              if (days.length > 4) {
+                                                ///get rid of the custom days they previously selected
+                                                days.removeLast();
+                                                days.removeLast();
+                                                days.add(s);
+                                                days.add("Custom");
+                                                checkReminderDays(s);
+                                                defaultDay = days[3]; //add new days to dropdown
+
+                                              }
+
+                                              else{
+                                                days.removeLast();
+                                                days.add(s);
+                                                days.add("Custom");
+                                                checkReminderDays(s);
+                                                  defaultDay = days[3];
+                                              }
+
+                                            }
+
+
+
+
+                                            // days.insert(3, daySelector.text);
+                                            print(days);
+
+                                            /// This if it is not custom
+                                          }
+
+
+                                           else{
+                                             ///disable selection for days that
+                                            ///a reminder can't be set if passed
+                                        //    int checkr= cardDetails.checkRemDays(renewOn, daysNow)
+
+
+
+                                            checkReminderDays(newvalue);
+                                            defaultDay = newvalue;
+
+                                          }
+
                                         });
-                                       }, currentTime: DateTime.now(),locale: LocaleType.en
+                                      },
+                                      //items takes in values(days) and puts them in list for dropdown
+                                      items: days.map<DropdownMenuItem<String>>((
+                                          String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value,)//style: isDisabled(value),),//fn checks if day is invalid
+                                        );
+                                      }
 
 
-                                      );
-
-                                    },
-                                  )
-
-                                ],
+                                      ).toList(),
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
+                              ///Error to show up if remainder days invalid
+                              Visibility(
+                                visible: errorCheck,
+                                child: Row(
+                                  children: <Widget>[
+                                    Spacer(),
+                                    Text('Day has passed',style: TextStyle(color:Colors.red),)
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 15.0),
+                                child: Container(
+                                  height: 3, color: Color.fromRGBO(72, 72, 72, 1),
+                                ),
+                              ),
 
-                            ),
+                              ///HORIZONTAL RULER
 
-                            Padding(
+                              Padding(
+                                padding: const EdgeInsets.only(top: 18.0),
+                                child: Row(
+                                  children: <Widget>[
+                                    Text("Payment Type",
+                                      style: TextStyle(fontSize: 20,color: Colors.white),),
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                    Text("(Optional)",style: TextStyle(color: Colors.grey, fontSize: 15),)
+                                  ],
 
-                              padding: EdgeInsets.only(top:15),
-                              child: Row(
+                                ),
+                              ),
+                              Container(
+                                color: Colors.black,
+                                width: double.infinity,
+                                height: 70,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 14.0),
+                                  child: ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children: <Widget>[
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            make();
+                                            updatePaymentType(png[0]);
+                                          });
+                                        },
+                                        child: Container(
+                                          width: 120,
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(
+                                                  30),
+                                              border: Border.all(width: 1.5),
+                                              color: selected)
+                                          ,
+                                          child: Center(child: Text(images[0],
+                                            style: TextStyle(fontSize: 20,color: Colors.white),)),
+                                        ),
+                                      ),
+
+                                      SizedBox(
+                                        width: 15,
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            make1();
+                                            updatePaymentType(png[1]);
+                                          });
+                                        },
+                                        child: Container(
+                                          width: 120,
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(
+                                                  30),
+                                              border: Border.all(width: 1.5),
+                                              color: selected1)
+                                          ,
+                                          child: Center(child: Text(images[1],
+                                            style: TextStyle(fontSize: 20,color: Colors.white),)),
+                                        ),
+                                      ),
+
+                                      SizedBox(
+                                        width: 15,
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            make2();
+                                            updatePaymentType(png[2]);
+                                          });
+                                        },
+                                        child: Container(
+                                          width: 120,
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(
+                                                  30),
+                                              border: Border.all(width: 1.5),
+                                              color: selected2)
+                                          ,
+                                          child: Center(child: Text(images[2],
+                                            style: TextStyle(fontSize: 20,color: Colors.white),)),
+                                        ),
+                                      ),
+
+                                      SizedBox(
+                                        width: 15,
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            make3();
+                                            updatePaymentType(png[3]);
+                                          });
+                                        },
+                                        child: Container(
+                                          width: 120,
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(
+                                                  30),
+                                              border: Border.all(width: 1.5),
+                                              color: selected3)
+                                          ,
+                                          child: Center(child: Text(images[3],
+                                            style: TextStyle(fontSize: 20,color: Colors.white),)),
+                                        ),
+                                      ),
+
+                                      SizedBox(
+                                        width: 15,
+                                      )
+
+
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+                              Padding(
+                                padding: const EdgeInsets.only(top: 15.0),
+                                child: Container(
+                                  height: 3, color: Color.fromRGBO(72, 72, 72, 1),
+                                ),
+                              ),
+
+
+
+
+
+                             SizedBox(
+                               height: 15,
+                             ),
+                              Row(
                                 children: <Widget>[
-                                  Text("End Cycle After:",style: TextStyle(fontSize: 20,color: Colors.white),),
+                                  //Text("Amount", style: TextStyle(fontSize: 20),),
+                                  // Spacer(),
+                                  Text("Amount", style: TextStyle(fontSize: 20,color: Colors.white),),
                                   SizedBox(
                                     width: 5,
                                   ),
 
                                   Text("*",style: TextStyle(color: Colors.grey, fontSize: 15),),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Visibility(
-                                    visible: daysError,
-                                    child: Text("Enter when cycle ends",style: TextStyle(color:Colors.red),),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            Padding(
-                              padding: const EdgeInsets.only(top: 15.0),
-                              child: Container(
-                                height: 90,
-                                color: Colors.black,
-                                width: double.infinity,
-
-                                child: ListView(
-                                  scrollDirection: Axis.horizontal,
-                                  children: <Widget>[
-                                    GestureDetector(
-                                      onTap: () {
-                                        customTapped = false;
-                                        setState(() {
-                                          daysError = false;
-
-                                          colorDay();
-                                          storeAns=7;
-                                          calculateCycleDays(7);
-
-
-
-                                        });
-                                      },
-                                      child: Container(
-
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment
-                                                .center,
-
-
-                                            children: <Widget>[
-                                              Text("1", style: TextStyle(
-                                                  fontSize: 40,color: Colors.white),),
-                                              Text("WEEK", style: TextStyle(
-                                                  fontSize: 20,color: Colors.white),),
-                                            ],
-                                          ),
-
-
-                                          width: 100,
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius
-                                                  .circular(30),
-                                              border: Border.all(width: 1.5),
-                                              color: days0)
-
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 15,
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        customTapped = false;
-                                        setState(() {
-                                          daysError = false;
-                                          //print("SEE:$keyboardState");
-                                          colorDay1();
-                                          storeAns=14;
-                                          calculateCycleDays(14);
-                                        });
-                                      },
-                                      child: Container(
-
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment
-                                                .center,
-
-                                            children: <Widget>[
-                                              Text("2", style: TextStyle(
-                                                  fontSize: 40,color: Colors.white),),
-                                              Text("WEEKS", style: TextStyle(
-                                                  fontSize: 20,color: Colors.white),),
-                                            ],
-
-                                          ),
-
-
-                                          width: 100,
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius
-                                                  .circular(30),
-                                              border: Border.all(width: 1.5),
-                                              color: days1)
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 15,
-                                    ),
-
-                                    GestureDetector(
-                                      onTap: () {
-                                        customTapped = false;
-                                        setState(() {
-                                          daysError = false;
-                                          calculateCycleDays(30);
-                                          colorDay2();
-                                          storeAns=30;
-
-                                        });
-                                      },
-                                      child: Container(
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment
-                                                .center,
-
-                                            children: <Widget>[
-                                              Text("1", style: TextStyle(
-                                                  fontSize: 40,color: Colors.white),),
-                                              Text("MONTH", style: TextStyle(
-                                                  fontSize: 20,color: Colors.white),),
-                                            ],
-                                          ),
-
-
-                                          width: 100,
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius
-                                                  .circular(30),
-                                              border: Border.all(width: 1.5),
-                                              color: days2)
-
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 15,
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-
-                                        customTapped = false;
-                                        setState(() {
-                                          daysError=false;
-                                          calculateCycleDays(90);
-                                          colorDay3();
-                                          storeAns=90;
-
-                                        });
-                                      },
-                                      child: Container(
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment
-                                                .center,
-
-                                            children: <Widget>[
-                                              Text("3", style: TextStyle(
-                                                  fontSize: 40,color: Colors.white),),
-                                              Text("MONTHS", style: TextStyle(
-                                                  fontSize: 20,color: Colors.white),),
-                                            ],
-                                          ),
-
-
-                                          width: 100,
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius
-                                                  .circular(30),
-                                              border: Border.all(width: 1.5),
-                                              color: days3)
-
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 15,
-                                    ),
-
-                                    ///where the range of dates is made,bug user can select previous
-                                    ///dates which shouldn't be allowed
-
-                                    GestureDetector(
-                                      onTap: () {
-                                          customTapped = true;
-                                          DatePicker.showDatePicker(context,
-                                              showTitleActions: true,
-                                              minTime: minDate(),
-                                              maxTime: DateTime(DateTime.now().year+5),
-                                              onConfirm: (val){///after done pressed
-                                                print(val);
-                                                setState(() {
-                                                  daysError = false;
-
-                                               //   endVal = val; // changes value of custom text
-                                                  colorCustom();
-                                                  //calculateDays(val);
-                                                  calculateD(val);
-                                                  //updateDays(val)
-
-                                                 // formatDate(val);///where it formats date
-
-                                                });
-                                              }, currentTime: DateTime.now(),locale: LocaleType.en
-
-
-                                          );
-
-
-                                       /* final List<DateTime> picked = await DateRagePicker.showDatePicker(
-                                            context: context,
-                                            selectableDayPredicate: _func(2020, 1, 10),//DateTime(DateTime.now().year).difference(DateTime(DateTime.now().year)).inDays,
-
-                                        initialFirstDate: new DateTime.now(),
-                                            initialLastDate: (new DateTime.now()),
-                                            //selectableDayPredicate: new DateTime.now(),
-                                            firstDate: new DateTime (DateTime.now().year),//beginning year
-                                            lastDate: new DateTime(DateTime.now().year + 5));
-                                        if (picked != null && picked.length == 2) {
-                                       //   print(picked[0].);
-                                          print(picked);
-                                        }*/
-                                      },
-                                    //getTime();},
-                                      child: Container(
-                                          child: customContainer(),
-
-
-                                          width: 100,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                                30),
-                                            border: Border.all(width: 1.5),color: days4)
-
-                                      ),
-                                    ),
-
-                                  ],
-                                ),
-                              ),
-                            ),
-                            ///Added the repeat cycle  option
-                            Padding(
-                              padding: const EdgeInsets.only(top: 12.0),
-                              child: Row(
-                                children: <Widget>[
-                                  Text("Repeat Cycle",
-                                    style: TextStyle(fontSize: 20,color: Colors.white),),
                                   Spacer(),
-                                  Switch(inactiveTrackColor:Color.fromRGBO(72, 72, 72, 1),activeColor:Color.fromRGBO(255, 241, 118, 1),
-                                      value: renewOn,
-                                      onChanged: (
-                                          val) { // onchanged takes parameter of whats changed
-                                        setState(() {
-                                          renewOn = val;
-                                       //  inCycle = val;
-                                        if (!customTapped && diff != -1 ){ ///doesn't apply to custom
-                                        //  print('wwwwwwwwwwwwwwwww');
-                                          calculateCycleDays(storeAns);
+                                  Container(
+
+
+                                //    CHANGE BORDER STYLE
+                                  //  CHANGE WHITE TO BLACK WHEN PRESSED
+
+
+                                    // color: Colors.black,
+                                    width: 120,
+                                    child: TextField(
+
+                                      decoration: InputDecoration(
+                                        prefixIcon: Icon(Icons.attach_money,
+                                          color: Colors.green,),
+                                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: amountError),),
+                                       // focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white))
+                                      //  errorBorder: OutlineInputBorder(borderSide: BorderSide(color: amountError))
+
+
+
+                                        //block digits with comma, hyphen etc.
+                                      ),style: TextStyle(color: Colors.white),
+                                      controller: amountController,
+                                      keyboardType: TextInputType.number, maxLength: 6,
+                                      inputFormatters: [
+                                        BlacklistingTextInputFormatter(
+                                            RegExp('[,|-]|[ ]')),
+                                        //WhitelistingTextInputFormatter.digitsOnly],
+
+                                      ],
+
+                                      ///will be used to determine if first time clicked
+                                      onSubmitted: (val){
+                                        if (val.endsWith(".")){
+                                          setState(() {
+                                            amountController.text+="0";
+                                            updateMoney(amountController.text);
+                                            amountError= Colors.white;
+                                          });
+
                                         }
+                                      },
 
 
-
-                                          // openDrawer(isOn);
-                                        });
-                                      }
-                                  ),
-
-                                ],
-                              ),
-                            ),
-
-
-
-                            Padding(
-                              padding: const EdgeInsets.only(top: 10.0),
-                              child: Container(
-                                height: 3, color: Color.fromRGBO(72, 72, 72, 1),
-                              ),
-                            ),
-
-                            Padding(
-                              padding: const EdgeInsets.only(top: 12.0),
-                              child: Container(
-                                width: double.infinity,
-                                height: 45,
-                                child: ListView(
-                                  scrollDirection: Axis.horizontal,
-                                  children: colorContainers(),
-                                ),
-                              ),
-                            ),
-                            
-
-
-                            Padding(
-                              padding: const EdgeInsets.only(top: 12.0),
-                              child: Row(
-                                children: <Widget>[
-                                  Text("Set Reminder",
-                                    style: TextStyle(fontSize: 20,color: Colors.white),),
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  Text("(Optional)",style: TextStyle(color: Colors.grey, fontSize: 15),),
-                                  Spacer(),
-                                  Switch(inactiveTrackColor:Color.fromRGBO(72, 72, 72, 1),activeColor:Color.fromRGBO(255, 241, 118, 1),
-                                      value: isOn,
-                                      onChanged: (
-                                          checker) { // onchanged takes parameter of whats changed
+                                      onChanged: (val) { //takes parameter
+                                           checkAmount(val);
                                         setState(() {
-                                          isOn = checker;
-                                          // openDrawer(isOn);
-                                        });
-                                      }
-                                  ),
+                                          amountError=Colors.white;
 
-                                ],
-                              ),
-                            ),
+                                          nameError = Colors.white;
 
-
-                            Visibility(
-                              visible: isOn,
-                              child: Row(
-                                children: <Widget>[
-                                  Text(
-                                    "Remind me", style: TextStyle(fontSize: 20,color: Colors.white),
-                                  ),
-                                  Spacer(),
-                                  DropdownButton(iconEnabledColor: Color.fromRGBO(255, 241, 118, 1),
-                                    value: defaultDay,style: TextStyle(color: Colors.white),
-                                    elevation: 8,
-                                    // default is 3 days
-                                    onChanged: (newvalue) async  {
-                                    if (newvalue == "Custom") {
-                                      await dayPickerBox();
-                                      if (userCancel){
-                                        newvalue= days[0];
-                                      }
-                                    }
-
-
-                                      setState(()  {
-                                        FocusScope.of(context).requestFocus( ///it will clear all focus of the textfield
-                                            new FocusNode());
-
-                                        errorCheck = false; // remove the error when user changing rem days
-
-                                        if (newvalue == "Custom") {
-
-
-                                          ///set up dialog box for user to access
-                                          // String val =  dayPickerBox() as String;
-                                          // await dayPickerBox() ;
-                                          String s = obtainDay() + " days";
-                                          //String s = st  " days";
-                                          int i = int.parse(obtainDay());
-                                          ///Check for duplicates
-                                          if (i == 1 || i == 3){
-                                            if (i == 1){
-                                              checkReminderDays(i.toString() + " day");
-                                              defaultDay = i.toString() + " day"; //since it already exists
-
-                                            }
-                                            else{
-                                              checkReminderDays(s);
-                                            defaultDay = i.toString() + " days"; //since it already exists
-                                            }
-
+                                          if (cardDetails.checkAll() ==4 && amountController.text != ""){
+                                            op = 1;
                                           }
-                                          ///Update the dropdown with custom value
-                                          else{
-                                            if (days.length > 4) {
-                                              ///get rid of the custom days they previously selected
-                                              days.removeLast();
-                                              days.removeLast();
-                                              days.add(s);
-                                              days.add("Custom");
-                                              checkReminderDays(s);
-                                              defaultDay = days[3]; //add new days to dropdown
-
-                                            }
-
-                                            else{
-                                              days.removeLast();
-                                              days.add(s);
-                                              days.add("Custom");
-                                              checkReminderDays(s);
-                                                defaultDay = days[3];
-                                            }
-
-                                          }
-
-
-
-
-                                          // days.insert(3, daySelector.text);
-                                          print(days);
-
-                                          /// This if it is not custom
-                                        }
-
-
-                                         else{
-                                           ///disable selection for days that
-                                          ///a reminder can't be set if passed
-                                      //    int checkr= cardDetails.checkRemDays(renewOn, daysNow)
-
-
-
-                                          checkReminderDays(newvalue);
-                                          defaultDay = newvalue;
-
-                                        }
-
-                                      });
-                                    },
-                                    //items takes in values(days) and puts them in list for dropdown
-                                    items: days.map<DropdownMenuItem<String>>((
-                                        String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value,)//style: isDisabled(value),),//fn checks if day is invalid
-                                      );
-                                    }
-
-
-                                    ).toList(),
-                                  )
-                                ],
-                              ),
-                            ),
-                            ///Error to show up if remainder days invalid
-                            Visibility(
-                              visible: errorCheck,
-                              child: Row(
-                                children: <Widget>[
-                                  Spacer(),
-                                  Text('Day has passed',style: TextStyle(color:Colors.red),)
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 15.0),
-                              child: Container(
-                                height: 3, color: Color.fromRGBO(72, 72, 72, 1),
-                              ),
-                            ),
-
-                            ///HORIZONTAL RULER
-
-                            Padding(
-                              padding: const EdgeInsets.only(top: 18.0),
-                              child: Row(
-                                children: <Widget>[
-                                  Text("Payment Type",
-                                    style: TextStyle(fontSize: 20,color: Colors.white),),
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  Text("(Optional)",style: TextStyle(color: Colors.grey, fontSize: 15),)
-                                ],
-
-                              ),
-                            ),
-                            Container(
-                              color: Colors.black,
-                              width: double.infinity,
-                              height: 70,
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 14.0),
-                                child: ListView(
-                                  scrollDirection: Axis.horizontal,
-                                  children: <Widget>[
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          make();
-                                          updatePaymentType(png[0]);
-                                        });
-                                      },
-                                      child: Container(
-                                        width: 120,
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                                30),
-                                            border: Border.all(width: 1.5),
-                                            color: selected)
-                                        ,
-                                        child: Center(child: Text(images[0],
-                                          style: TextStyle(fontSize: 20,color: Colors.white),)),
-                                      ),
-                                    ),
-
-                                    SizedBox(
-                                      width: 15,
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          make1();
-                                          updatePaymentType(png[1]);
-                                        });
-                                      },
-                                      child: Container(
-                                        width: 120,
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                                30),
-                                            border: Border.all(width: 1.5),
-                                            color: selected1)
-                                        ,
-                                        child: Center(child: Text(images[1],
-                                          style: TextStyle(fontSize: 20,color: Colors.white),)),
-                                      ),
-                                    ),
-
-                                    SizedBox(
-                                      width: 15,
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          make2();
-                                          updatePaymentType(png[2]);
-                                        });
-                                      },
-                                      child: Container(
-                                        width: 120,
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                                30),
-                                            border: Border.all(width: 1.5),
-                                            color: selected2)
-                                        ,
-                                        child: Center(child: Text(images[2],
-                                          style: TextStyle(fontSize: 20,color: Colors.white),)),
-                                      ),
-                                    ),
-
-                                    SizedBox(
-                                      width: 15,
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          make3();
-                                          updatePaymentType(png[3]);
-                                        });
-                                      },
-                                      child: Container(
-                                        width: 120,
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                                30),
-                                            border: Border.all(width: 1.5),
-                                            color: selected3)
-                                        ,
-                                        child: Center(child: Text(images[3],
-                                          style: TextStyle(fontSize: 20,color: Colors.white),)),
-                                      ),
-                                    ),
-
-                                    SizedBox(
-                                      width: 15,
-                                    )
-
-
-                                  ],
-                                ),
-                              ),
-                            ),
-
-                            Padding(
-                              padding: const EdgeInsets.only(top: 15.0),
-                              child: Container(
-                                height: 3, color: Color.fromRGBO(72, 72, 72, 1),
-                              ),
-                            ),
-
-
-
-
-
-                           SizedBox(
-                             height: 15,
-                           ),
-                            Row(
-                              children: <Widget>[
-                                //Text("Amount", style: TextStyle(fontSize: 20),),
-                                // Spacer(),
-                                Text("Amount", style: TextStyle(fontSize: 20,color: Colors.white),),
-                                SizedBox(
-                                  width: 5,
-                                ),
-
-                                Text("*",style: TextStyle(color: Colors.grey, fontSize: 15),),
-                                Spacer(),
-                                Container(
-
-
-                              //    CHANGE BORDER STYLE
-                                //  CHANGE WHITE TO BLACK WHEN PRESSED
-
-
-                                  // color: Colors.black,
-                                  width: 120,
-                                  child: TextField(
-
-                                    decoration: InputDecoration(
-                                      prefixIcon: Icon(Icons.attach_money,
-                                        color: Colors.green,),
-                                      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: amountError),),
-                                     // focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white))
-                                    //  errorBorder: OutlineInputBorder(borderSide: BorderSide(color: amountError))
-
-
-
-                                      //block digits with comma, hyphen etc.
-                                    ),style: TextStyle(color: Colors.white),
-                                    controller: amountController,
-                                    keyboardType: TextInputType.number, maxLength: 6,
-                                    inputFormatters: [
-                                      BlacklistingTextInputFormatter(
-                                          RegExp('[,|-]|[ ]')),
-                                      //WhitelistingTextInputFormatter.digitsOnly],
-
-                                    ],
-
-                                    ///will be used to determine if first time clicked
-                                    onSubmitted: (val){
-                                      if (val.endsWith(".")){
-                                        setState(() {
-                                          amountController.text+="0";
+                                          print(amountController.text);
                                           updateMoney(amountController.text);
-                                          amountError= Colors.white;
                                         });
-                                        
-                                      }
-                                    },
+                                      },),//decoration: BoxDecoration(border: Border(left:BorderSide.none,right:BorderSide.none,top:BorderSide.none,),borderRadius: BorderRadius.all(Radius.circular(9)),),
+                                  )
 
 
-                                    onChanged: (val) { //takes parameter
-                                         checkAmount(val);
-                                      setState(() {
-                                        amountError=Colors.white;
-
-                                        nameError = Colors.white;
-
-                                        if (cardDetails.checkAll() ==4 && amountController.text != ""){
-                                          op = 1;
-                                        }
-                                        print(amountController.text);
-                                        updateMoney(amountController.text);
-                                      });
-                                    },),//decoration: BoxDecoration(border: Border(left:BorderSide.none,right:BorderSide.none,top:BorderSide.none,),borderRadius: BorderRadius.all(Radius.circular(9)),),
-                                )
-
-
-                              ],
-                            ),
-
-
-                            //Button to add the card
-
-                            Spacer(),
-
-                            Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Padding(
-                                padding: const EdgeInsets.only(bottom: 8.0),
-                                child: RaisedButton(
-                                  elevation: 10,
-
-                                  color: Color.fromRGBO(255, 241, 118, op),
-                                  onPressed: (){
-                                    //if true, then all fields were filled
-                                    int i = cardDetails.checkRemDays(renewOn, storeCycleDays);
-                                    int x = cardDetails.checkAll();
-
-
-                                    ///checks if everything is set
-                                    if (x ==4 && i == 0 && amountController.text != ""){
-                                      ///go to home screen add card
-                                      errorCheck = false;
-                                      op = 1;
-                                      returnHome();
-
-
-                                    }
-                                    //check if fields filled and show error
-                                    else if(x == 1){
-                                      //name is empty
-                                      setState(() {
-                                        nameError = Colors.red;
-
-                                      });
-                                    }else if(x == 2){ // days not set
-                                      setState(() {
-                                        daysError = true;
-                                      });
-                                    }else if (x == 3 || amountController.text == ""){// money not set
-                                      setState(() {
-                                        amountError = Colors.red;
-                                      });
-                                    }
-                                    else if (i == 1){
-                                      ///then  remainder days is invalid
-                                      ///set error
-                                      setState(() {
-                                        errorCheck = true;
-                                      });
-
-                                    }
-                                    //else if (i == 0){//all fields empty
-
-                                    //}
-                                  },
-                                  child:Center(child: Text("Save Card",
-                                      style: TextStyle(
-                                          fontSize: 23, color: Colors.black))) ,
-                                ),
+                                ],
                               ),
-                            )
-                          ],
-
-                        )
 
 
-                    ),),
+                              //Button to add the card
+
+                              Spacer(),
+
+                              Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: RaisedButton(
+                                    elevation: 10,
+
+                                    color: Color.fromRGBO(255, 241, 118, op),
+                                    onPressed: (){
+                                      //if true, then all fields were filled
+                                      int i = cardDetails.checkRemDays(renewOn, storeCycleDays);
+                                      int x = cardDetails.checkAll();
 
 
-                ]
+                                      ///checks if everything is set
+                                      if (x ==4 && i == 0 && amountController.text != ""){
+                                        ///go to home screen add card
+                                        errorCheck = false;
+                                        op = 1;
+                                        returnHome();
+
+
+                                      }
+                                      //check if fields filled and show error
+                                      else if(x == 1){
+                                        //name is empty
+                                        setState(() {
+                                          nameError = Colors.red;
+
+                                        });
+                                      }else if(x == 2){ // days not set
+                                        setState(() {
+                                          daysError = true;
+                                        });
+                                      }else if (x == 3 || amountController.text == ""){// money not set
+                                        setState(() {
+                                          amountError = Colors.red;
+                                        });
+                                      }
+                                      else if (i == 1){
+                                        ///then  remainder days is invalid
+                                        ///set error
+                                        setState(() {
+                                          errorCheck = true;
+                                        });
+
+                                      }
+                                      //else if (i == 0){//all fields empty
+
+                                      //}
+                                    },
+                                    child:Center(child: Text("Save Card",
+                                        style: TextStyle(
+                                            fontSize: 23, color: Colors.black))) ,
+                                  ),
+                                ),
+                              )
+                            ],
+
+                          )
+
+
+                      ),),
+
+
+                  ]
+              ),
+
             ),
 
-          ),
+
+          ],
 
 
-        ],
+        ),
 
 
       ),
-
-
     );
   }
 
@@ -1870,7 +1913,18 @@ class _AddCardState extends State<AddCard> {
 
 
 
-
+/* String checkInputText(String s){
+    String p = r'[a-zA-Z]+\d*';
+    RegExp reg = new RegExp(p);
+    if (reg.hasMatch(s)){
+      //textCheck.text = s;
+      return s;
+    }else{
+      textCheck.text = textCheck.text.substring(0, textCheck.text.length-1);
+      return "";
+   //   textCheck.text = "";
+    }
+ }*/
 
 
 

@@ -18,7 +18,7 @@ class CardDetails{
   int _cycleDays;
   bool _status; ///represents if subscription has started, false if upcoming
   DateTime created; ///stores the day created, so as to view when updating page
-
+   int futureDays;
 
 
   String dayTemp;
@@ -37,7 +37,13 @@ class CardDetails{
     _status = val;
   }
 
-
+  ///reduces the days to reach the cycle
+  void setFutureDays(int i){
+    futureDays = i;
+  }
+  int getFuture(){
+    return futureDays;
+  }
 
   bool getStatus(){
     return _status;

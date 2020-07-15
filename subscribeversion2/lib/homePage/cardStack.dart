@@ -123,7 +123,7 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardT
                               children: <Widget>[
                                 Padding(
                                   padding: const EdgeInsets.only(left:20.0),
-                                  child: Text(stackType[i][0].getNameCard(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 38,),),
+                                  child: Text(stackType[i][0].getNameCard(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30,),),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(top:5,left: 3),
@@ -149,8 +149,9 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardT
                                           width: 140,
 
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.all(Radius.circular(40),),color: stackType[i][0].getDayColor()
-                                            //boxShadow: [BoxShadow(color: Colors.black12,spreadRadius: 1,blurRadius: 2)]
+                                            borderRadius: BorderRadius.all(Radius.circular(40),),color: stackType[i][0].getDayColor(),
+
+                                              boxShadow: [BoxShadow(color: Colors.black12,spreadRadius: 4,blurRadius: 2)]
                                           ),
 
                                           child: Center(child: Text(modifyView(stackType[i][0].getDayCount()),style: TextStyle(fontSize: 25,color: Colors.white,fontWeight: FontWeight.bold),)),
