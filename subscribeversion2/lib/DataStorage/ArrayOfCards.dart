@@ -77,7 +77,14 @@ class ArrayOfCards{
      }return upcoming;
    }
 
+  double getBalance(List x){
+     double val=0.00;
+     for(int i=0; i< x.length;i++){
+       val+= double.parse(x[i][0].getMoney());
+     }
+     return val;
 
+  }
 
    void updatePerformed(){
      updated = true;

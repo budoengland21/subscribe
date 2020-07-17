@@ -25,6 +25,7 @@ class AddCard extends StatefulWidget {
    CardDetails accessCard;
    int cardIndex;//index of card
 
+
   AddCard(this.accessCard, this.cardIndex);///used to determine if being updated or not
    @override
   _AddCardState createState() => _AddCardState();
@@ -34,7 +35,7 @@ class AddCard extends StatefulWidget {
 
 
 class _AddCardState extends State<AddCard> {
-
+  BuildContext saveContext;
   //Controller to check if user changed a value in the text field box
   String oldName = "";
   // endVal= DateTime.now();
@@ -76,7 +77,7 @@ class _AddCardState extends State<AddCard> {
   CardDetails cardDetails = new CardDetails();
   ArrayOfCards arrayOfCards = new ArrayOfCards();
 
-  double op = 0.5; /// determines opacity of button
+  double op = 0.9; /// determines opacity of button
 
   bool keyboardState; /// store the state of the keyboard
   int reduceFuture =0;  ///store value for the future cards
@@ -139,6 +140,8 @@ class _AddCardState extends State<AddCard> {
     "images/voucher.png",
     "images/paypal.png"
   ];
+  //check the remainder days if auto renew off
+  bool validity = false;
 
   //used to check if switch is on
   bool isOn = false;
@@ -218,6 +221,7 @@ class _AddCardState extends State<AddCard> {
   }
 // calculate days for 7 days, 3 months but not for custom
   void calculateCycleDays(int val){
+    print('val---$val');
     diff = (DateTime.now().difference(firstTime).inDays);
 
     int ans;
@@ -251,9 +255,11 @@ class _AddCardState extends State<AddCard> {
     if (diff > val || inCycle){
       print('yes2');
       int rem = diff % val;
+      print(renewOn);
       if (rem == 0){//hence no remainder, then it's 2day
         ans = 0;
       }else{//find the remainder, then set the cycle days, all assuming repeat on
+        print('lol $renewOn');
          if (renewOn){
            ans = val-rem;
            inCycle = true;
@@ -263,6 +269,7 @@ class _AddCardState extends State<AddCard> {
 
          }else{//user didn't set renew, so its expired
            ans = -1;
+           inCycle = false;
 
 
          }
@@ -399,7 +406,7 @@ class _AddCardState extends State<AddCard> {
       if (int.parse(val) == 1 && !notStarted){
         tempDays="DUE IN "+ val + " DAY";
         cardDetails.setDayColor(Color.fromRGBO(26, 255, 49, 1)); //set to green
-
+        statusCheck=true;
         print("updating.....");
 
       }else if (int.parse(val) == 0){ // WHEN USER is updating and it's 0 days
@@ -454,12 +461,6 @@ class _AddCardState extends State<AddCard> {
       print('lopppppppppppppppp');
       cardDetails.setReminder(isOn);
      cardDetails.updateStatus(statusCheck); ///update status based on upcoming
-
-     // arrayOfCards.updatePerformed();
-
-
-      //Navigator.pop(context);
-      //day color left at default
 
 
      cardDetails.setDate(firstTime);
@@ -641,12 +642,12 @@ class _AddCardState extends State<AddCard> {
 
   ///set the remainder
   void checkReminderDays(String remDays){
-    if (isOn){
+    if (renewOn){
       int i= calculateRem(remDays);
       cardDetails.setReminderDays(i);
     }
     else{
-      cardDetails.setReminderDays(0);///dummy value
+      cardDetails.setReminderDays(135);///when it's off, just set reminder same day
     }
   }
   int calculateRem(String x){
@@ -679,13 +680,26 @@ class _AddCardState extends State<AddCard> {
   }
 
   Future<bool> undoChanges() async{
-    arrayOfCards.replaceCard(this.widget.cardIndex, tempState);//
+    arrayOfCards.removeAll();
+   //  arrayOfCards.replaceCard(this.widget.cardIndex, tempState);//
+    storedData st = storedData();
+    await st.initializeDatabase();
+   List  list  = await st.getData();
+   arrayOfCards.addAll(list);
+
+
+     print(tempState.getNamePayment());
+    print("look if ");
+    Navigator.pop(saveContext); ///so it can go back to view card and remove any update
+    //Navigator.pop(context);
+
     return true;
   }
   ///Builder
   ///______________________________________________________________________________________________________________________________________________________________________________________________________________________________________
   @override
   Widget build(BuildContext context) {
+    saveContext = context;
     //Since default color is black
    // cardDetails.setColor(Colors.black); //set the color
 /// This is what user sees when card is being updated
@@ -796,11 +810,8 @@ class _AddCardState extends State<AddCard> {
 
     return WillPopScope(
 
-      onWillPop: () {
-        undoChanges();
-
-
-      },
+      onWillPop:
+        undoChanges,
       child: Scaffold(
         backgroundColor: Colors.black,
         body: CustomScrollView(
@@ -818,7 +829,7 @@ class _AddCardState extends State<AddCard> {
               elevation: 10,
               leading: IconButton(
                 icon: Icon(Icons.arrow_back, color: Colors.greenAccent, size: 35,),
-                onPressed: () {Navigator.pop(context);},),
+                onPressed: () {undoChanges();},),
               // appBar:AppBar(leading: IconButton(icon:Icon(Icons.arrow_back,color: Colors.black,size: 30,),),)//leading: IconButton(icon:Icon(Icons.arrow_back,color: Colors.black,size: 30,),),
 
               // color that appear when scroll up
@@ -1047,12 +1058,21 @@ class _AddCardState extends State<AddCard> {
                                       GestureDetector(
                                         onTap: () {
                                           customTapped = false;
+
+
                                           setState(() {
                                             daysError = false;
 
                                             colorDay();
                                             storeAns=7;
                                             calculateCycleDays(7);
+                                            ///for checking reminder
+                                            if (cardDetails.getReminderDays()> storeCycleDays && validity){
+                                              errorCheck=true;
+                                            }else{
+                                              errorCheck=false;
+                                            }
+                                            daysError = false;
 
 
 
@@ -1095,6 +1115,13 @@ class _AddCardState extends State<AddCard> {
                                             colorDay1();
                                             storeAns=14;
                                             calculateCycleDays(14);
+                                            ///for checking reminder
+                                            if (cardDetails.getReminderDays()> storeCycleDays  && validity){
+                                              errorCheck=true;
+                                            }else{
+                                              errorCheck=false;
+                                            }
+                                            daysError = false;
                                           });
                                         },
                                         child: Container(
@@ -1134,6 +1161,15 @@ class _AddCardState extends State<AddCard> {
                                             colorDay2();
                                             storeAns=30;
 
+                                            ///for checking reminder
+                                            ///validity if on set reminder on
+                                            if (cardDetails.getReminderDays()> storeCycleDays && validity){
+                                              errorCheck=true;
+                                            }else{
+                                              errorCheck=false;
+                                            }
+                                            daysError = false;
+
                                           });
                                         },
                                         child: Container(
@@ -1167,10 +1203,18 @@ class _AddCardState extends State<AddCard> {
 
                                           customTapped = false;
                                           setState(() {
+
                                             daysError=false;
                                             calculateCycleDays(90);
                                             colorDay3();
                                             storeAns=90;
+                                            ///for checking reminder
+                                            if (cardDetails.getReminderDays()> storeCycleDays && validity){
+                                              errorCheck=true;
+                                            }else{
+                                              errorCheck=false;
+                                            }
+                                            daysError = false;
 
                                           });
                                         },
@@ -1214,13 +1258,20 @@ class _AddCardState extends State<AddCard> {
                                                 onConfirm: (val){///after done pressed
                                                   print(val);
                                                   setState(() {
-                                                    daysError = false;
 
                                                  //   endVal = val; // changes value of custom text
                                                     colorCustom();
                                                     //calculateDays(val);
                                                     calculateD(val);
                                                     //updateDays(val)
+
+                                                    ///for checking reminder
+                                                    if (cardDetails.getReminderDays()> storeCycleDays){
+                                                      errorCheck=true;
+                                                    }else{
+                                                      errorCheck=false;
+                                                    }
+                                                    daysError = false;
 
                                                    // formatDate(val);///where it formats date
 
@@ -1276,10 +1327,23 @@ class _AddCardState extends State<AddCard> {
                                         onChanged: (
                                             val) { // onchanged takes parameter of whats changed
                                           setState(() {
+                                            print('pp $val');
+
                                             renewOn = val;
+                                            if (renewOn){
+                                              errorCheck = false; ///coz if renew on, then reminder all accepted
+                                            }else{///incase turned off but days still greater
+                                              if (cardDetails.getReminderDays()> storeCycleDays){
+                                                errorCheck=true;
+                                              }else{
+                                                errorCheck=false;
+                                              }
+
+                                            }
+                                            print('diff--- $diff');
                                          //  inCycle = val;
                                           if (!customTapped && diff != -1 ){ ///doesn't apply to custom
-                                          //  print('wwwwwwwwwwwwwwwww');
+                                           print('wwwwwwwwwwwwwwwww');
                                             calculateCycleDays(storeAns);
                                           }
 
@@ -1367,12 +1431,22 @@ class _AddCardState extends State<AddCard> {
                                         if (userCancel){
                                           newvalue= days[0];
                                         }
+                                      }else{
+
+                                          validity = checkRemValid(newvalue);///check if remainder > than days,should be error
+
+
+
                                       }
 
 
                                         setState(()  {
+
                                           FocusScope.of(context).requestFocus( ///it will clear all focus of the textfield
                                               new FocusNode());
+                                          if (cardDetails.getNameCard()!=null){
+                                            nameError = Colors.white;
+                                          }
 
                                           errorCheck = false; // remove the error when user changing rem days
 
@@ -1434,12 +1508,26 @@ class _AddCardState extends State<AddCard> {
                                            else{
                                              ///disable selection for days that
                                             ///a reminder can't be set if passed
+                                            ///this is when renew off but if on all days valid
                                         //    int checkr= cardDetails.checkRemDays(renewOn, daysNow)
+                                            if (!renewOn){
+                                              if (validity){
+                                                errorCheck=false;
+                                              }else{
+                                                errorCheck= true;
+                                              }
+                                            }else{
+                                              ///this is for those with renewal on
+                                              checkReminderDays(newvalue);
+                                            }
 
 
 
-                                            checkReminderDays(newvalue);
+
                                             defaultDay = newvalue;
+
+
+
 
                                           }
 
@@ -1705,15 +1793,18 @@ class _AddCardState extends State<AddCard> {
                                     color: Color.fromRGBO(255, 241, 118, op),
                                     onPressed: (){
                                       //if true, then all fields were filled
-                                      int i = cardDetails.checkRemDays(renewOn, storeCycleDays);
+                                     // int i = cardDetails.checkRemDays(renewOn, storeCycleDays);
                                       int x = cardDetails.checkAll();
 
 
                                       ///checks if everything is set
-                                      if (x ==4 && i == 0 && amountController.text != ""){
+                                      if (x ==4 && (!errorCheck) && amountController.text != ""){
                                         ///go to home screen add card
-                                        errorCheck = false;
+                                      //  errorCheck = false;
                                         op = 1;
+                                        print("CARD OPAYENT----");
+                                          print(cardDetails.getNamePayment());
+
                                         returnHome();
 
 
@@ -1734,7 +1825,7 @@ class _AddCardState extends State<AddCard> {
                                           amountError = Colors.red;
                                         });
                                       }
-                                      else if (i == 1){
+                                      else if (errorCheck){
                                         ///then  remainder days is invalid
                                         ///set error
                                         setState(() {
@@ -1746,7 +1837,7 @@ class _AddCardState extends State<AddCard> {
 
                                       //}
                                     },
-                                    child:Center(child: Text("Save Card",
+                                    child:Center(child: Text("Save Subscription",
                                         style: TextStyle(
                                             fontSize: 23, color: Colors.black))) ,
                                   ),
@@ -1787,7 +1878,7 @@ class _AddCardState extends State<AddCard> {
       Colors.blue,
       Colors.lime,
       Colors.orange,
-      Colors.cyanAccent
+      Colors.cyan
     ];
     List<Widget> containers = [];
     for (int i = 0; i < colorLst.length; i++) {
@@ -1908,6 +1999,36 @@ class _AddCardState extends State<AddCard> {
           width: 60,
           height: 60,
         );
+    }
+  }
+
+  ///check if the days can be allowed to be set a reminder
+  ///a reminder will activate instantly when on that same day
+  bool checkRemValid(String val){
+
+    if (val == "1 day"){
+      if (storeCycleDays >= 1){
+
+
+        return true;
+      }else{
+
+        return false;
+      }
+
+
+    }else if (val == "3 days"){
+      if (storeCycleDays >= 3){
+
+        return true;
+      }else{
+
+        return false;
+      }
+    }else{
+
+
+      return true;///assume user selected same day
     }
   }
 

@@ -28,6 +28,7 @@ class CardDetails{
   CardDetails(){
     _reminder=false;
    _renew=false;
+   _namePayment = "images/money.png";
  //  _status = true; //default that it has started
   }
 
@@ -75,20 +76,15 @@ class CardDetails{
   }
 
   String getNamePayment() {
-    if (_namePayment == "None") {
-      return null;
 
-    }else {
       return _namePayment;
-    }
+
    // _namePayment;
   }
   void NamePayment(String value) {
-    if (value == null){
-      _namePayment = "None";
-    }else{
+
     _namePayment = value;
-  }}
+  }
 
   int getReminderDays() {
     if (_reminder){

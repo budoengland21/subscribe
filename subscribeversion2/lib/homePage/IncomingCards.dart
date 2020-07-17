@@ -15,7 +15,7 @@ CustomScrollView IncomingCards(ArrayOfCards a, BuildContext context){
 
                   children: stackOfCards(a, context, "incoming"),
                 )]
-          ), itemExtent: 900,
+          ), itemExtent:   (a.checkSize())*140.00
         )
       ],
     );

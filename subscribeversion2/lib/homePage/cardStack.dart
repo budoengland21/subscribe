@@ -35,48 +35,20 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardT
 
   List stackType = determineType(cardType,cards);
   int check = stackType.length;
+  double balance = cards.getBalance(stackType);
 
   print('size---> $check');
   if (check == 0){
     stacks.add(
-        Positioned(
-          top:ttop,
-          left:0,
-          right: 0,
-          child: Card(
-            margin: EdgeInsets.zero,
-            elevation: 10,
-            color:Colors.blueGrey,
+      Padding(
+        padding: const EdgeInsets.only(top:100,bottom: 100),
+        child: Center(
+            child: Text('Add a subscription by clicking +',style: TextStyle(color: Colors.white.withOpacity(0.6),fontSize: 20),)),
+      )
 
 
-            child: Container(
+    );
 
-              width: double.infinity,
-              // color: Colors.blue,
-              height: 80,
-              child: Row(
-                children: <Widget>[
-                  Container(
-                    height: 30,
-                    width: 70,
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage("images/price.png"),fit: BoxFit.contain,
-                        )
-
-
-                    ),
-                  ),
-                  Container(
-                      width: 120,
-                      child: Center(child: Text("\$439990",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,fontSize: 23),))
-                  )
-                ],
-              ),
-            ),
-
-          ),
-        ));
 
   }
   else{
@@ -181,7 +153,47 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardT
       ttop+=140;
 
     }
-  }
+  }stacks.add(
+      Positioned(
+        top:ttop,
+        left:0,
+        right: 0,
+        child: Card(
+          margin: EdgeInsets.zero,
+          elevation: 10,
+          color:Colors.blueGrey,
+
+
+          child: Container(
+
+            width: double.infinity,
+            // color: Colors.blue,
+            height: 80,
+            child: Row(
+              children: <Widget>[
+                Container(
+                  height: 30,
+                  width: 70,
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage("images/price.png"),fit: BoxFit.contain,
+                      )
+
+
+                  ),
+                ),
+                Container(
+                    width: 120,
+                    child: Center(child: Text("\$ $balance",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,fontSize: 23),))
+                )
+              ],
+            ),
+          ),
+
+        ),
+      )
+
+  );
   return stacks;
 }
 
@@ -200,7 +212,7 @@ String modifyView(String days){
 }
 
 Container checkPayment(int i, List stack){
-  if (stack[i][0].getNamePayment() != null){
+
     return (
         Container(
           height: 60,
@@ -216,11 +228,7 @@ Container checkPayment(int i, List stack){
         )
     );
 
-  }return Container(
-    height: 60,
-    //color: Colors.red,
-    width: 70,
-  );
+
 }
 
 

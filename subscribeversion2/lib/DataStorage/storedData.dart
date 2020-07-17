@@ -252,8 +252,9 @@ class storedData{
        if (future == 0){
          card.updateStatus(true);
          startedCheck = true;
+         future = 0;
        }
-       String d_color = findDayColor(maps[index]['$dayColor']);
+       String d_color = findDayColor();
        print(" COLOR $d_color");
        print('started --- $startedCheck');
        card.setDayColorHex(d_color);
@@ -287,7 +288,7 @@ class storedData{
      });
    }
 
-   String findDayColor(String cal){
+   String findDayColor(){
      //check reminder days
      //String check = days;
      print("Days remaining updated-->: $diff");
@@ -301,8 +302,8 @@ class storedData{
      if (diff <= 1 ){
        return "#FF0000";//red color
      }else{
-       print("how da f");
-       return cal;
+
+       return '#1aff31';
      }
 
 
@@ -316,7 +317,7 @@ class storedData{
      int nowDay =  int.parse(days);
 
 
-     DateTime saved = DateTime.parse(dateString);///technically the begin cycle too
+     DateTime saved = DateTime.parse(dateString);///technically the day it was created too
 
      ///difference between begin cycle and now (dateCreated) too
       diff = DateTime(now.year, now.month,now.day).difference
@@ -379,8 +380,10 @@ class storedData{
 
      ///subtracts days based on how many have passed
      ///set the diff to be the days remaining to show on the display
-     else if (diff >= 0){
+     ///dateCreated>0, means the begin cycle is 1 day more than now, hence not future
+     else if (diff >= 0 && (dateCreated > 0)){
         diff = nowDay - diff;
+        future=0;
 
 
      }
