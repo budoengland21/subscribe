@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:subscribeversion2/AddCardScreen/AddCard.dart';
 import 'package:subscribeversion2/DataStorage/ArrayOfCards.dart';
 import 'package:subscribeversion2/DataStorage/CardDetails.dart';
@@ -8,13 +10,16 @@ import 'package:subscribeversion2/homePage/UpcomingCards.dart';
 import 'package:subscribeversion2/homePage/pastCards.dart';
 
 
+
+
 import 'cardStack.dart';
 
     void main() {
       runApp(
           MaterialApp(
             theme: ThemeData(
-                primaryColor: Colors.white,canvasColor: Color.fromRGBO(72, 72, 72, 1)
+                primaryColor: Colors.white,canvasColor: Color.fromRGBO(72, 72, 72, 1),
+
 
             ),
             home: FrontPage(false),
@@ -43,7 +48,7 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
 
   ///keep state track
   //final myKey =   GlobalKey<FormState>();
-  int current = 0; /// index of the tab
+  int current = 1; /// index of the tab
 
 /// calls the singleton class
 
@@ -65,6 +70,7 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // TODO: implement didChangeAppLifecycleState
   //  super.didChangeAppLifecycleState(state);
+    print('this is the state $state');
     if (state == AppLifecycleState.resumed){// meaning the app resumed after dormant
       startDatabase();
       print("RESUME");
@@ -86,6 +92,7 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
   ///Only runs once
   void startDatabase() async{
     storage = storedData();
+
     await storage.initializeDatabase();
   list  = await storage.getData();
       setState(() {
@@ -107,28 +114,25 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
   @override
   Widget build(BuildContext context) {
     buildContext = context;
+
     ///list of the tabs for their bodies
     final tabs = [
       pastCards(a, buildContext),
       IncomingCards(a, buildContext),
       UpcomingCards(a, buildContext)
     ];
+ //   FlutterStatusbarcolor.setStatusBarColor(Colors.green);
+    FlutterStatusbarcolor.setStatusBarWhiteForeground(true);
     return Scaffold(
 
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        elevation: 10,
-        backgroundColor: Colors.black,
-        actions: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(right:30.0),
-            child: IconButton(
-              icon: Icon(Icons.filter_list),
-              color: Colors.white,
-              iconSize: 30,
-              onPressed: (){},//go to settings page} ,
-            ),
-          ),
+      backgroundColor: Colors.black12,
+      appBar: 
+      AppBar(
+       // brightness: Brightness.light,
+       elevation: 10,
+       backgroundColor: Colors.black,
+      /*  actions: <Widget>[
+
           Padding(
             padding: const EdgeInsets.only(right:10.0),
             child: IconButton(
@@ -138,7 +142,7 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
               onPressed: (){}, // generate container with options
             ),
           )
-        ],
+        ],*/
       ),
 
       body:

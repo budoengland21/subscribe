@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 import 'package:flutter/services.dart';
-import 'package:keyboard_visibility/keyboard_visibility.dart';
 import 'package:subscribeversion2/DataStorage/ArrayOfCards.dart';
 import 'package:subscribeversion2/DataStorage/CardDetails.dart';
 import 'package:subscribeversion2/DataStorage/storedData.dart';
@@ -1941,7 +1940,7 @@ class _AddCardState extends State<AddCard> {
 
 
 
-   String p = r'(^[0-9]{0,4}(.)?[0-9]{0,2}$)';
+   String p = r'(^[1-9]{0,4}(.)?[0-9]{0,2}$)';
 
     RegExp regExp = new RegExp(p);
     if (amountController.text.startsWith(".")||

@@ -27,15 +27,15 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardT
 
 
   List<Widget> stacks = [];
-  double ttop=10;
-  double lleft= 0;
-  double rright=0;
+  double ttop=120;
+  double lleft= 4;
+  double rright=4;
 
   ///NEED INDEX OF ARRAY OF CARDS AND NOT THE LIST TO UPDATE AND DELETE
 
   List stackType = determineType(cardType,cards);
   int check = stackType.length;
-  double balance = cards.getBalance(stackType);
+  String balance = cards.getBalance(stackType);
 
   print('size---> $check');
   if (check == 0){
@@ -51,8 +51,51 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardT
 
 
   }
-  else{
+  ///add stack to show the balance
+  ///
 
+  else{
+    stacks.add(
+
+    Positioned(
+        top:0,
+        left:30,
+        right: 30,
+        child: Card(
+            margin: EdgeInsets.zero,
+            elevation: 10,
+            color:Colors.blueGrey,
+
+
+           child: Container(
+
+              width: double.infinity,
+              // color: Colors.blue,
+              height: 90,
+                child: Row(
+                  children: <Widget>[
+                  Container(
+                  height: 30,
+                  width: 70,
+                  decoration: BoxDecoration(
+                  image: DecorationImage(
+                  image: AssetImage("images/price.png"),fit: BoxFit.contain,
+                  )
+
+
+    ),
+    ),
+                  Container(
+                        width: 120,
+                        child: Center(child: Text("\$ $balance",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,fontSize: 23),))
+                        )
+                            ],
+        ),
+        ),
+
+        ),
+        )
+        );
 
     for (int i=0; i< check; i++){
 
@@ -62,7 +105,7 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardT
               left: lleft,
               right: rright,
               child: Padding(
-                padding: EdgeInsets.all(5.0),
+                padding: EdgeInsets.all(8.0),
                 child: Transform(
                   transform:  Matrix4.identity()
                     ..setEntry(3,2,0.01)
@@ -79,10 +122,10 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardT
                     },
                     child: Card(
                       margin: EdgeInsets.zero,
-                      elevation: 10,
+                      elevation: 20,
                       color: stackType[i][0].getColor(),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(40))
+                          borderRadius: BorderRadius.only(topLeft:Radius.circular(20),topRight: Radius.circular(20))
                       ),
                       child: Container(
                         width: double.infinity,
@@ -153,47 +196,9 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardT
       ttop+=140;
 
     }
-  }stacks.add(
-      Positioned(
-        top:ttop,
-        left:0,
-        right: 0,
-        child: Card(
-          margin: EdgeInsets.zero,
-          elevation: 10,
-          color:Colors.blueGrey,
+  }
 
 
-          child: Container(
-
-            width: double.infinity,
-            // color: Colors.blue,
-            height: 80,
-            child: Row(
-              children: <Widget>[
-                Container(
-                  height: 30,
-                  width: 70,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage("images/price.png"),fit: BoxFit.contain,
-                      )
-
-
-                  ),
-                ),
-                Container(
-                    width: 120,
-                    child: Center(child: Text("\$ $balance",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,fontSize: 23),))
-                )
-              ],
-            ),
-          ),
-
-        ),
-      )
-
-  );
   return stacks;
 }
 

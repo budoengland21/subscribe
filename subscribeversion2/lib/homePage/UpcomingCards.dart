@@ -15,7 +15,7 @@ CustomScrollView UpcomingCards(ArrayOfCards a, BuildContext context){
 ///add upcoming to database
                   children: stackOfCards(a, context, "upcoming"),
                 )]
-          ), itemExtent:   (a.checkSize())*140.00
+          ), itemExtent:   (a.checkSize()+1)*140.00
         )
       ],
     );

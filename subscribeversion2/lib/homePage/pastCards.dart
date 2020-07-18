@@ -16,7 +16,7 @@ CustomScrollView pastCards(ArrayOfCards a, BuildContext context){
                   children: stackOfCards(a, context, "pass"),
                 )]
                   //if size not empty, increase to add extra space for balance
-          ), itemExtent:  (a.checkSize())*140.00
+          ), itemExtent:  (a.checkSize()+1)*140.00
    //     a.checkSize()*150.0,
         )
       ],

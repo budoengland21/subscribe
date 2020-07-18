@@ -27,7 +27,7 @@ dependencies:
   sqflite: ^1.3.0+1
   path_provider: ^1.6.7
   intl:
-  keyboard_visibility: any
+  flutter_statusbarcolor: ^0.2.3
 
 
 
