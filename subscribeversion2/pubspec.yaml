@@ -28,6 +28,8 @@ dependencies:
   path_provider: ^1.6.7
   intl:
   flutter_statusbarcolor: ^0.2.3
+  flutter_local_notifications: ^1.4.4+2
+
 
 
 

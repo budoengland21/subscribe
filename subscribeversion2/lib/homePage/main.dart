@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:subscribeversion2/AddCardScreen/AddCard.dart';
 import 'package:subscribeversion2/DataStorage/ArrayOfCards.dart';
@@ -8,6 +10,7 @@ import 'package:subscribeversion2/DataStorage/storedData.dart';
 import 'package:subscribeversion2/homePage/IncomingCards.dart';
 import 'package:subscribeversion2/homePage/UpcomingCards.dart';
 import 'package:subscribeversion2/homePage/pastCards.dart';
+import '';
 
 
 
@@ -46,8 +49,66 @@ class FrontPage extends StatefulWidget{// with WidgetsBindingObserver {
 
 class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
 
-  ///keep state track
-  //final myKey =   GlobalKey<FormState>();
+  ///local notifications
+  FlutterLocalNotificationsPlugin plugin = FlutterLocalNotificationsPlugin();
+  AndroidInitializationSettings androidSettings;
+  IOSInitializationSettings iosSettings;
+  InitializationSettings initializationSettings;
+
+  ///runs first time from the init state
+  void initializePlugin() async{
+    androidSettings = AndroidInitializationSettings('notify');
+    iosSettings = IOSInitializationSettings(onDidReceiveLocalNotification: onDidReceiveIOS); ///triggers initializition for ios
+    initializationSettings  = InitializationSettings(androidSettings,iosSettings); ///settings for each platform
+    await plugin.initialize(initializationSettings,onSelectNotification: onSelectNotifications);///triggers notification and onSelect determines what it does when pressed
+  }
+
+  void showNotificationsAfterInterval() async{
+    await notification();
+  }
+
+  Future<void> notification() async{
+    var timeInt = DateTime.now().add(Duration(seconds: 10));
+    AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
+        'Channel ID', 'title', 'body', priority: Priority.High,importance: Importance.Max,
+         ticker: 'test');
+    
+    ///FOR IOS notification info, if ios
+    IOSNotificationDetails iosNotificationDetails = IOSNotificationDetails();
+    
+    ///Notification details for each platform
+    NotificationDetails notificationDetails = NotificationDetails(androidNotificationDetails,iosNotificationDetails);
+    await plugin.schedule(2, 'hello', 'Dur 30',timeInt,notificationDetails); ///plugin for each platform shows this msg after line 63
+  }
+
+  ///when notification is clicked on, and you want to do sth
+  Future<void> onSelectNotifications(String payload) async{
+    if (payload != null){
+      print(payload);
+    }
+  //  print(payload);
+
+  }
+
+  ///notification details for ios, for now not tested
+  Future<void> onDidReceiveIOS(int id, String title,String body,String payload) async{
+      return CupertinoAlertDialog(
+        title: Text(title),
+        content: Text(body),
+        actions: <Widget>[
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: (){
+              print("");
+            },
+            child: Text("Okay"),
+          )
+        ],
+      );
+  }
+
+
+
   int current = 1; /// index of the tab
 
 /// calls the singleton class
@@ -55,6 +116,7 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
   @override
   void initState() {
     // TODO: implement initState
+    initializePlugin();///initilizes notification based on what platform used
     if (!this.widget.hasPassed){
       print("DATABSE ACTIVATING----------------------");
       super.initState();
@@ -182,11 +244,11 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
         backgroundColor: Colors.blueGrey,
         child: Icon(Icons.add,color: Colors.white,size: 30,),
         splashColor: Colors.lime,
-        onPressed: (){
+        onPressed: (){showNotificationsAfterInterval();
           //  Navigator.pop(context);
-            Navigator.push(context, MaterialPageRoute(builder: (context)=> AddCard(null,-1))).then((value){
+          /*  Navigator.push(context, MaterialPageRoute(builder: (context)=> AddCard(null,-1))).then((value){
               setState(() {});///rebuild state after
-            });
+            });*/
 
 
         },
