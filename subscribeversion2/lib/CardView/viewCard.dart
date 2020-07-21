@@ -5,14 +5,27 @@ import 'package:subscribeversion2/DataStorage/ArrayOfCards.dart';
 import 'package:subscribeversion2/DataStorage/CardDetails.dart';
 import 'package:subscribeversion2/DataStorage/storedData.dart';
 import 'package:subscribeversion2/homePage/main.dart';
+import 'package:subscribeversion2/notificationData.dart';
 
 class viewCard extends StatelessWidget {
   CardDetails card;
   int index;
+  bool isOn = false; ///check if remainder is on
+  CardDetails tempIndex; ///store carddetails for database to delete
+  String tempName; ///store name of card to get index
+  bool remOn = false; ///for notification to determine
+  int channelIndex=0; ///index of card in database to delete
   ArrayOfCards a = new ArrayOfCards();
-  viewCard(this.card, this.index);
+  storedData store = new storedData();
+  viewCard(this.card, this.index){
+    tempIndex = a.seeCard(this.index);
+    isOn= this.card.getReminder();
+    tempName = this.card.getNameCard();
+  }
 
   String checkSet(){
+
+
     if (this.card.getReminderDays() == 0){
       return "Not set";
 
@@ -28,16 +41,22 @@ class viewCard extends StatelessWidget {
       }else{return "Not set";}
     }
 
-    void delete() {
+    ///deletes notification if exists
+    void removeNotification() async {
+      if (isOn){///then we can delete the reminder
+        channelIndex = await store.getIndex(tempName);
+        NotificationData notificationData = new NotificationData();
+      //  int val = await  store.getIndex(this.card.getNameCard());
+        notificationData.cancelNotification(channelIndex); ///delete
+      }
+    }
+    void delete()  {
+   //   storedData store = new storedData();
 
 
-    storedData store = new storedData();
-
-
-      // int val = await store.getID(this.index);
-       store.deleteItem(a.seeCard(this.index));
+       store.deleteItem(tempIndex);
        print('this is index delete:$index');
-       a.removeCard(this.index);//removes from the array
+
 
        print("size");
        print(a.checkSize());
@@ -209,13 +228,19 @@ class viewCard extends StatelessWidget {
                                 ///delete from database
                                 onPressed: () {
                              //    a.removeCard(this.index);
-                                 delete();
 
+                                 //tempIndex = a.seeCard(this.index);
+                                 a.removeCard(this.index);//removes from the array
                                   Navigator.pop(context);
 
                                   Navigator.pop(context);//remove the  main page too
                                   //Now pop the main page, pass parameter to confirm so it doesn't go to init
                                   Navigator.push(context, MaterialPageRoute(builder: (context)=> FrontPage(true)));
+
+
+                                  removeNotification();
+                                 delete(); ///remove from database
+
                                  // delete();
                                 },
                                 elevation: 15,

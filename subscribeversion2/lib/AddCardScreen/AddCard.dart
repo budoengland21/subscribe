@@ -14,6 +14,7 @@ import 'package:subscribeversion2/DataStorage/ArrayOfCards.dart';
 import 'package:subscribeversion2/DataStorage/CardDetails.dart';
 import 'package:subscribeversion2/DataStorage/storedData.dart';
 import 'package:subscribeversion2/homePage/main.dart';
+import 'package:subscribeversion2/notificationData.dart';
 
 
 
@@ -23,6 +24,8 @@ class AddCard extends StatefulWidget {
 
    CardDetails accessCard;
    int cardIndex;//index of card
+
+
 
 
   AddCard(this.accessCard, this.cardIndex);///used to determine if being updated or not
@@ -43,6 +46,7 @@ class _AddCardState extends State<AddCard> {
    final TextEditingController textCheck = new TextEditingController(); //track of the name of subscription
    final TextEditingController amountController = new TextEditingController();//keep track of amount
 
+  int storageIndex=-1; ///used as channel id for notifications
 
   final  TextEditingController daySelector = new TextEditingController(); // keep track of custom days selected
 
@@ -147,6 +151,7 @@ class _AddCardState extends State<AddCard> {
   bool renewOn = true;
   List<String> days = ["Same day","1 day", "3 days", "Custom"];
   String defaultDay = "1 day";
+  bool remainderTouched= false; ///check if reminder days touched, if not, remdays=1
 
   ///storing dates, first time stores date first time entered
   String defaultDate = "Today";
@@ -451,6 +456,10 @@ class _AddCardState extends State<AddCard> {
 
   ///Updates the current card
     if (updating) {
+
+      ///CHECK IF REMINDER DAYS WAS CHANGED, THEN  REUPDATE THE NOTIFICATION
+      ///
+      ///
       cardDetails.setColor(cardColor);
 
 
@@ -480,6 +489,7 @@ class _AddCardState extends State<AddCard> {
     ///Adds a new card
     // set the autorenew and remainder
     else {
+
       cardDetails.setFutureDays(reduceFuture); ///set days reduce the future
       cardDetails.updateStatus(statusCheck);
       if (cardColor == Colors.grey) {
@@ -501,6 +511,9 @@ class _AddCardState extends State<AddCard> {
 
 
   }
+
+
+
   ///this displays the dialog box
   Future<void> dayPickerBox() async{
     return  await showDialog(context: context,
@@ -642,6 +655,9 @@ class _AddCardState extends State<AddCard> {
   ///set the remainder
   void checkReminderDays(String remDays){
     if (renewOn){
+      if (!remainderTouched){
+        remDays = days[1]; ///represents 1 day
+      }
       int i= calculateRem(remDays);
       cardDetails.setReminderDays(i);
     }
@@ -668,14 +684,46 @@ class _AddCardState extends State<AddCard> {
 
 
 ///insert into database
-  void insertDatabase(){
+  void insertDatabase() async{
     storedData storage = storedData();
     storage.insertDb(cardDetails);
+
+    storageIndex= await storage.getIndex(cardDetails.getNameCard());
+    activateNotification(false);
   }
-  void updateDatabase(String val){
+  ///this activates the notification
+  void activateNotification(bool changed) {
+    NotificationData notificationData = new NotificationData();
+    if (changed){ ///meaning it was updated, cancel the original reminder and recreate another one
+      notificationData.cancelNotification(storageIndex);
+    }
+    int daysRem = int.parse(cardDetails.getDayCount());
+    int r = cardDetails.getReminderDays();
+    int paid= int.parse(cardDetails.getMoney());
+    int daysNotify = 0; ///duration of days added
+
+    if (isOn){///check if reminder was on
+      if (r == 135){ ///meaning reminder was to same day
+        daysNotify = daysRem; ///so notification turns on that day
+      }
+      else if (daysRem <= r ){ ///if less then remainder passed, so reminder set to now
+        daysNotify = 0; ///no days added
+
+      }else{
+        daysNotify = daysRem - r; ///amount of days to set duration
+
+      }
+      notificationData.showNotification(storageIndex, cardDetails.getNameCard(),paid, daysNotify);
+    }
+  }
+
+
+  void updateDatabase(String val) async{
     storedData storage = storedData();
   //  cardDetails.setNameCard("kkk");
     storage.updateRow(cardDetails, val);
+    storageIndex= await storage.getIndex(cardDetails.getNameCard());
+    activateNotification(true);
   }
 
   Future<bool> undoChanges() async{
@@ -703,7 +751,8 @@ class _AddCardState extends State<AddCard> {
    // cardDetails.setColor(Colors.black); //set the color
 /// This is what user sees when card is being updated
       if (this.widget.accessCard != null){
-        tempState = this.widget.accessCard;///stores the state incase press back
+        //tempState = this.widget.accessCard;///stores the state incase press back
+
         setState(() {
           updating = true;
           cardDetails = this.widget.accessCard; /// code added, simplifes setting things, test so cycle option must be included in cardDetails
@@ -1425,6 +1474,8 @@ class _AddCardState extends State<AddCard> {
                                       elevation: 8,
                                       // default is 3 days
                                       onChanged: (newvalue) async  {
+                                      remainderTouched = true;
+
                                       if (newvalue == "Custom") {
                                         await dayPickerBox();
                                         if (userCancel){
