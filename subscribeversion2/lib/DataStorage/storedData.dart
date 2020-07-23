@@ -319,6 +319,9 @@ class storedData{
 
      DateTime saved = DateTime.parse(dateString);///technically the day it was created too
 
+
+
+
      ///difference between begin cycle and now (dateCreated) too
       diff = DateTime(now.year, now.month,now.day).difference
         (DateTime(saved.year,saved.month,saved.day)).inDays; //leave as original if same as day (ie it is 0)
@@ -331,12 +334,15 @@ class storedData{
      print('diff in days btwn begin cycle: $dateCreated');
      print("has it started: $hasStarted");
 
-
+     ///reupdates the upcoming all the time to avoid it going back since its original value in database
+     if (dateCreated >= 0){
+       future=0;
+     }
      ///check if in upcoming and its starts todY
      ///so the difference between today date and date it was made==0, then it has reached that day
      if(!hasStarted && dateCreated==0){//then the cycle has started so put in incoming
        print("No longer a future");
-       future=0;
+      // future=0;
        diff = nowDay;
      }
 
