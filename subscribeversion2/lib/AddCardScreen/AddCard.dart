@@ -687,13 +687,22 @@ class _AddCardState extends State<AddCard> {
   void insertDatabase() async{
 
     storedData storage = storedData();
+
+    activateNotification(false);
+    storageIndex= await storage.lastIndex(); ///this will be the future index either way
+    if (storageIndex > 1){
+      storageIndex+=1;///this will be the future index either way
+    }
+
+    activateNotification(false);
+
     storage.insertDb(cardDetails);
 
-    storageIndex= await storage.getIndex(cardDetails.getNameCard());
-    activateNotification(false);
+   // storageIndex= await storage.getIndex(cardDetails.getNameCard());
+
   }
   ///this activates the notification
-  void activateNotification(bool changed) {
+  Future<void> activateNotification(bool changed) async {
     bool repeatAgain = false;
     NotificationData notificationData = new NotificationData();
     if (changed){ ///meaning it was updated, cancel the original reminder and recreate another one
@@ -721,7 +730,9 @@ class _AddCardState extends State<AddCard> {
       if(renewOn){
        repeatAgain = true;
      }
-      notificationData.showNotification(storageIndex, cardDetails.getNameCard(),paid, daysNotify,repeatAgain,Cycle,r, daysRem);
+      await notificationData.showNotification(storageIndex, cardDetails.getNameCard(),paid, daysNotify,repeatAgain,Cycle,r, daysRem);
+
+      cardDetails.setLastDate(notificationData.getLast()); ///stores the last notification date
     }
   }
 
@@ -729,9 +740,10 @@ class _AddCardState extends State<AddCard> {
   void updateDatabase(String val) async{
     storedData storage = storedData();
   //  cardDetails.setNameCard("kkk");
-    storage.updateRow(cardDetails, val);
+
     storageIndex= await storage.getIndex(cardDetails.getNameCard());
-    activateNotification(true);
+    await activateNotification(true);
+    storage.updateRow(cardDetails, val);
   }
 
   Future<bool> undoChanges() async{
@@ -781,6 +793,9 @@ class _AddCardState extends State<AddCard> {
           else if (cardDetails.getNamePayment()== "Credit"){make1();}else if (cardDetails.getNamePayment() == "Gift card"){make2();}//else{make3();}
           isOn = cardDetails.getReminder();
           if (isOn){
+            remainderTouched=true; ///so it doesn;t give it  a default
+            print('REMBDER DAYS');
+            print(cardDetails.getReminderDays());
           //  cardDetails.setReminder(isOn);
             if (cardDetails.getReminderDays() == 1){
               defaultDay = cardDetails.getReminderDays().toString()+" day";

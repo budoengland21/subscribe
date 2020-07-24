@@ -9,6 +9,8 @@ class NotificationData{
   IOSInitializationSettings iosSettings;
   InitializationSettings initializationSettings;
 
+  DateTime lastDate; ///stores the last notification date
+
   factory NotificationData(){
     if (notificationData == null){
       notificationData = NotificationData.createInstance(); ///if null,then it's first time, so create an object
@@ -20,6 +22,8 @@ class NotificationData{
   ///creates the plugin once unless app restarted
   NotificationData.createInstance(){
     _plugin = FlutterLocalNotificationsPlugin();
+    lastDate = DateTime.now(); ///dummy value to avoid null pointer
+
   }
 
   ///runs first time from the init state
@@ -45,8 +49,13 @@ class NotificationData{
     // timeInt
     timeInt = timeInt.toLocal();
     timeInt = new DateTime(timeInt.year,timeInt.month,timeInt.day,0,0,sec); // set for midnight
+
     return timeInt;
 
+  }
+
+  DateTime getLast(){
+    return lastDate;
   }
 
 
@@ -98,7 +107,7 @@ class NotificationData{
       ///to make every channel a dummy val
       ///channel range : 10xx -- (6 times)
       channel+=1000;
-      for (int i=0; i<=5; i++){
+      for (int i=0; i<=6; i++){
         var repeat = calculateDuration(period);
         print('REPEAT---$repeat');
         await _plugin.schedule(channel, '$sub', 'Reminder to pay \$ $amount',repeat,notificationDetails);
@@ -106,7 +115,8 @@ class NotificationData{
         channel+=1;
         period+=cycle;
 
-
+        lastDate = repeat; ///so the last notification date of notification saved here
+        print('last date---- $lastDate');
 
       }
     }
@@ -122,6 +132,7 @@ class NotificationData{
  //   pending();
     var x = await _plugin.pendingNotificationRequests();
     //print(x[0].id);
+    print('length...');
     print(x.length);
   }
 
@@ -135,22 +146,8 @@ class NotificationData{
 
   }
 
-  ///notification details for ios, for now not tested
-  Future<void> onDidReceiveIOS(int id, String title,String body,String payload) async{
-    return CupertinoAlertDialog(
-      title: Text(title),
-      content: Text(body),
-      actions: <Widget>[
-        CupertinoDialogAction(
-          isDefaultAction: true,
-          onPressed: (){
-            print("");
-          },
-          child: Text("Okay"),
-        )
-      ],
-    );
-  }
+
+
 
   void cancelNotification(int channel){
     print('deleted for channel $channel');
@@ -179,9 +176,79 @@ class NotificationData{
     }
   }
 
+  Future<bool> reupdatePendingNotifications(DateTime last, String name,int cycle, int amount) async{
+    int v = cycle;
+    List<PendingNotificationRequest> pending = await getPending();
+    List<PendingNotificationRequest> temp = new List();
+    int lastId = 0;
+    for (int x=0; x<pending.length;x++){
+      if (pending[x].title == name){
+        temp.add(pending[x]);
+        lastId = pending[x].id;
+      }
+    }
+    ///therefore we need to add more scheduled notifications
+    ///temporary hack until package can release new method
+    ///so add more scheduled notifications till 6
+    ///
+    ///
+    ///
+    AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
+        'Channel ID', 'title', 'body', priority: Priority.High,importance: Importance.Max,
+        ticker: 'test');
+    IOSNotificationDetails iosNotificationDetails = IOSNotificationDetails();
+    NotificationDetails notificationDetails = NotificationDetails(androidNotificationDetails,iosNotificationDetails);
+    print('last date saved $last');
+    if (temp.length < 6){
+
+      for (int i=temp.length; i<=5; i++){
+        lastId+=1;   ///a new channel created and time, for another schedule
+
+        last = last.add(Duration(days: cycle)); ///keep updating cycle last day
+       // var repeat = calculateDuration(cycle);
+        print('new---$last');
+        await _plugin.schedule(lastId, '$name', 'Reminder to pay \$ $amount',last,notificationDetails);
+
+
+        ///update the last date
+        lastDate = last;
+
+
+      }
+      return true;
+    }else {
+      lastDate = last;
+      return false;
+      print('last item');
+      print(temp[temp.length-1]);
+      var x = await _plugin.pendingNotificationRequests();
+      //print(x[0].id);
+
+      print('new nnlength...');
+      print(x.length);
+    }
+
+  }
 
 
 
+
+  ///notification details for ios, for now not tested
+  Future<void> onDidReceiveIOS(int id, String title,String body,String payload) async{
+    return CupertinoAlertDialog(
+      title: Text(title),
+      content: Text(body),
+      actions: <Widget>[
+        CupertinoDialogAction(
+          isDefaultAction: true,
+          onPressed: (){
+            print("");
+          },
+          child: Text("Okay"),
+        )
+      ],
+    );
+  }
 
 }
 

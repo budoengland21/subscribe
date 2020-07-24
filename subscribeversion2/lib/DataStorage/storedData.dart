@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:subscribeversion2/notificationData.dart';
 
 import 'CardDetails.dart';
 
@@ -27,6 +28,7 @@ class storedData{
   String money = 'money';
   String actualDate = 'actualDate';//store date it was made
   String dateNow = 'DateNow'; // used to calculate the database and compare days passed each time app opened
+  String lastDate = 'lastDate'; //Stores the last date to the notification
   String futureDays = 'Future';
 
   int diff;
@@ -34,9 +36,11 @@ class storedData{
   int dateCreated;
 
 
+
   factory storedData(){
     if (data == null){
       data = storedData._makeInstance();
+
 
     }
     return data;
@@ -85,6 +89,7 @@ class storedData{
            '$money TEXT,'
            '$actualDate TEXT,'
            ' $dateNow TEXT,'
+           '$lastDate TEXT,' //STORES THE LAST DATE OF THE NOTIFICATION
            '$futureDays INTEGER)');
 
      }
@@ -121,6 +126,7 @@ class storedData{
        '$money': card.getMoney(),
        '$actualDate': card.getDate().toString(),
        '$dateNow': DateTime.now().toString(),
+       '$lastDate': card.getLastDate().toString(),
        '$futureDays': card.getFuture(),
 
 
@@ -142,6 +148,26 @@ class storedData{
 
 
    }
+
+
+   ///get last index of card
+   Future<int> lastIndex() async{
+     Database db = await getDatabase();
+
+     List<Map> map= await db.rawQuery('SELECT * from $tblName ');/// this just retrieves the id of the row
+     if (map.length == 0){
+       return 1;
+     }else{
+       int val = map[map.length-1]['id'];
+
+       return val;
+     }
+
+   }
+
+
+
+
    ///Update card, when card clicked on
    Future<void> updateRow(CardDetails card, String oldName) async{
      Database db = await getDatabase();
@@ -209,8 +235,9 @@ class storedData{
      Database db = await getDatabase();
      List maps = await db.query(tblName);
      
-     return List.generate(maps.length, (index){
+     return List.generate(maps.length, (index) {
        CardDetails card=new CardDetails();
+       print(maps.toString());
 
        bool ans;
        bool renew;
@@ -278,6 +305,12 @@ class storedData{
        card.NamePayment(maps[index]['$paymentType']);
        card.setRenew(renew);
        card.setMoney(maps[index]['$money']);
+
+       DateTime d = DateTime.parse(maps[index]['$lastDate']);
+       card.setLastDate(d);
+        checkNotifications(d,maps[index]['$cardName'],maps[index]['$cycleDays'],int.parse(maps[index]['$money']) );
+        card.setLastDate(obtainUpdatedLastDate()); ///reupdates the last date
+     //  updateRow(card,maps[index]['$cardName'] ); ///update to add the last
        return card;
 
 
@@ -421,6 +454,19 @@ class storedData{
 
 
 
+   }
+ ///adds datetimes to schedule if app hasn't been opened
+  ///for a while and then reupdates the last date
+    void checkNotifications(DateTime d, String name, int cycle, int amount)async{
+     NotificationData notificationData = NotificationData();
+      await notificationData.reupdatePendingNotifications(d, name, cycle, amount);
+
+   }
+
+
+   DateTime obtainUpdatedLastDate(){
+     NotificationData notificationData = NotificationData();
+     return notificationData.getLast();
    }
 
 }

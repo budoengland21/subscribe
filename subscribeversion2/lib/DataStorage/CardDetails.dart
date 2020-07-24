@@ -20,6 +20,8 @@ class CardDetails{
   DateTime created; ///stores the day created, so as to view when updating page
    int futureDays;
 
+   DateTime dateNotification; ///stores the last pending date
+
 
   String dayTemp;
 
@@ -30,6 +32,15 @@ class CardDetails{
    _renew=false;
    _namePayment = "images/money.png";
  //  _status = true; //default that it has started
+  }
+
+  ///this stores the last date of pending notification
+  void setLastDate(DateTime d){
+    dateNotification = d;
+
+  }
+  DateTime getLastDate(){
+    return dateNotification;
   }
 
   ///once called, then it hasn't started
