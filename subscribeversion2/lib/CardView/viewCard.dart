@@ -42,12 +42,15 @@ class viewCard extends StatelessWidget {
     }
 
     ///deletes notification if exists
-    void removeNotification() async {
-      if (isOn){///then we can delete the reminder
-        channelIndex = await store.getIndex(tempName);
+    void removeNotification() {//print('this is the $tempName');
+
+    if (isOn){///then we can delete the reminder
+        //channelIndex = await store.getIndex(tempName);
         NotificationData notificationData = new NotificationData();
+      //  var list = await notificationData.
       //  int val = await  store.getIndex(this.card.getNameCard());
-        notificationData.cancelNotification(channelIndex); ///delete
+       // notificationData.cancelNotification(channelIndex)
+           notificationData.deleteAll(tempName); ///delete
       }
     }
     void delete()  {

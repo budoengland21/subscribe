@@ -685,6 +685,7 @@ class _AddCardState extends State<AddCard> {
 
 ///insert into database
   void insertDatabase() async{
+
     storedData storage = storedData();
     storage.insertDb(cardDetails);
 
@@ -693,13 +694,16 @@ class _AddCardState extends State<AddCard> {
   }
   ///this activates the notification
   void activateNotification(bool changed) {
+    bool repeatAgain = false;
     NotificationData notificationData = new NotificationData();
     if (changed){ ///meaning it was updated, cancel the original reminder and recreate another one
-      notificationData.cancelNotification(storageIndex);
+     // notificationData.cancelNotification(storageIndex);
+      notificationData.deleteAll(cardDetails.getNameCard());
     }
     int daysRem = int.parse(cardDetails.getDayCount());
     int r = cardDetails.getReminderDays();
     int paid= int.parse(cardDetails.getMoney());
+    int Cycle = cardDetails.getCycleDays();
     int daysNotify = 0; ///duration of days added
 
     if (isOn){///check if reminder was on
@@ -713,7 +717,11 @@ class _AddCardState extends State<AddCard> {
         daysNotify = daysRem - r; ///amount of days to set duration
 
       }
-      notificationData.showNotification(storageIndex, cardDetails.getNameCard(),paid, daysNotify);
+      ///CHECK IF RENEW ON, TO SCHEDULE PERIODICALLY
+      if(renewOn){
+       repeatAgain = true;
+     }
+      notificationData.showNotification(storageIndex, cardDetails.getNameCard(),paid, daysNotify,repeatAgain,Cycle,r, daysRem);
     }
   }
 
@@ -1956,6 +1964,9 @@ class _AddCardState extends State<AddCard> {
 
   Column customContainer(){
     int x = cardDetails.getCycleDays();
+    if (x==null){
+      x=0;
+    }
     if (customTapped){
       return
         Column(
