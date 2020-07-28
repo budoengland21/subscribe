@@ -51,6 +51,8 @@ class _AddCardState extends State<AddCard> {
   final  TextEditingController daySelector = new TextEditingController(); // keep track of custom days selected
 
 
+  int daysToStart = 0; ///stores ow many days it takes to start
+
    CardDetails tempState = new CardDetails(); ///saves a temp state of the card
   ///error fields for checking fields
   //booleaan c;
@@ -106,7 +108,7 @@ class _AddCardState extends State<AddCard> {
     int yr = DateTime.now().year;
     int month = DateTime.now().month;
 
-    int day = firstTime.day+3;
+    int day = firstTime.day+7;
     return DateTime(yr,month,day);
   }
 
@@ -194,7 +196,7 @@ class _AddCardState extends State<AddCard> {
       ///when cycle hasn't started
     }else if(firstTime.isAfter(DateTime.now())){
      // customDiff+=1; //fix one day bug
-      //val = firstTime.day - DateTime.now().day; ///  stores when the cycle starts
+   //   daysToStart = firstTime.day - DateTime.now().day; ///  stores when the cycle starts
       val = customDiff;
       print("val of cycle not started: $val");
       notStarted = true;
@@ -498,6 +500,15 @@ class _AddCardState extends State<AddCard> {
      // cardDetails.setCardId(cardIdValue+1);
       cardDetails.setRenew(renewOn);
       cardDetails.setReminder(isOn);
+      print('whatttt');
+      print(cardDetails.getReminder());
+      print(cardDetails.getReminderDays());
+      if (cardDetails.getReminder()){
+
+        if (cardDetails.getReminderDays() == null){///hence it should default to 1 day
+          cardDetails.setReminderDays(1);
+        }
+      }
       /// sets the date
       cardDetails.setDate(firstTime);
        print(cardDetails.getDayCount());
@@ -654,7 +665,8 @@ class _AddCardState extends State<AddCard> {
 
   ///set the remainder
   void checkReminderDays(String remDays){
-    if (renewOn){
+    if (isOn){
+
       if (!remainderTouched){
         remDays = days[1]; ///represents 1 day
       }
@@ -688,13 +700,13 @@ class _AddCardState extends State<AddCard> {
 
     storedData storage = storedData();
 
-    activateNotification(false);
-    storageIndex= await storage.lastIndex(); ///this will be the future index either way
-    if (storageIndex > 1){
-      storageIndex+=1;///this will be the future index either way
-    }
+    await activateNotification(false);
+    //storageIndex= await storage.lastIndex(); ///this will be the future index either way
+ //   if (storageIndex > 1){
+  //    storageIndex+=1;///this will be the future index either way
+  //  }
 
-    activateNotification(false);
+    //activateNotification(false);
 
     storage.insertDb(cardDetails);
 
@@ -709,31 +721,39 @@ class _AddCardState extends State<AddCard> {
      // notificationData.cancelNotification(storageIndex);
       notificationData.deleteAll(cardDetails.getNameCard());
     }
-    int daysRem = int.parse(cardDetails.getDayCount());
-    int r = cardDetails.getReminderDays();
-    int paid= int.parse(cardDetails.getMoney());
-    int Cycle = cardDetails.getCycleDays();
-    int daysNotify = 0; ///duration of days added
+    ///check if user turned off the reminder
+    if (isOn){
+      int daysRem = int.parse(cardDetails.getDayCount());
+      int r = cardDetails.getReminderDays();
+      int paid= int.parse(cardDetails.getMoney());
+      int Cycle = cardDetails.getCycleDays();
+      int daysNotify = 0; ///duration of days added
 
-    if (isOn){///check if reminder was on
-      if (r == 135){ ///meaning reminder was to same day
-        daysNotify = daysRem; ///so notification turns on that day
+      if (isOn){///check if reminder was on
+        if (r == 135){ ///meaning reminder was to same day
+          daysNotify = daysRem; ///so notification turns on that day
+        }
+        else if (daysRem <= r ){ ///if less then remainder passed, so reminder set to now
+          daysNotify = 0; ///no days added
+
+        }else{
+          daysNotify = daysRem - r; ///amount of days to set duration
+
+        }if (reduceFuture > 0){
+
+          daysNotify+=reduceFuture; ///add amount of days since it's a future
+        }
+        ///CHECK IF RENEW ON, TO SCHEDULE PERIODICALLY
+        if(renewOn){
+          repeatAgain = true;
+        }
+        await notificationData.showNotification( cardDetails.getNameCard(),paid, daysNotify,repeatAgain,Cycle,r, daysRem);
+
+
       }
-      else if (daysRem <= r ){ ///if less then remainder passed, so reminder set to now
-        daysNotify = 0; ///no days added
+    } cardDetails.setLastDate(notificationData.getLast()); ///stores the last notification date
+    ///else if it's off then notifications were deleted
 
-      }else{
-        daysNotify = daysRem - r; ///amount of days to set duration
-
-      }
-      ///CHECK IF RENEW ON, TO SCHEDULE PERIODICALLY
-      if(renewOn){
-       repeatAgain = true;
-     }
-      await notificationData.showNotification(storageIndex, cardDetails.getNameCard(),paid, daysNotify,repeatAgain,Cycle,r, daysRem);
-
-      cardDetails.setLastDate(notificationData.getLast()); ///stores the last notification date
-    }
   }
 
 
@@ -741,7 +761,7 @@ class _AddCardState extends State<AddCard> {
     storedData storage = storedData();
   //  cardDetails.setNameCard("kkk");
 
-    storageIndex= await storage.getIndex(cardDetails.getNameCard());
+  //  storageIndex= await storage.getIndex(cardDetails.getNameCard());
     await activateNotification(true);
     storage.updateRow(cardDetails, val);
   }
@@ -851,6 +871,7 @@ class _AddCardState extends State<AddCard> {
           }
           print(cardDetails.getStatus());
           statusCheck = cardDetails.getStatus();
+
           print('STATUS-----> $statusCheck');
           reduceFuture = cardDetails.getFuture();
 
@@ -899,7 +920,7 @@ class _AddCardState extends State<AddCard> {
               pinned: true,
               elevation: 10,
               leading: IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.greenAccent, size: 35,),
+                icon: Icon(Icons.arrow_back, color: Color.fromRGBO(255, 241, 118, 1), size: 35,),
                 onPressed: () {undoChanges();},),
               // appBar:AppBar(leading: IconButton(icon:Icon(Icons.arrow_back,color: Colors.black,size: 30,),),)//leading: IconButton(icon:Icon(Icons.arrow_back,color: Colors.black,size: 30,),),
 
@@ -913,13 +934,15 @@ class _AddCardState extends State<AddCard> {
                 Center(
                   child: Card(
 
+
                     elevation: 60,
                     child: Container(
+
                       height: 150, width: (MediaQuery
                         .of(context)
                         .size
                         .width) - 100,
-                      color: cardColor.withOpacity(0.8),
+                     color: cardColor.withOpacity(0.8),
                       //CARD DETAILS REAL TIME UPDATE
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -1404,7 +1427,10 @@ class _AddCardState extends State<AddCard> {
                                             if (renewOn){
                                               errorCheck = false; ///coz if renew on, then reminder all accepted
                                             }else{///incase turned off but days still greater
-                                              if (cardDetails.getReminderDays()> storeCycleDays){
+                                              if (storeCycleDays == -1){///nothing pressed
+                                                errorCheck=false;
+                                              }
+                                              else if (cardDetails.getReminderDays()> storeCycleDays){
                                                 errorCheck=true;
                                               }else{
                                                 errorCheck=false;
@@ -1497,7 +1523,7 @@ class _AddCardState extends State<AddCard> {
                                       elevation: 8,
                                       // default is 3 days
                                       onChanged: (newvalue) async  {
-                                      remainderTouched = true;
+
 
                                       if (newvalue == "Custom") {
                                         await dayPickerBox();
@@ -1514,7 +1540,7 @@ class _AddCardState extends State<AddCard> {
 
 
                                         setState(()  {
-
+                                          remainderTouched = true;
                                           FocusScope.of(context).requestFocus( ///it will clear all focus of the textfield
                                               new FocusNode());
                                           if (cardDetails.getNameCard()!=null){

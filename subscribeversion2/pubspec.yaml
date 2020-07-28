@@ -29,6 +29,7 @@ dependencies:
   intl:
   flutter_statusbarcolor: ^0.2.3
   flutter_local_notifications: ^1.4.4+2
+  currency_pickers: ^1.0.6
 
 
 

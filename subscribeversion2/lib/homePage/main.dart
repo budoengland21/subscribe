@@ -1,17 +1,22 @@
+import 'package:currency_pickers/country.dart';
+import 'package:currency_pickers/currency_picker_dropdown.dart';
+import 'package:currency_pickers/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
+import 'package:intl/intl.dart';
 import 'package:subscribeversion2/AddCardScreen/AddCard.dart';
 import 'package:subscribeversion2/DataStorage/ArrayOfCards.dart';
 import 'package:subscribeversion2/DataStorage/CardDetails.dart';
+import 'package:subscribeversion2/DataStorage/currencyStorage.dart';
 import 'package:subscribeversion2/DataStorage/storedData.dart';
 import 'package:subscribeversion2/homePage/IncomingCards.dart';
 import 'package:subscribeversion2/homePage/UpcomingCards.dart';
 import 'package:subscribeversion2/homePage/pastCards.dart';
 import '';
-
+import 'package:currency_pickers/currency_pickers.dart';
 
 
 
@@ -26,7 +31,7 @@ import 'cardStack.dart';
 
 
             ),
-            home: FrontPage(false),
+            home: FrontPage(false),   debugShowCheckedModeBanner: false,
           )
       );
     }
@@ -38,12 +43,16 @@ ArrayOfCards a = new ArrayOfCards();
 BuildContext buildContext;
 NotificationData notificationData = new NotificationData();
 
+ String currency="";
+currencyStorage currencyTrack; ///keeps the currency in the database
 
 class FrontPage extends StatefulWidget{// with WidgetsBindingObserver {
   final bool hasPassed;
   //constructor
   FrontPage(this.hasPassed);
 // notificationData = new NotificationData(); ///class for all the notification info
+
+
 
 
   @override
@@ -99,8 +108,18 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
   }
   ///Only runs once
   void startDatabase() async{
+    ///this is for the currency
+    currencyTrack = currencyStorage();
+    await currencyTrack.initializeDatabase();
+    List  c = await (currencyTrack.getCurrency());
+    if (c.length==0){
+      currency = "\$";
+    }else {
+      print(c);
+      currency = c[c.length-1];
+    }
+   ///this is previous card subscriptions
     storage = storedData();
-
     await storage.initializeDatabase();
   list  = await storage.getData();
       setState(() {
@@ -114,14 +133,33 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
 
 
   }
-  
 
 
+  void _openCupertinoCurrencyPicker() => showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return CurrencyPickerCupertino(
+          pickerSheetHeight: 300.0,
+          onValuePicked: (Country country) =>
+              setState(() {
+
+              currency = NumberFormat.simpleCurrency(name: country.currencyCode).currencySymbol.toString();
+
+              ///insert it into database
+                currencyTrack = currencyStorage();
+                print(currency);
+                currencyTrack.insertCurrency(currency);
+              }
 
 
-  @override
+        ));
+      });
+
+@override
   Widget build(BuildContext context) {
+
     buildContext = context;
+
 
     ///list of the tabs for their bodies
     final tabs = [
@@ -129,7 +167,7 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
       IncomingCards(a, buildContext),
       UpcomingCards(a, buildContext)
     ];
- //   FlutterStatusbarcolor.setStatusBarColor(Colors.green);
+    FlutterStatusbarcolor.setStatusBarColor(Colors.green);
     FlutterStatusbarcolor.setStatusBarWhiteForeground(true);
 
     return Scaffold(
@@ -140,38 +178,41 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
        // brightness: Brightness.light,
        elevation: 10,
        backgroundColor: Colors.black,
-      /*  actions: <Widget>[
+        actions: <Widget>[
 
-          Padding(
-            padding: const EdgeInsets.only(right:10.0),
-            child: IconButton(
-              icon: Icon(Icons.settings),
-              color: Colors.white,
-              iconSize: 30,
-              onPressed: (){}, // generate container with options
-            ),
-          )
-        ],*/
-      ),
+         RaisedButton(
+           onPressed: (){ _openCupertinoCurrencyPicker();},
+           color: Colors.black,
+           child: Text('Currency: $currency', style: TextStyle(color: Color.fromRGBO(255, 241, 118, 1), fontSize: 16),),
+         )
+          ]),
+
+
 
       body:
      tabs[current],
      bottomNavigationBar: BottomNavigationBar(
+       type: BottomNavigationBarType.shifting,
+     showUnselectedLabels: true,
+
      currentIndex: current,
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
+          backgroundColor: Colors.red,
           title: Text('Past'),
           icon: Icon(Icons.ac_unit),
 
         ),
         BottomNavigationBarItem(
+          backgroundColor: Colors.green,
           title: Text('Incoming'),
           icon: Icon(Icons.access_alarm),
 
         ),
         BottomNavigationBarItem(
           title: Text('Upcoming'),
-          icon: Icon(Icons.ac_unit),
+          backgroundColor: Colors.blueGrey,
+          icon: Icon(Icons.calendar_today),
 
         )
 
@@ -187,9 +228,9 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
 
 
       floatingActionButton: FloatingActionButton(
-        elevation: 10,
-        backgroundColor: Colors.blueGrey,
-        child: Icon(Icons.add,color: Colors.white,size: 30,),
+        elevation: 30,
+        backgroundColor: Color.fromRGBO(255, 241, 118, 1),
+        child: Icon(Icons.add,color: Colors.black,size: 30,),
         splashColor: Colors.lime,
         onPressed: (){//notification();
           //  Navigator.pop(context);

@@ -55,13 +55,24 @@ class NotificationData{
   }
 
   DateTime getLast(){
+    print("this is the last date for card norifications: $lastDate");
     return lastDate;
   }
 
+  ///retrieve a new channel id based on pending notifications
+  Future<int> getLastChannelId() async{
+    var lst = await getPending();
+    if (lst.length == 0){
+      return 1;
+    }else{
+      return lst[lst.length-1].id + 1; ///returns +1 channel id of last id
+    }
 
-  Future<void> showNotification(int channel, String sub, int amount, int daysToAdd,bool renew, int cycle,int remainder,int daysOnCard) async{
+  }
 
+  Future<void> showNotification( String sub, int amount, int daysToAdd,bool renew, int cycle,int remainder,int daysOnCard) async{
 
+    int lastId = await getLastChannelId();
     var timeInt = calculateDuration(daysToAdd);
 
     AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
@@ -83,7 +94,7 @@ class NotificationData{
       ///code below calculates for the next cycle
       ///the rest: just add the cycle days
       print('first---> $timeInt');
-      await _plugin.schedule(channel, '$sub', 'Reminder to pay \$ $amount',timeInt,notificationDetails);
+      await _plugin.schedule(lastId, '$sub', 'Reminder to pay \$ $amount',timeInt,notificationDetails);
 
       int period = daysToAdd;
       ///this is for reminders where reminder has passed but we create it now and for future cycles
@@ -106,13 +117,14 @@ class NotificationData{
       ///cycle to find the rest of the next notifications
       ///to make every channel a dummy val
       ///channel range : 10xx -- (6 times)
-      channel+=1000;
+
       for (int i=0; i<=6; i++){
         var repeat = calculateDuration(period);
         print('REPEAT---$repeat');
-        await _plugin.schedule(channel, '$sub', 'Reminder to pay \$ $amount',repeat,notificationDetails);
-        ///a new channel created and time, for another schedule
-        channel+=1;
+        lastId+=1; ///a new channel created and time, for another schedule
+
+        await _plugin.schedule(lastId, '$sub', 'Reminder to pay \$ $amount',repeat,notificationDetails);
+
         period+=cycle;
 
         lastDate = repeat; ///so the last notification date of notification saved here
@@ -121,12 +133,12 @@ class NotificationData{
       }
     }
     else{ ///when renew off, this is one time
-      await _plugin.schedule(channel, '$sub', 'Reminder to pay \$ $amount',timeInt,notificationDetails); ///plugin for each platform shows this msg after line 63
+      await _plugin.schedule(lastId, '$sub', 'Reminder to pay \$ $amount',timeInt,notificationDetails); ///plugin for each platform shows this msg after line 63
     }
 
 
     print('Set for ----> $timeInt');
-    print('created for channel $channel');
+    print('created for channel $lastId');
 
 
  //   pending();
@@ -152,9 +164,9 @@ class NotificationData{
   void cancelNotification(int channel){
     print('deleted for channel $channel');
     _plugin.cancel(channel);
-  // _plugin.cancelAll();
+  //_plugin.cancelAll();
 
-//    _plugin.cancelAll();
+ //   _plugin.cancelAll();
    // _plugin.
   }
 
@@ -199,7 +211,7 @@ class NotificationData{
     IOSNotificationDetails iosNotificationDetails = IOSNotificationDetails();
     NotificationDetails notificationDetails = NotificationDetails(androidNotificationDetails,iosNotificationDetails);
     print('last date saved $last');
-    if (temp.length < 6){
+    if (temp.length < 4){
 
       for (int i=temp.length; i<=5; i++){
         lastId+=1;   ///a new channel created and time, for another schedule
@@ -217,15 +229,20 @@ class NotificationData{
       }
       return true;
     }else {
+      ///delete this code, just used for testing purposes
       lastDate = last;
+      var x = await _plugin.pendingNotificationRequests();
+      //print(x[0].id);
+      for (int i =0; i< x.length;i++){
+        print(x[i].id);
+        print(x[i].title);
+      }
+      print('total notifications...');
+      print(x.length);
       return false;
       print('last item');
       print(temp[temp.length-1]);
-      var x = await _plugin.pendingNotificationRequests();
-      //print(x[0].id);
 
-      print('new nnlength...');
-      print(x.length);
     }
 
   }

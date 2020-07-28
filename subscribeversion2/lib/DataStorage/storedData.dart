@@ -64,7 +64,7 @@ class storedData{
      Directory directory = await getApplicationDocumentsDirectory();
      String path = join(directory.path, 'subscribe.db');
      //open database
-     var myDatabase = await openDatabase(path, version: 35, onCreate: _createDatabase);
+     var myDatabase = await openDatabase(path, version: 36, onCreate: _createDatabase);
      return myDatabase;
 
 
@@ -102,6 +102,7 @@ class storedData{
 
      Database db = await getDatabase();
      Map map = _mapItems(card);
+     print(map.toString());
      await db.insert(tblName, map);
 
    }
@@ -306,10 +307,15 @@ class storedData{
        card.setRenew(renew);
        card.setMoney(maps[index]['$money']);
 
+
        DateTime d = DateTime.parse(maps[index]['$lastDate']);
        card.setLastDate(d);
-        checkNotifications(d,maps[index]['$cardName'],maps[index]['$cycleDays'],int.parse(maps[index]['$money']) );
-        card.setLastDate(obtainUpdatedLastDate()); ///reupdates the last date
+
+       if (ans){  ///meaning reminder on
+         checkNotifications(d,maps[index]['$cardName'],maps[index]['$cycleDays'],int.parse(maps[index]['$money']) );
+         card.setLastDate(obtainUpdatedLastDate()); ///reupdates the last date
+       }
+
      //  updateRow(card,maps[index]['$cardName'] ); ///update to add the last
        return card;
 
@@ -350,12 +356,12 @@ class storedData{
      int nowDay =  int.parse(days);
 
 
-     DateTime saved = DateTime.parse(dateString);///technically the day it was created too
+     DateTime saved = DateTime.parse(dateString);///technically the date it was created too
 
 
 
 
-     ///difference between begin cycle and now (dateCreated) too
+     ///difference between date made and now
       diff = DateTime(now.year, now.month,now.day).difference
         (DateTime(saved.year,saved.month,saved.day)).inDays; //leave as original if same as day (ie it is 0)
 
@@ -366,6 +372,12 @@ class storedData{
 
      print('diff in days btwn begin cycle: $dateCreated');
      print("has it started: $hasStarted");
+
+     ///update the future so we can reduce it day by day
+     if (!hasStarted && diff >0){
+       ///future value being decreased
+       future-=1;
+     }
 
      ///reupdates the upcoming all the time to avoid it going back since its original value in database
      if (dateCreated >= 0){
@@ -422,6 +434,7 @@ class storedData{
      ///dateCreated>0, means the begin cycle is 1 day more than now, hence not future
      else if (diff >= 0 && (dateCreated > 0)){
         diff = nowDay - diff;
+       // diff = diff.abs(); ///so as expired stays not negative
         future=0;
 
 

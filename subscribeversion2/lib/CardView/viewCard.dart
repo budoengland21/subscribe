@@ -33,7 +33,7 @@ class viewCard extends StatelessWidget {
       return "Same day";
     }
     else{
-      return this.card.getReminderDays().toString() + " days";
+      return this.card.getReminderDays().toString() + " day(s)";
     }}
     String checkRenew(){
       if (this.card.getRenew()){
@@ -44,14 +44,14 @@ class viewCard extends StatelessWidget {
     ///deletes notification if exists
     void removeNotification() {//print('this is the $tempName');
 
-    if (isOn){///then we can delete the reminder
+   ///then we can delete the reminder
         //channelIndex = await store.getIndex(tempName);
         NotificationData notificationData = new NotificationData();
       //  var list = await notificationData.
       //  int val = await  store.getIndex(this.card.getNameCard());
        // notificationData.cancelNotification(channelIndex)
            notificationData.deleteAll(tempName); ///delete
-      }
+
     }
     void delete()  {
    //   storedData store = new storedData();
@@ -146,7 +146,7 @@ class viewCard extends StatelessWidget {
                         children: <Widget>[
                           Text("Days remaining",style: TextStyle(color:Colors.white,fontSize: 30)),
                           Spacer(),
-                          Text(this.card.getDayCount()+" days", style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold,fontSize: 25))
+                          Text(this.card.getDayCount()+" day(s)", style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold,fontSize: 25))
                         ],
 
                       ),
@@ -161,7 +161,7 @@ class viewCard extends StatelessWidget {
                         children: <Widget>[
                           Text("Amount",style: TextStyle(color:Colors.white,fontSize: 30)),
                           Spacer(),
-                          Text("\$ "+this.card.getMoney(), style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold,fontSize: 25))
+                          Text("$currency "+this.card.getMoney(), style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold,fontSize: 25))
 
                         ],
 
@@ -222,10 +222,11 @@ class viewCard extends StatelessWidget {
                           Padding(
                             padding: EdgeInsets.all(15),
                             child: Container(
-                              height: 80,
+                              height: 60,
                               width: MediaQuery.of(context).size.width/2,
 
                               child:  RaisedButton(
+
                                 child:  Text("Delete", style: TextStyle(color: Colors.white,fontSize: 30),),
                                 color: Colors.black,
                                 ///delete from database

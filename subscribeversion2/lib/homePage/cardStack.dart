@@ -1,11 +1,18 @@
+import 'package:currency_pickers/country.dart';
+import 'package:currency_pickers/currency_picker_dropdown.dart';
+import 'package:currency_pickers/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:subscribeversion2/CardView/viewCard.dart';
 import 'package:subscribeversion2/DataStorage/ArrayOfCards.dart';
+import 'package:subscribeversion2/homePage/main.dart';
 ///
 /// creates a stack of cards to display on the home screen
 
 List determineType(String c , ArrayOfCards array){
+
+
   print(c);
   if (c == "pass"){
     return array.obtainPast();
@@ -24,17 +31,19 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardT
   ///use if statement check if 0, then show balance
   print("passed here");
  // print((cards.checkSize()));
-
+  Color isFuture;
+  Color isFutureNumber;
 
   List<Widget> stacks = [];
-  double ttop=120;
+  double ttop=140;
   double lleft= 4;
   double rright=4;
+
 
   ///NEED INDEX OF ARRAY OF CARDS AND NOT THE LIST TO UPDATE AND DELETE
 
   List stackType = determineType(cardType,cards);
-  int check = stackType.length;
+int check = stackType.length;
   String balance = cards.getBalance(stackType);
 
   print('size---> $check');
@@ -58,13 +67,13 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardT
     stacks.add(
 
     Positioned(
-        top:0,
+        top:20,
         left:30,
         right: 30,
         child: Card(
             margin: EdgeInsets.zero,
-            elevation: 10,
-            color:Colors.blueGrey,
+            elevation: 10,shadowColor: Colors.green,
+            color:Color.fromRGBO(255, 241, 118, 0.75),
 
 
            child: Container(
@@ -86,9 +95,11 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardT
     ),
     ),
                   Container(
-                        width: 120,
-                        child: Center(child: Text("\$ $balance",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,fontSize: 23),))
-                        )
+                        width: 200,
+                        child: Center(child: Text("$currency $balance",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,fontSize: 23),))
+                        ),
+                    Spacer(),
+
                             ],
         ),
         ),
@@ -98,6 +109,13 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardT
         );
 
     for (int i=0; i< check; i++){
+      if (cardType == "upcoming"){
+        isFuture = Colors.black;
+        isFutureNumber = Colors.white;
+      }else{
+        isFuture = stackType[i][0].getColor();
+        isFutureNumber = stackType[i][0].getColor();
+      }
 
       stacks.add(
           Positioned(
@@ -136,9 +154,23 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardT
 
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.only(left:20.0),
-                                  child: Text(stackType[i][0].getNameCard(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30,),),
+                                Row(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(left:20.0),
+                                      child: Text(stackType[i][0].getNameCard(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30,),),
+                                    ),
+                                    Spacer(),
+                                    Padding(
+                                      padding: const EdgeInsets.only(right:10.0),
+                                      child: Container(
+                                        color: isFuture,
+                                        width: 50,
+                                        height: 25,
+                                        child: Center(child: Text(stackType[i][0].getFuture().toString(), style: TextStyle(color: isFutureNumber,fontWeight: FontWeight.bold),),),
+                                      ),
+                                    )
+                                  ],
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(top:5,left: 3),
@@ -148,10 +180,10 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardT
 
                                       Container(
                                         height: 40,
-                                        width: 90,
+                                        width: 150,
                                         child: Center(
                                           child: Text(
-                                            '\$ ' + stackType[i][0].getMoney(), style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 23,),
+                                            '$currency ' + stackType[i][0].getMoney(), style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 23,),
                                           ),
                                         ),
                                       ),
@@ -160,7 +192,7 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardT
                                         padding: const EdgeInsets.only(right:4.0),
                                         child: Container(
                                           //color: Colors.pinkAccent,
-                                          height: 60,
+                                          height: 55,
                                           width: 140,
 
                                           decoration: BoxDecoration(
@@ -222,7 +254,7 @@ Container checkPayment(int i, List stack){
         Container(
           height: 60,
           //color: Colors.red,
-          width: 70,
+          width: 50,
           decoration: BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(stack[i][0].getNamePayment()),
