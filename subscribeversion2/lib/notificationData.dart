@@ -187,12 +187,13 @@ class NotificationData{
       }
     }
   }
-
-  Future<bool> reupdatePendingNotifications(DateTime last, String name,int cycle, int amount) async{
+ ///only add more scheduled data for renew cards
+  Future<bool> reupdatePendingNotifications(DateTime last, String name,int cycle, int amount, bool isRenew) async{
     int v = cycle;
     List<PendingNotificationRequest> pending = await getPending();
     List<PendingNotificationRequest> temp = new List();
     int lastId = 0;
+    if (isRenew){
     for (int x=0; x<pending.length;x++){
       if (pending[x].title == name){
         temp.add(pending[x]);
@@ -245,7 +246,7 @@ class NotificationData{
 
     }
 
-  }
+  }}
 
 
 

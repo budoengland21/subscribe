@@ -701,13 +701,14 @@ class _AddCardState extends State<AddCard> {
     storedData storage = storedData();
 
     await activateNotification(false);
-    //storageIndex= await storage.lastIndex(); ///this will be the future index either way
- //   if (storageIndex > 1){
-  //    storageIndex+=1;///this will be the future index either way
-  //  }
+    storageIndex= await storage.lastIndex(); ///this will be the future index either way
+    if (storageIndex > 1){
+      storageIndex+=1;///this will be the future index either way
+   }
 
     //activateNotification(false);
-
+    cardDetails.setSortId(storageIndex); ///reason of this is because
+    ///don't want to wait for database to insert hence when sorting avoid null
     storage.insertDb(cardDetails);
 
    // storageIndex= await storage.getIndex(cardDetails.getNameCard());
@@ -1495,7 +1496,7 @@ class _AddCardState extends State<AddCard> {
                                             checker) { // onchanged takes parameter of whats changed
                                           setState(() {
                                             if (isExpired){ //expired no need to set reminder
-                                              isOn = false;
+                                              isOn = checker;
                                             }else{
                                               isOn = checker;
                                             }

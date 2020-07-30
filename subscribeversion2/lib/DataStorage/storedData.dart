@@ -35,7 +35,7 @@ class storedData{
   int future;
   int dateCreated;
 
-
+  int sortVal; ///store id in this for sorting
 
   factory storedData(){
     if (data == null){
@@ -235,10 +235,13 @@ class storedData{
 
      Database db = await getDatabase();
      List maps = await db.query(tblName);
-     
+
      return List.generate(maps.length, (index) {
        CardDetails card=new CardDetails();
        print(maps.toString());
+     //  f(maps[index]['$cardName']);
+      // int z = await getIndex();
+       card.setSortId(maps[index]['$id']);///get the index of card in databse
 
        bool ans;
        bool renew;
@@ -312,7 +315,7 @@ class storedData{
        card.setLastDate(d);
 
        if (ans){  ///meaning reminder on
-         checkNotifications(d,maps[index]['$cardName'],maps[index]['$cycleDays'],int.parse(maps[index]['$money']) );
+         checkNotifications(d,maps[index]['$cardName'],maps[index]['$cycleDays'],int.parse(maps[index]['$money']),renew );
          card.setLastDate(obtainUpdatedLastDate()); ///reupdates the last date
        }
 
@@ -470,9 +473,9 @@ class storedData{
    }
  ///adds datetimes to schedule if app hasn't been opened
   ///for a while and then reupdates the last date
-    void checkNotifications(DateTime d, String name, int cycle, int amount)async{
+    void checkNotifications(DateTime d, String name, int cycle, int amount,bool Isrenew)async{
      NotificationData notificationData = NotificationData();
-      await notificationData.reupdatePendingNotifications(d, name, cycle, amount);
+      await notificationData.reupdatePendingNotifications(d, name, cycle, amount,Isrenew);
 
    }
 

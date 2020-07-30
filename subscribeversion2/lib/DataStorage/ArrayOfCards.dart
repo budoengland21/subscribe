@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 import 'CardDetails.dart';
@@ -10,10 +11,12 @@ class ArrayOfCards{
 
 
   List<CardDetails> _storage;
+  List<CardDetails> _storageSave; ///used to store copy
   bool updated;
 
    ArrayOfCards.createInstance(){
      _storage = new List();
+     _storageSave = new List();
      updated = false;
    }
 
@@ -24,11 +27,64 @@ class ArrayOfCards{
      return arrayOfCards;
 
    }
+
+
+   void performSort(int filterType){
+     print("HERRRRRRRRRRR");
+     print(filterType);
+     if (filterType == 2){///for high days
+
+       _storage.sort((y,x){///ascending
+         return  int.parse(x.getMoney()).compareTo(int.parse(y.getMoney()));
+       });
+     }else if (filterType == 3){///for low days
+       _storage.sort((x,y){///low to high
+         return  int.parse(x.getMoney()).compareTo(int.parse(y.getMoney()));
+       });
+     }else if (filterType == 4){///for desscending days
+       _storage.sort((y,x){
+         return  int.parse(x.getDayCount()).compareTo(int.parse(y.getDayCount()));
+       });
+     }else if (filterType == 5) {
+       ///descending days
+       _storage.sort((x, y) {
+         return int.parse(x.getDayCount()).compareTo(
+             int.parse(y.getDayCount()));
+       });
+       //   }else if (filterType ==1){
+       ///then default
+       // if (_storageSave.length!=0){///incase they press as first
+       //  _storage = List.of(_storageSave);
+       //  }
+
+     }else{
+
+       _storage.sort((x, y) {
+         return (x.getSortId()).compareTo(
+             (y.getSortId()));
+       });
+     }
+       ///this is the first time pressed
+     //  if (_storage.length> _storageSave.length && _storageSave.length!=0){
+    //     ///that means storage was updated
+   //      ///add the new item of storage to storage save
+    //     ///because storage has sorted items
+   //      ///and storage save is default
+         print("new added");
+     //    _storageSave.add(_storage[_storage.length-1]);
+    //     _storage = List.of(_storageSave);
+   //    }else{///saves the copy first time it runs
+   //      _storageSave = List.of(_storage);
+     //  }
+
+
+   }
 ///we need to obtain the index hence list in list
   ///better implementation using map
-   List<List> obtainPast(){
+   List<List> obtainPast(int filterType){
 
      List<List> past = new List();
+     performSort(filterType);
      for (int i =0; i < _storage.length; i++){
        if (int.parse(_storage[i].getDayCount()) < 0){
          List temp = new List();
@@ -37,12 +93,16 @@ class ArrayOfCards{
          past.add(temp);
         // temp.clear();
        }
-     }return past;
+     }
+
+     return past;
 
    }
-   List<List> obtainIncoming(){
+   List<List> obtainIncoming(int filterType){
 
      List<List> incoming = new List();
+    performSort(filterType);
+
      for (int i =0; i < _storage.length; i++){
        if (int.parse(_storage[i].getDayCount()) >= 0 && _storage[i].getStatus()){
          List temp = new List();
@@ -53,14 +113,17 @@ class ArrayOfCards{
          print(incoming);
 
        }
-     }return incoming;
+
+     }
+     return incoming;
 
 
    }
 
-   List<List> obtainUpcoming(){
+   List<List> obtainUpcoming(int filterType){
 
      List<List> upcoming = new List();
+     performSort(filterType);
      for (int i=0; i< _storage.length; i++){
        print(_storage[i].getStatus());
        print("RT000001");

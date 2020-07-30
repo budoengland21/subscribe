@@ -22,7 +22,7 @@ class CardDetails{
 
    DateTime dateNotification; ///stores the last pending date
 
-
+  String sortId; ///id to keep track of first cards made
   String dayTemp;
 
   bool _track; // check if all fields are filled
@@ -47,6 +47,12 @@ class CardDetails{
   void updateStatus(bool val){
     print("CHANGED");
     _status = val;
+  }
+  void setSortId(int val){
+    sortId = val.toString();
+  }
+  int getSortId(){
+    return int.parse(sortId);
   }
 
   ///reduces the days to reach the cycle

@@ -1,3 +1,6 @@
+
+import 'dart:ui';
+
 import 'package:currency_pickers/country.dart';
 import 'package:currency_pickers/currency_picker_dropdown.dart';
 import 'package:currency_pickers/utils/utils.dart';
@@ -10,22 +13,44 @@ import 'package:subscribeversion2/homePage/main.dart';
 ///
 /// creates a stack of cards to display on the home screen
 
-List determineType(String c , ArrayOfCards array){
+///shows the user dialog box to select the notification
+///show price and days ^
+///
+
+
+
+
+/*void priceUpList(){
+
+
+   stackType.sort((x,y){
+    return  x[0].getDayCount().compareTo(y[0].getDayCount());
+   });
+   print(stackType);
+   //stackType = stackType.reversed;
+
+}*/
+
+
+
+
+
+List determineType(String c , ArrayOfCards array,int filterType){
 
 
   print(c);
   if (c == "pass"){
-    return array.obtainPast();
+    return array.obtainPast(filterType);
   }else if (c == "upcoming"){
 
     //return null;
-    return array.obtainUpcoming();// add to database to inform user
+    return array.obtainUpcoming(filterType);// add to database to inform user
   }else{
 
-    return array.obtainIncoming();
+    return array.obtainIncoming(filterType);
   }
 }
-List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardType)  {
+List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardType, int filtType)  {
   //ArrayOfCards cards = new ArrayOfCards();
   //cards.addCard()
   ///use if statement check if 0, then show balance
@@ -35,14 +60,15 @@ List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardT
   Color isFutureNumber;
 
   List<Widget> stacks = [];
-  double ttop=140;
+  double ttop=120;
   double lleft= 4;
   double rright=4;
 
 
   ///NEED INDEX OF ARRAY OF CARDS AND NOT THE LIST TO UPDATE AND DELETE
 
-  List stackType = determineType(cardType,cards);
+  List stackType = determineType(cardType,cards,filtType);
+
 int check = stackType.length;
   String balance = cards.getBalance(stackType);
 
@@ -67,7 +93,7 @@ int check = stackType.length;
     stacks.add(
 
     Positioned(
-        top:20,
+        top:10,
         left:30,
         right: 30,
         child: Card(
@@ -242,6 +268,8 @@ String modifyView(String days){
   }
   else if (days == "1"){
     return days+ " DAY";
+  }else if (int.parse(days)<0){///CHANGE -VE TO +VE
+    return int.parse(days).abs().toString() + "DAYS";
   }
   else{
     return days+ " DAYS";

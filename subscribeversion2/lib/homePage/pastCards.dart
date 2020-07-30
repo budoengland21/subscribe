@@ -3,7 +3,7 @@ import 'package:subscribeversion2/DataStorage/ArrayOfCards.dart';
 
 import 'cardStack.dart';
 
-CustomScrollView pastCards(ArrayOfCards a, BuildContext context){
+CustomScrollView pastCards(ArrayOfCards a, BuildContext context,int filter){
   return
     CustomScrollView(
       slivers: <Widget>[
@@ -13,7 +13,7 @@ CustomScrollView pastCards(ArrayOfCards a, BuildContext context){
               [
                 Stack(
 
-                  children: stackOfCards(a, context, "pass"),
+                  children: stackOfCards(a, context, "pass",filter),
                 )]
                   //if size not empty, increase to add extra space for balance
           ), itemExtent:  (a.checkSize()+1)*140.00
