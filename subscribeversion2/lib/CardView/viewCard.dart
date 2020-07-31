@@ -144,9 +144,9 @@ class viewCard extends StatelessWidget {
                       ///the number of days
                       Row(
                         children: <Widget>[
-                          Text("Days remaining",style: TextStyle(color:Colors.white,fontSize: 30)),
+                          Text(determineEligibilty(int.parse(this.card.getDayCount())),style: TextStyle(color:Colors.white,fontSize: 30)),
                           Spacer(),
-                          Text(this.card.getDayCount()+" day(s)", style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold,fontSize: 25))
+                          Text(int.parse(this.card.getDayCount()).abs().toString()+" day(s)", style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold,fontSize: 25))
                         ],
 
                       ),
@@ -272,4 +272,15 @@ class viewCard extends StatelessWidget {
     );
 
   }
+  ///replace days
+  String determineEligibilty(int v){
+      if (v< 0){
+        return "Past due";
+      }else{
+        return "Days remaining";
+      }
+  }
+
+  
 }
+

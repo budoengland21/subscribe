@@ -397,7 +397,14 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
       IncomingCards(a, buildContext,filterOption),
       UpcomingCards(a, buildContext, filterOption)
     ];
-    FlutterStatusbarcolor.setStatusBarColor(Colors.green);
+    if (current == 0){
+      FlutterStatusbarcolor.setStatusBarColor(Colors.red);
+    }else if (current == 1) {
+      FlutterStatusbarcolor.setStatusBarColor(Colors.green);
+    }else{
+      FlutterStatusbarcolor.setStatusBarColor(Colors.grey);
+    }
+
     FlutterStatusbarcolor.setStatusBarWhiteForeground(true);
 
     return Scaffold(
