@@ -269,7 +269,7 @@ String modifyView(String days){
   else if (days == "1"){
     return days+ " DAY";
   }else if (int.parse(days)<0){///CHANGE -VE TO +VE
-    return int.parse(days).abs().toString() + "DAYS";
+    return int.parse(days).abs().toString() + " DAYS";
   }
   else{
     return days+ " DAYS";

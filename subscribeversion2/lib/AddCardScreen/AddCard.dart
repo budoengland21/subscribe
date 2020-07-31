@@ -1901,6 +1901,7 @@ class _AddCardState extends State<AddCard> {
                                       if (x ==4 && (!errorCheck) && amountController.text != ""){
                                         ///go to home screen add card
                                       //  errorCheck = false;
+
                                         op = 1;
                                         print("CARD OPAYENT----");
                                           print(cardDetails.getNamePayment());

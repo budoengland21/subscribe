@@ -199,7 +199,8 @@ class storedData{
    Future<void> deleteItem(CardDetails card) async{
      try{
        Database db = await getDatabase();
-       db.delete(tblName, where: '$cardName=?',whereArgs: [card.getNameCard()]);
+       int index =  (card.getSortId());
+       db.delete(tblName, where: '$id=?',whereArgs: [index]);
      }catch(Exception){
        print('deleteError: '+Exception);
      }
