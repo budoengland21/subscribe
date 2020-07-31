@@ -216,11 +216,12 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
                                     },
                                     child: Container(
                                       width: MediaQuery.of(context).size.width,
+                                        height: 30,
                                         decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
+                                            shape: BoxShape.rectangle,borderRadius: BorderRadius.circular(20),
                                             border: Border.all(color: defaultColor0)
                                         ),
-                                        child: Text('Recently added', style: TextStyle(color: Colors.white),)),
+                                        child: Center(child: Text('Recently added', style: TextStyle(color: Colors.white),))),
                                   ),
 
                                   Row(

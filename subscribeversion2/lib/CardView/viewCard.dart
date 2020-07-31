@@ -281,6 +281,6 @@ class viewCard extends StatelessWidget {
       }
   }
 
-  
+
 }
 
