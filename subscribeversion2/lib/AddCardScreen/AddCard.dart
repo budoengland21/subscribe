@@ -809,9 +809,9 @@ class _AddCardState extends State<AddCard> {
           updateDays(cardDetails.getDayCount(),false);
           updateColor(cardDetails.getColor());
           updatePaymentType(cardDetails.getNamePayment());
-          if (cardDetails.getNamePayment() == "Debit"){
-            make();}else if (cardDetails.getNamePayment() == "Paypal"){make3();}///nothing
-          else if (cardDetails.getNamePayment()== "Credit"){make1();}else if (cardDetails.getNamePayment() == "Gift card"){make2();}//else{make3();}
+          if (cardDetails.getNamePayment() == "images/debit.png"){
+            make();}else if (cardDetails.getNamePayment() == "images/paypal.png"){make3();}///nothing
+          else if (cardDetails.getNamePayment()== "images/credit.png"){make1();}else{make2();}//else{make3();}
           isOn = cardDetails.getReminder();
           if (isOn){
             remainderTouched=true; ///so it doesn;t give it  a default
@@ -2082,7 +2082,9 @@ class _AddCardState extends State<AddCard> {
 
 
   Container obtainPay(){
-    if (cardDetails.getNamePayment() != null){
+    print(tempPay);
+    if (tempPay != ""){
+      print("lopoooo");
       return
         Container(
 
