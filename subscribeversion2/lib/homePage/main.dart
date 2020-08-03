@@ -1,12 +1,10 @@
 import 'dart:ui';
 
 import 'package:currency_pickers/country.dart';
-import 'package:currency_pickers/currency_picker_dropdown.dart';
-import 'package:currency_pickers/utils/utils.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:intl/intl.dart';
 import 'package:subscribeversion2/AddCardScreen/AddCard.dart';

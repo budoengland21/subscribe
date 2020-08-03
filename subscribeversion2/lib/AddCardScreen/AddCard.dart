@@ -453,7 +453,7 @@ class _AddCardState extends State<AddCard> {
   ///_________________________________________________________________________
   ///This will add the card to the home screen
   ///then it will add the card to an array
-  void returnHome() {
+  void returnHome() async{
     // print (cardDetails.getNamePayment());
 
   ///Updates the current card
@@ -517,6 +517,18 @@ class _AddCardState extends State<AddCard> {
 
      //Navigator.push(context, MaterialPageRoute(builder: (context)=> FrontPage()));//
       insertDatabase();
+
+      ///sets the sort id
+      storedData storage = storedData();
+      storageIndex= await storage.lastIndex(); ///this will be the future index either way
+      if (storageIndex > 1){
+        storageIndex+=1;///this will be the future index either way
+      }
+
+      //activateNotification(false);
+      print("this is storageIndex $storageIndex");
+      cardDetails.setSortId(storageIndex); ///reason of this is because
+      ///don't want to wait for database to insert hence when sorting avoid null
       Navigator.pop(context);
     }
 
@@ -701,14 +713,7 @@ class _AddCardState extends State<AddCard> {
     storedData storage = storedData();
 
     await activateNotification(false);
-    storageIndex= await storage.lastIndex(); ///this will be the future index either way
-    if (storageIndex > 1){
-      storageIndex+=1;///this will be the future index either way
-   }
 
-    //activateNotification(false);
-    cardDetails.setSortId(storageIndex); ///reason of this is because
-    ///don't want to wait for database to insert hence when sorting avoid null
     storage.insertDb(cardDetails);
 
    // storageIndex= await storage.getIndex(cardDetails.getNameCard());
@@ -726,7 +731,7 @@ class _AddCardState extends State<AddCard> {
     if (isOn){
       int daysRem = int.parse(cardDetails.getDayCount());
       int r = cardDetails.getReminderDays();
-      int paid= int.parse(cardDetails.getMoney());
+      double paid= double.parse(cardDetails.getMoney());
       int Cycle = cardDetails.getCycleDays();
       int daysNotify = 0; ///duration of days added
 
@@ -978,7 +983,7 @@ class _AddCardState extends State<AddCard> {
                               Padding(
                                 padding: const EdgeInsets.only(left: 15.0),
                                   child: Text(
-                                  tempAmount, style: TextStyle(fontSize: 22,
+                                  tempAmount, style: TextStyle(fontSize: 21,
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold),
                                 ),
@@ -1822,7 +1827,7 @@ class _AddCardState extends State<AddCard> {
 
 
                                     // color: Colors.black,
-                                    width: 120,
+                                    width: 150,
                                     child: TextField(
 
                                       decoration: InputDecoration(
@@ -1837,11 +1842,14 @@ class _AddCardState extends State<AddCard> {
                                         //block digits with comma, hyphen etc.
                                       ),style: TextStyle(color: Colors.white),
                                       controller: amountController,
-                                      keyboardType: TextInputType.number, maxLength: 6,
+                                      keyboardType: TextInputType.number, maxLength: 7,
                                       inputFormatters: [
+
+                                        WhitelistingTextInputFormatter(
+                                          RegExp('^[0-9]{1,5}(.)?[0-9]{0,2}')
+                                        ),
                                         BlacklistingTextInputFormatter(
                                             RegExp('[,|-]|[ ]')),
-                                        //WhitelistingTextInputFormatter.digitsOnly],
 
                                       ],
 
@@ -1898,7 +1906,7 @@ class _AddCardState extends State<AddCard> {
 
 
                                       ///checks if everything is set
-                                      if (x ==4 && (!errorCheck) && amountController.text != ""){
+                                      if (x ==4 && (!errorCheck) && amountController.text != "" && amountError != Colors.red){
                                         ///go to home screen add card
                                       //  errorCheck = false;
 
@@ -2044,39 +2052,41 @@ class _AddCardState extends State<AddCard> {
   void checkAmount(String val) {
 
 
+  if (amountController.text.startsWith("0")){
+    amountController.text = amountController.text.substring(1,);
+  }
+  // String p = r'(^[1-9]{0,4}(.)?[0-9]{0,2}$)';
 
-   String p = r'(^[1-9]{0,4}(.)?[0-9]{0,2}$)';
-
-    RegExp regExp = new RegExp(p);
-    if (amountController.text.startsWith(".")||
-        amountController.text.startsWith(",")||
-        amountController.text.startsWith(" ")||
-        amountController.text.startsWith("-")){
-
-        amountController.text = amountController.text.substring(1,);
-
-
-
-    }
-    if (!regExp.hasMatch(val)){
-
-
-      print("NOT VALID");
-
-      amountController.text = amountController.text.substring(0,amountController.text.length-1);
-
-      //then it ends with dot
-    }
-    else{
-      goodAmount = val;
-      print ("ACCEPTED");
-    }
-
-  //  print("SEE:$keyboardState");
-
-   amountController.selection = TextSelection.fromPosition(
-       TextPosition(offset: amountController.text.length)
-   );
+  //  RegExp regExp = new RegExp(p);
+//    if (amountController.text.startsWith(".")||
+//        amountController.text.startsWith(",")||
+//        amountController.text.startsWith(" ")||
+//        amountController.text.startsWith("-")){
+//
+//        amountController.text = amountController.text.substring(1,);
+//
+//
+//
+//    }
+//    if (!regExp.hasMatch(val)){
+//
+//
+//      print("NOT VALID");
+//
+//      amountController.text = amountController.text.substring(0,amountController.text.length-1);
+//
+//      //then it ends with dot
+//    }
+//    else{
+//      goodAmount = val;
+//      print ("ACCEPTED");
+//    }
+//
+//  //  print("SEE:$keyboardState");
+//
+//   amountController.selection = TextSelection.fromPosition(
+//       TextPosition(offset: amountController.text.length)
+//   );
 
   }
 

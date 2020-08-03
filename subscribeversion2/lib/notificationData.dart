@@ -70,7 +70,7 @@ class NotificationData{
 
   }
 
-  Future<void> showNotification( String sub, int amount, int daysToAdd,bool renew, int cycle,int remainder,int daysOnCard) async{
+  Future<void> showNotification( String sub, double amount, int daysToAdd,bool renew, int cycle,int remainder,int daysOnCard) async{
 
     int lastId = await getLastChannelId();
     var timeInt = calculateDuration(daysToAdd);
@@ -188,7 +188,7 @@ class NotificationData{
     }
   }
  ///only add more scheduled data for renew cards
-  Future<bool> reupdatePendingNotifications(DateTime last, String name,int cycle, int amount, bool isRenew) async{
+  Future<bool> reupdatePendingNotifications(DateTime last, String name,int cycle, double amount, bool isRenew) async{
     int v = cycle;
     List<PendingNotificationRequest> pending = await getPending();
     List<PendingNotificationRequest> temp = new List();
@@ -196,10 +196,16 @@ class NotificationData{
     if (isRenew){
     for (int x=0; x<pending.length;x++){
       if (pending[x].title == name){
+        print(pending[x].id);
+        print(pending[x].title);  print("this is pending each");
         temp.add(pending[x]);
         lastId = pending[x].id;
       }
     }
+    print('pending length');
+    print(temp.length);
+
+
     ///therefore we need to add more scheduled notifications
     ///temporary hack until package can release new method
     ///so add more scheduled notifications till 6
@@ -212,8 +218,9 @@ class NotificationData{
     IOSNotificationDetails iosNotificationDetails = IOSNotificationDetails();
     NotificationDetails notificationDetails = NotificationDetails(androidNotificationDetails,iosNotificationDetails);
     print('last date saved $last');
+    //print('updating $name');
     if (temp.length < 4){
-
+      print('updating $name');
       for (int i=temp.length; i<=5; i++){
         lastId+=1;   ///a new channel created and time, for another schedule
 

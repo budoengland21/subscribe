@@ -52,6 +52,7 @@ class CardDetails{
     sortId = val.toString();
   }
   int getSortId(){
+    print("the sortId $sortId");
     return int.parse(sortId);
   }
 

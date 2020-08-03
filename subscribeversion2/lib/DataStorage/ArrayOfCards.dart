@@ -35,21 +35,21 @@ class ArrayOfCards{
      if (filterType == 2){///for high days
 
        _storage.sort((y,x){///ascending
-         return  int.parse(x.getMoney()).compareTo(int.parse(y.getMoney()));
+         return  double.parse(x.getMoney()).compareTo(double.parse(y.getMoney()));
        });
      }else if (filterType == 3){///for low days
        _storage.sort((x,y){///low to high
-         return  int.parse(x.getMoney()).compareTo(int.parse(y.getMoney()));
+         return  double.parse(x.getMoney()).compareTo(double.parse(y.getMoney()));
        });
      }else if (filterType == 4){///for desscending days
        _storage.sort((y,x){
-         return  int.parse(x.getDayCount()).compareTo(int.parse(y.getDayCount()));
+         return  double.parse(x.getDayCount()).compareTo(double.parse(y.getDayCount()));
        });
      }else if (filterType == 5) {
        ///descending days
        _storage.sort((x, y) {
-         return int.parse(x.getDayCount()).compareTo(
-             int.parse(y.getDayCount()));
+         return double.parse(x.getDayCount()).compareTo(
+             double.parse(y.getDayCount()));
        });
        //   }else if (filterType ==1){
        ///then default

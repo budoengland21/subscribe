@@ -316,7 +316,7 @@ class storedData{
        card.setLastDate(d);
 
        if (ans){  ///meaning reminder on
-         checkNotifications(d,maps[index]['$cardName'],maps[index]['$cycleDays'],int.parse(maps[index]['$money']),renew );
+         checkNotifications(d,maps[index]['$cardName'],maps[index]['$cycleDays'],double.parse(maps[index]['$money']),renew );
          card.setLastDate(obtainUpdatedLastDate()); ///reupdates the last date
        }
 
@@ -474,7 +474,7 @@ class storedData{
    }
  ///adds datetimes to schedule if app hasn't been opened
   ///for a while and then reupdates the last date
-    void checkNotifications(DateTime d, String name, int cycle, int amount,bool Isrenew)async{
+    void checkNotifications(DateTime d, String name, int cycle, double amount,bool Isrenew)async{
      NotificationData notificationData = NotificationData();
       await notificationData.reupdatePendingNotifications(d, name, cycle, amount,Isrenew);
 
