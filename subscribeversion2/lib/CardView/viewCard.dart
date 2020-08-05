@@ -4,7 +4,7 @@ import 'package:subscribeversion2/AddCardScreen/AddCard.dart';
 import 'package:subscribeversion2/DataStorage/ArrayOfCards.dart';
 import 'package:subscribeversion2/DataStorage/CardDetails.dart';
 import 'package:subscribeversion2/DataStorage/storedData.dart';
-import 'package:subscribeversion2/homePage/main.dart';
+import 'file:///C:/Users/User/coding%20with%20angela/subscripe-app/subscribeversion2/lib/main.dart';
 import 'package:subscribeversion2/notificationData.dart';
 
 class viewCard extends StatelessWidget {

@@ -15,13 +15,13 @@ import 'package:subscribeversion2/DataStorage/storedData.dart';
 import 'package:subscribeversion2/homePage/IncomingCards.dart';
 import 'package:subscribeversion2/homePage/UpcomingCards.dart';
 import 'package:subscribeversion2/homePage/pastCards.dart';
-import '';
+
 import 'package:currency_pickers/currency_pickers.dart';
 
 
 
-import '../notificationData.dart';
-import 'cardStack.dart';
+import 'notificationData.dart';
+import 'homePage/cardStack.dart';
 
     void main() {
       runApp(

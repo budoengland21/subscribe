@@ -13,7 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:subscribeversion2/DataStorage/ArrayOfCards.dart';
 import 'package:subscribeversion2/DataStorage/CardDetails.dart';
 import 'package:subscribeversion2/DataStorage/storedData.dart';
-import 'package:subscribeversion2/homePage/main.dart';
+import 'file:///C:/Users/User/coding%20with%20angela/subscripe-app/subscribeversion2/lib/main.dart';
 import 'package:subscribeversion2/notificationData.dart';
 
 
@@ -816,7 +816,7 @@ class _AddCardState extends State<AddCard> {
           updatePaymentType(cardDetails.getNamePayment());
           if (cardDetails.getNamePayment() == "images/debit.png"){
             make();}else if (cardDetails.getNamePayment() == "images/paypal.png"){make3();}///nothing
-          else if (cardDetails.getNamePayment()== "images/credit.png"){make1();}else{make2();}//else{make3();}
+          else if (cardDetails.getNamePayment()== "images/credit.png"){make1();}else if(cardDetails.getNamePayment()=="images/voucher.png"){make2();}//else{make3();}
           isOn = cardDetails.getReminder();
           if (isOn){
             remainderTouched=true; ///so it doesn;t give it  a default

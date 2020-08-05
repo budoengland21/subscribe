@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:subscribeversion2/CardView/viewCard.dart';
 import 'package:subscribeversion2/DataStorage/ArrayOfCards.dart';
-import 'package:subscribeversion2/homePage/main.dart';
+import 'file:///C:/Users/User/coding%20with%20angela/subscripe-app/subscribeversion2/lib/main.dart';
 ///
 /// creates a stack of cards to display on the home screen
 
