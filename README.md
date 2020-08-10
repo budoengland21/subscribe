@@ -17,10 +17,10 @@ Simple application to manage your subscriptions, you can add upcoming subscripti
 
 <p> <u>Credit</u>:</p>
 
--[Flat icons](flaticon.com)
--[Currency picker] (https://github.com/figengungor/country_pickers)
--[Notifications](https://github.com/MaikuB/flutter_local_notifications)
--[Status bar](https://pub.dev/packages/flutter_statusbarcolor)
+-[Flat icons](flaticon.com)  
+-[Currency picker](https://github.com/figengungor/country_pickers)  
+-[Notifications](https://github.com/MaikuB/flutter_local_notifications)  
+-[Status bar](https://pub.dev/packages/flutter_statusbarcolor)  
 
 
 
