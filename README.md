@@ -1,5 +1,7 @@
-# subscribe
-Simple application to manage your subscriptions, you can add upcoming subscriptions 
+# Pocket subscriptions
+
+
+<p style= color:"red">Simple application to manage your subscriptions, you can add upcoming subscriptions </p>
 
 - Add a subscription of your choice
 
