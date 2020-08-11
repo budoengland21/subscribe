@@ -4,12 +4,14 @@ import 'package:subscribeversion2/AddCardScreen/AddCard.dart';
 import 'package:subscribeversion2/DataStorage/ArrayOfCards.dart';
 import 'package:subscribeversion2/DataStorage/CardDetails.dart';
 import 'package:subscribeversion2/DataStorage/storedData.dart';
-import 'file:///C:/Users/User/coding%20with%20angela/subscripe-app/subscribeversion2/lib/main.dart';
+import 'package:subscribeversion2/main.dart';
+
 import 'package:subscribeversion2/notificationData.dart';
 
 class viewCard extends StatelessWidget {
   CardDetails card;
   int index;
+  String mCurrency;
   bool isOn = false; ///check if remainder is on
   CardDetails tempIndex; ///store carddetails for database to delete
   String tempName; ///store name of card to get index
@@ -17,8 +19,9 @@ class viewCard extends StatelessWidget {
   int channelIndex=0; ///index of card in database to delete
   ArrayOfCards a = new ArrayOfCards();
   storedData store = new storedData();
-  viewCard(this.card, this.index){
+  viewCard(this.card, this.index,this.mCurrency){
     tempIndex = a.seeCard(this.index);
+
     isOn= this.card.getReminder();
     tempName = this.card.getNameCard();
   }
@@ -161,7 +164,7 @@ class viewCard extends StatelessWidget {
                         children: <Widget>[
                           Text("Amount",style: TextStyle(color:Colors.white,fontSize: 30)),
                           Spacer(),
-                          Text("$currency "+this.card.getMoney(), style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold,fontSize: 25))
+                          Text("$mCurrency "+this.card.getMoney(), style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold,fontSize: 25))
 
                         ],
 
@@ -239,6 +242,7 @@ class viewCard extends StatelessWidget {
 
                                   Navigator.pop(context);//remove the  main page too
                                   //Now pop the main page, pass parameter to confirm so it doesn't go to init
+                                 currency = this.mCurrency;
                                   Navigator.push(context, MaterialPageRoute(builder: (context)=> FrontPage(true)));
 
 

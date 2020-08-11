@@ -13,8 +13,10 @@ import 'package:flutter/services.dart';
 import 'package:subscribeversion2/DataStorage/ArrayOfCards.dart';
 import 'package:subscribeversion2/DataStorage/CardDetails.dart';
 import 'package:subscribeversion2/DataStorage/storedData.dart';
-import 'file:///C:/Users/User/coding%20with%20angela/subscripe-app/subscribeversion2/lib/main.dart';
+
 import 'package:subscribeversion2/notificationData.dart';
+
+import '../main.dart';
 
 
 
@@ -392,8 +394,11 @@ class _AddCardState extends State<AddCard> {
 
   //Update money
   void updateMoney(String amount) {
+    if (!amount.contains(".") && amount.length < 6){///hence this means it's int, so add .00 to make it double
+      amount+=".00";
+    }
     cardDetails.setMoney(amount);
-    tempAmount = '\$ '+amount;
+    tempAmount = '🤑 '+amount;
   }
 
   //update day count
@@ -983,15 +988,15 @@ class _AddCardState extends State<AddCard> {
                               Padding(
                                 padding: const EdgeInsets.only(left: 15.0),
                                   child: Text(
-                                  tempAmount, style: TextStyle(fontSize: 21,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
+                                  tempAmount, style: TextStyle(fontSize: 18,
+                                    color: Colors.white,fontWeight: FontWeight.bold
+                                    ),
                                 ),
                               ),
                               Spacer(),
 
                               Text(
-                                tempDays, style: TextStyle(fontSize: 22,
+                                tempDays, style: TextStyle(fontSize: 20,
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold),
                               ),
@@ -1857,7 +1862,7 @@ class _AddCardState extends State<AddCard> {
                                       onSubmitted: (val){
                                         if (val.endsWith(".")){
                                           setState(() {
-                                            amountController.text+="0";
+                                            amountController.text+="00";
                                             updateMoney(amountController.text);
                                             amountError= Colors.white;
                                           });
@@ -1904,7 +1909,11 @@ class _AddCardState extends State<AddCard> {
                                      // int i = cardDetails.checkRemDays(renewOn, storeCycleDays);
                                       int x = cardDetails.checkAll();
 
-
+                                     ///let's first check if amount ends with zero
+                                      if (amountController.text.endsWith(".")){
+                                        amountController.text +="00";
+                                        updateMoney(amountController.text);
+                                      }
                                       ///checks if everything is set
                                       if (x ==4 && (!errorCheck) && amountController.text != "" && amountError != Colors.red){
                                         ///go to home screen add card

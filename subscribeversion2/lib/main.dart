@@ -77,7 +77,7 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
 /// calls the singleton class
 
   @override
-  void initState() {
+  void initState()  {
     // TODO: implement initState
 
     if (!this.widget.hasPassed){
@@ -89,12 +89,16 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
 
       startDatabase();
     }else{
+      ///reupdate the currency
+      obtainUpdatedCurrency();
+
       isPressed=false;
       defaultColor0=defaultColor3=defaultColor2=defaultColor1=defaultColor4=Colors.black;
     filterOption=0;
     }
 
   }
+
 
   @override///Listens when app changes its lifecycle
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -129,6 +133,8 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
       currency = "\$";
     }else {
       print(c);
+      print("this is original $currency");
+      print(currency);
       currency = c[c.length-1];
     }
    ///this is previous card subscriptions
@@ -147,27 +153,49 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
 
   }
 
-
-  void _openCupertinoCurrencyPicker() => showCupertinoModalPopup<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return CurrencyPickerCupertino(
-          pickerSheetHeight: 300.0,
-          onValuePicked: (Country country) =>
-              setState(() {
-
-              currency = NumberFormat.simpleCurrency(name: country.currencyCode).currencySymbol.toString();
-
-              ///insert it into database
-                currencyTrack = currencyStorage();
-                print(currency);
-                currencyTrack.insertCurrency(currency);
-              }
+  void obtainUpdatedCurrency() async{
+    currencyTrack = currencyStorage();
+    await currencyTrack.initializeDatabase();
+    List t = await currencyTrack.getCurrency();
+    currency = t[t.length-1];
+    print("currency updated $currency");
+  }
 
 
-        ));
-      });
+  void _openCupertinoCurrencyPicker() {
 
+    showCupertinoModalPopup<void>(
+
+        context: context,
+        builder: (BuildContext context) {
+          return CurrencyPickerCupertino(
+              pickerSheetHeight: 300.0,
+            //  initialCountry:c,
+              onValuePicked: (Country country) {
+                print("INITIAL $country");
+                setState(() {
+                  //  print()
+                  //  print("INITIAL $country");
+
+
+                  currency = NumberFormat
+                      .simpleCurrency(name: country.currencyCode)
+                      .currencySymbol
+                      .toString();
+
+                  print("CURRENCY NEW $currency");
+
+                  ///insert it into database
+                  currencyTrack = currencyStorage();
+                  print(currency);
+                  currencyTrack.insertCurrency(currency);
+                }
+
+
+                );
+              });
+        });
+  }
 
 
   Color checkPress(){
@@ -392,9 +420,9 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
 
     ///list of the tabs for their bodies
     final tabs = [
-      pastCards(a, buildContext, filterOption),
-      IncomingCards(a, buildContext,filterOption),
-      UpcomingCards(a, buildContext, filterOption)
+      pastCards(a, buildContext, filterOption, currency),
+      IncomingCards(a, buildContext,filterOption, currency),
+      UpcomingCards(a, buildContext, filterOption,currency)
     ];
     if (current == 0){
       FlutterStatusbarcolor.setStatusBarColor(Colors.red);
@@ -419,7 +447,9 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
          Padding(
            padding: const EdgeInsets.all(10.0),
            child: RaisedButton(
-             onPressed: (){ _openCupertinoCurrencyPicker();},
+             onPressed: (){ setState(() {
+               _openCupertinoCurrencyPicker();
+             });},
              color: Colors.black,
              child: Text('Currency: $currency', style: TextStyle(color: Color.fromRGBO(255, 241, 118, 1), fontSize: 17),),
            ),

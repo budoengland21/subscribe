@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:subscribeversion2/CardView/viewCard.dart';
 import 'package:subscribeversion2/DataStorage/ArrayOfCards.dart';
-import 'file:///C:/Users/User/coding%20with%20angela/subscripe-app/subscribeversion2/lib/main.dart';
+
+import 'package:subscribeversion2/main.dart';
 ///
 /// creates a stack of cards to display on the home screen
 
@@ -35,8 +36,7 @@ import 'file:///C:/Users/User/coding%20with%20angela/subscripe-app/subscribevers
 
 
 
-List determineType(String c , ArrayOfCards array,int filterType){
-
+List determineType(String c , ArrayOfCards array,int filterType ){
 
   print(c);
   if (c == "pass"){
@@ -50,9 +50,11 @@ List determineType(String c , ArrayOfCards array,int filterType){
     return array.obtainIncoming(filterType);
   }
 }
-List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardType, int filtType)  {
+List<Widget> stackOfCards(ArrayOfCards cards, BuildContext context, String cardType, int filtType,String current)  {
   //ArrayOfCards cards = new ArrayOfCards();
   //cards.addCard()
+
+  print("currency in cardStack $currency");
   ///use if statement check if 0, then show balance
   print("passed here");
  // print((cards.checkSize()));
@@ -76,7 +78,7 @@ int check = stackType.length;
   if (check == 0){
     stacks.add(
       Padding(
-        padding: const EdgeInsets.only(top:100,bottom: 100),
+        padding: const EdgeInsets.only(top:100,bottom: 1),
         child: Center(
             child: Text('Add a subscription by clicking +',style: TextStyle(color: Colors.white.withOpacity(0.6),fontSize: 20),)),
       )
@@ -122,7 +124,7 @@ int check = stackType.length;
     ),
                   Container(
                         width: 200,
-                        child: Center(child: Text("$currency $balance",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,fontSize: 23),))
+                        child: Center(child: Text("$current $balance",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white,fontSize: 23),))
                         ),
                     Spacer(),
 
@@ -160,7 +162,7 @@ int check = stackType.length;
                   child: GestureDetector(
                     onTap: (){
 
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=> viewCard(stackType[i][0],stackType[i][1])));
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> viewCard(stackType[i][0],stackType[i][1],current)));
 
 
                     },
@@ -209,7 +211,7 @@ int check = stackType.length;
                                         width: 150,
                                         child: Center(
                                           child: Text(
-                                            '$currency ' + stackType[i][0].getMoney(), style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 23,),
+                                            '$current ' + stackType[i][0].getMoney(), style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 23,),
                                           ),
                                         ),
                                       ),
@@ -253,8 +255,20 @@ int check = stackType.length;
           ));
       ttop+=140;
 
-    }
+    } stacks.add(
+        Positioned(
+          top: ttop+40,
+          left: lleft,right: rright,
+          child: Container(
+            width: double.infinity,
+            height: 70,
+            color: Colors.black,
+          ),
+        )
+
+    );
   }
+
 
 
   return stacks;

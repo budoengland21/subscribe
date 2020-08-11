@@ -3,7 +3,7 @@ import 'package:subscribeversion2/DataStorage/ArrayOfCards.dart';
 
 import 'cardStack.dart';
 
-CustomScrollView IncomingCards(ArrayOfCards a, BuildContext context,int filter){
+CustomScrollView IncomingCards(ArrayOfCards a, BuildContext context,int filter, String current){
   return
     CustomScrollView(
       slivers: <Widget>[
@@ -13,7 +13,7 @@ CustomScrollView IncomingCards(ArrayOfCards a, BuildContext context,int filter){
               [
                 Stack(
 
-                  children: stackOfCards(a, context, "incoming", filter),
+                  children: stackOfCards(a, context, "incoming", filter,current),
                 )]
           ), itemExtent:   (a.checkSize()+1)*140.00
         )
