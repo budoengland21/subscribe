@@ -157,7 +157,12 @@ class _FrontPageState extends State<FrontPage> with WidgetsBindingObserver{
     currencyTrack = currencyStorage();
     await currencyTrack.initializeDatabase();
     List t = await currencyTrack.getCurrency();
-    currency = t[t.length-1];
+    if (t.length==0){
+      currency="\$";
+    }else{
+      currency = t[t.length-1];
+    }
+
     print("currency updated $currency");
   }
 

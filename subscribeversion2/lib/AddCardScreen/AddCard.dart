@@ -789,6 +789,10 @@ class _AddCardState extends State<AddCard> {
      print(tempState.getNamePayment());
     print("look if ");
     Navigator.pop(saveContext); ///so it can go back to view card and remove any update
+    Navigator.of(context).pop();
+    Navigator.of(context).pop();
+    Navigator.push(context, MaterialPageRoute(builder: (context)=> FrontPage(true)));
+
     //Navigator.pop(context);
 
     return true;
