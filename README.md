@@ -9,13 +9,13 @@ Simple application to manage your subscriptions, you can add upcoming subscripti
 
 - Set a reminder to be notified when due date is coming up.
 
-<p float = "left">
+<!--<p float = "left">
 <img src="image2.png" height=450>
 <img src="image3.png" height=450>
 <img src="image5.png" height=450>
   </p>
   
-  https://play.google.com/store/apps/details?id=pocket.subscriptions
+  https://play.google.com/store/apps/details?id=pocket.subscriptions-->
 
 <p> <u>Credit</u>:</p>
 
